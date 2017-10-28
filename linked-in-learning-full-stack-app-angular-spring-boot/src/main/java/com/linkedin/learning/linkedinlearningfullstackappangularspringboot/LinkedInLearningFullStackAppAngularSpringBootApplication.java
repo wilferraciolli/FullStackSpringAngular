@@ -1,5 +1,6 @@
 package com.linkedin.learning.linkedinlearningfullstackappangularspringboot;
 
+import com.linkedin.learning.rest.ReservationResource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @EnableAutoConfiguration
-@ComponentScan
+@ComponentScan(basePackageClasses = ReservationResource.class)
 public class LinkedInLearningFullStackAppAngularSpringBootApplication {
 
 	/**
