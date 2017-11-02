@@ -25,6 +25,8 @@ public class H2Bootstrap implements CommandLineRunner {
         roomRepository.save(new RoomEntity(407, "250"));
 
         //loop through every entity persisted
+        //check when entities are being persisted
+        System.out.println("Printing out data ");
        Iterable<RoomEntity> iterable =  roomRepository.findAll();
        for (RoomEntity room : iterable){
            System.out.println(room.getRoomNumber());
