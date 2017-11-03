@@ -1,31 +1,42 @@
-package com.linkedin.learning.model.response;
+package com.linkedin.learning.entity;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
- * The type Reservation response.
+ * The type Reservation entity. Each room amy have multiple reservations.
  */
-public class ReservationResponse {
+@Entity
+@Table(name = "Reservation")
+public class ReservationEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotNull
     private LocalDate checkin;
+
+    @NotNull
     private LocalDate checkout;
 
+    @ManyToOne
+    private RoomEntity roomEntity;
+
     /**
-     * Instantiates a new Reservation response.
+     * Instantiates a new Reservation entity.
      */
-    public ReservationResponse() {
+    public ReservationEntity() {
     }
 
     /**
-     * Instantiates a new Reservation response.
+     * Instantiates a new Reservation entity.
      *
-     * @param id       the id
      * @param checkin  the checkin
      * @param checkout the checkout
      */
-    public ReservationResponse(Long id, LocalDate checkin, LocalDate checkout) {
-        this.id = id;
+    public ReservationEntity(LocalDate checkin, LocalDate checkout) {
         this.checkin = checkin;
         this.checkout = checkout;
     }
@@ -82,5 +93,23 @@ public class ReservationResponse {
      */
     public void setCheckout(LocalDate checkout) {
         this.checkout = checkout;
+    }
+
+    /**
+     * Gets room entity.
+     *
+     * @return the room entity
+     */
+    public RoomEntity getRoomEntity() {
+        return roomEntity;
+    }
+
+    /**
+     * Sets room entity.
+     *
+     * @param roomEntity the room entity
+     */
+    public void setRoomEntity(RoomEntity roomEntity) {
+        this.roomEntity = roomEntity;
     }
 }

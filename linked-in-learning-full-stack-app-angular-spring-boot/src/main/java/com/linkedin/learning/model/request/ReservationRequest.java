@@ -1,6 +1,10 @@
 package com.linkedin.learning.model.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.linkedin.learning.model.Links;
+import com.linkedin.learning.utils.LocalDateSerializer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -11,8 +15,14 @@ import java.time.LocalDate;
 public class ReservationRequest {
 
     private Long id;
+
+    private Long roomId;
+
+    @JsonDeserialize(using = LocalDateSerializer.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate checkin;
+
+    @JsonDeserialize(using = LocalDateSerializer.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate checkout;
 
@@ -26,13 +36,12 @@ public class ReservationRequest {
     /**
      * Instantiates a new Reservation request.
      *
-     * @param id       the id
+     * @param roomId   the room id
      * @param checkin  the checkin
      * @param checkout the checkout
      */
-    public ReservationRequest(Long id, LocalDate checkin, LocalDate checkout) {
-        super();
-        this.id = id;
+    public ReservationRequest(Long roomId, LocalDate checkin, LocalDate checkout) {
+        this.roomId = roomId;
         this.checkin = checkin;
         this.checkout = checkout;
     }
@@ -53,6 +62,24 @@ public class ReservationRequest {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * Gets room id.
+     *
+     * @return the room id
+     */
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    /**
+     * Sets room id.
+     *
+     * @param roomId the room id
+     */
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 
     /**
