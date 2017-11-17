@@ -28,6 +28,7 @@ import static com.linkedin.learning.rest.ResourceConstants.ROOM_RESERVATION_V1;
  */
 @RestController
 @RequestMapping(ROOM_RESERVATION_V1)
+@CrossOrigin
 public class ReservationResource {
 
     @Autowired

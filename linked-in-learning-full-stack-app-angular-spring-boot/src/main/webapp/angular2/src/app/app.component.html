@@ -61,14 +61,14 @@
       <!-- Display table of available rooms -->
       <h1>Available Rooms</h1>
 
-      <div class="row">
+      <div class="row" *ngIf="rooms">
         <div class="col-12">
           <div class="table-responsive">
             <table class="table">
               <tbody>
               <tr *ngFor="let room of rooms">
                 <td>
-                  <img src="images/intro_room.jpg" alt="Intro Gallery Room Sample Pictures">
+                  <img src="src/app/images/intro_room.jpg" alt="Intro Gallery Room Sample Pictures">
                 </td>
                 <td>
                   <strong>Room #: {{room.roomNumber}}</strong><br/>
