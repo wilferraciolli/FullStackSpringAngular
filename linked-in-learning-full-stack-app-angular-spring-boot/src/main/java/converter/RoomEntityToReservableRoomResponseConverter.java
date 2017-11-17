@@ -14,17 +14,20 @@ public class RoomEntityToReservableRoomResponseConverter implements Converter<Ro
 
     @Override
     public ReservableRoomResponse convert(RoomEntity source) {
-       ReservableRoomResponse response = new ReservableRoomResponse();
-       response.setRoomNumber(source.getRoomNumber());
-       response.setPrice(Integer.valueOf(source.getPrice()));
+        ReservableRoomResponse response = new ReservableRoomResponse();
+        if (null != source.getId()) {
+            response.setId(source.getId());
+        }
+        response.setRoomNumber(source.getRoomNumber());
+        response.setPrice(Integer.valueOf(source.getPrice()));
 
-       //add links
+        //add links
         Links links = new Links();
         Self self = new Self();
         self.setRef(ResourceConstants.ROOM_RESERVATION_V1 + "/" + source.getId());
         links.setSelf(self);
 
         response.setLinks(links);
-       return response;
+        return response;
     }
 }

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
-import {Http, Response} from '@angular/http';
+import {Http, Headers, RequestOptions, Response} from '@angular/http';
 import {Observable, operators} from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch"
@@ -12,16 +12,20 @@ import "rxjs/add/operator/catch"
 })
 export class AppComponent implements OnInit {
 
-  private baseUrl: string = 'http://localhost:8080';
-  public submitted: boolean;
-  roomsearch: FormGroup;
-  rooms: Room[];
-
   /**
    * Default constructor
    */
   constructor(private http: Http) {
   }
+
+  private baseUrl: string = 'http://localhost:8080';
+  public submitted: boolean;
+
+  roomsearch: FormGroup;
+  rooms: Room[];
+  request: ReserveRoomRequest;
+  currentCheckInVal: string;
+  currentCheckOutVal: string;
 
   ngOnInit() {
     this.roomsearch = new FormGroup({
@@ -29,6 +33,14 @@ export class AppComponent implements OnInit {
       checkout: new FormControl('')
     });
 
+    //constant to hold the form group.value changes.
+    const roomsearchValueChanges$ = this.roomsearch.valueChanges;
+
+    //change the value of checkin and checkout after every change on the form 'roomsearch'
+    roomsearchValueChanges$.subscribe(valChange => {
+      this.currentCheckInVal = valChange.checkin;
+      this.currentCheckOutVal = valChange.checkout;
+    });
   }
 
   /**
@@ -51,6 +63,9 @@ export class AppComponent implements OnInit {
    */
   reserveRoom(value: string) {
     console.log("Room id for reservation" + value);
+    this.request = new ReserveRoomRequest(value, this.currentCheckInVal, this.currentCheckOutVal);
+
+    this.createReservation(this.request);
   }
 
   /**
@@ -58,8 +73,21 @@ export class AppComponent implements OnInit {
    * @returns {Observable<Room[]>}
    */
   getAll(): Observable<Room[]> {
-    return this.http.get(this.baseUrl + '/room/reservation/v1?checkin=2017-03-18&checkout=2017-03-25')
+    return this.http.get(this.baseUrl + '/room/reservation/v1?checkin=' + this.currentCheckInVal + '-18&checkout=' + this.currentCheckOutVal)
       .map(this.mapRoom);
+  }
+
+  /**
+   * Metho to build a request body to send to an API to create a resource
+   * @param {ReserverRoomRequest} body
+   */
+  createReservation(body: ReserveRoomRequest) {
+    let bodyString = JSON.stringify(body);// Stringify payload
+    let headers = new Headers({'Content-Type': 'application/json'});// ... Set content type to JSON
+    let option = new RequestOptions({headers: headers});// Create a request option
+
+    this.http.post(this.baseUrl + '/room/reservation/v1', body, option)
+      .subscribe(res => console.log(res));
   }
 
   /**
@@ -84,4 +112,16 @@ export interface Room {
   roomNumber: string;
   price: string;
   links: string;
+}
+
+export class ReserveRoomRequest {
+  roomId: string;
+  checkin: string;
+  checkout: string;
+
+  constructor(roomId: string, checkin: string, checkout: string) {
+    this.roomId = roomId;
+    this.checkin = checkin;
+    this.checkout = checkout;
+  }
 }
