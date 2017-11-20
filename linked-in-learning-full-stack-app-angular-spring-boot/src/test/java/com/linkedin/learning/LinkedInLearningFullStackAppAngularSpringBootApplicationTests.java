@@ -1,4 +1,4 @@
-package com.linkedin.learning.linkedinlearningfullstackappangularspringboot;
+package com.linkedin.learning;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
