@@ -1,0 +1,49 @@
+<div class="container">
+  <mat-toolbar>
+    <span class="login-toolbar">Login</span>
+  </mat-toolbar>
+
+  <div class="login-container">
+    <mat-card class="login-form">
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+
+          <mat-form-field class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="Email" name="email"
+                   formControlName="username" required [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+            <!-- adding validation message based on error type -->
+            <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+              <div *ngIf="f.username.errors.required">Username is required</div>
+            </div>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Password" name="password"
+                   formControlName="password" required [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                   [type]="hide? 'password' : 'text'">
+            <mat-icon color="primary" matSuffix
+                      (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            <!-- adding validation message based on error type -->
+            <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+              <div *ngIf="f.password.errors.required">Password is required</div>
+            </div>
+          </mat-form-field>
+
+          <mat-card-actions>
+            <div align="end">
+              <a routerLink="/register" class="btn btn-link">Register</a>
+              <span class="spacer"></span>
+              <button [disabled]="loading || !loginForm.valid" mat-raised-button type="submit" color="primary">LOGIN
+              </button>
+              <span *ngIf="loading">Loading</span>
+            </div>
+          </mat-card-actions>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+</div>

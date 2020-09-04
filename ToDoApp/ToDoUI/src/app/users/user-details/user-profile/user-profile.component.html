@@ -1,0 +1,102 @@
+<div class="container">
+  <mat-toolbar>
+    <span>User Profile</span>
+  </mat-toolbar>
+
+  <!-- user profile detail -->
+  <mat-card>
+    <mat-card-content>
+      <!-- fields -->
+      <form [formGroup]="userDetailsProfileService.form" (ngSubmit)="updatePerson()">
+        <!--        <mat-grid-list cols=1 rowHeight="400px">-->
+
+        <!-- grid 1 -->
+        <!--          <mat-grid-tile>-->
+        <div class="user-profile-form-container">
+          <div class="user-profile-form-content">
+            <input type="hidden" formControlName="$key">
+            <mat-form-field color="primary">
+              <input formControlName="firstName" matInput placeholder="First Name">
+              <!-- adding validation message based on error type -->
+              <mat-error *ngIf="userDetailsProfileService.form.controls['firstName'].errors?.required">Mandatory
+              </mat-error>
+              <mat-error *ngIf="userDetailsProfileService.form.controls['firstName'].errors?.minLength">Minimum 2
+                characters
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field color="primary">
+              <input formControlName="lastName" matInput placeholder="Last Name">
+              <!-- adding validation message based on error type -->
+              <mat-error *ngIf="userDetailsProfileService.form.controls['lastName'].errors?.required">Mandatory
+              </mat-error>
+              <mat-error *ngIf="userDetailsProfileService.form.controls['lastName'].errors?.minLength">Minimum 2
+                characters
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field color="primary">
+              <input formControlName="email" matInput placeholder="Email">
+              <!-- adding validation message based on error type -->
+              <mat-error *ngIf="userDetailsProfileService.form.controls['email'].errors?.required">Mandatory
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field color="primary">
+              <mat-label>Date of Birth</mat-label>
+              <input matInput [matDatepicker]="picker" placeholder="Choose a date" formControlName="dateOfBirth">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+          </div>
+          <!--          </mat-grid-tile>-->
+
+          <!-- grid 2 -->
+          <!--          <mat-grid-tile>-->
+          <div class="user-profile-form-content">
+
+            <mat-form-field color="primary">
+              <mat-label>Gender</mat-label>
+              <mat-select formControlName="genderId">
+                <mat-option *ngFor="let gender of genders" [value]="gender.value">
+                  {{gender.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field color="primary">
+              <mat-label>Marital Status</mat-label>
+              <mat-select formControlName="maritalStatusId">
+                <mat-option *ngFor="let maritalStatus of maritalStatuses" [value]="maritalStatus.value">
+                  {{maritalStatus.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field color="primary">
+              <input formControlName="numberOfDependants" matInput placeholder="Number of dependants">
+            </mat-form-field>
+
+            <mat-form-field color="primary">
+              <input formControlName="phoneNumber" matInput placeholder="Phone number">
+            </mat-form-field>
+
+          </div>
+          <!--          </mat-grid-tile>-->
+          <!--        </mat-grid-list>-->
+        </div>
+
+        <mat-card-actions class="user-profile-form-actions">
+          <div align="end">
+            <button [disabled]="!userDetailsProfileService.form.valid" mat-raised-button type="submit" color="primary">
+              Update
+            </button>
+          </div>
+        </mat-card-actions>
+      </form>
+
+    </mat-card-content>
+  </mat-card>
+
+</div>
