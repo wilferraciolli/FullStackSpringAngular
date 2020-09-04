@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.wiltech.ProvidersLinkProvider;
 import com.wiltech.todos.exceptions.EntityNotFoundException;
 import com.wiltech.todos.people.PersonRestService;
+import com.wiltech.todos.todos.TodoRestService;
 import com.wiltech.todos.users.UserDetailsView;
 import com.wiltech.todos.users.UserDetailsViewRepository;
 import com.wiltech.todos.users.UserRestService;
@@ -48,6 +50,8 @@ public class UserProfileAppService {
 
         userResource.add(linkTo(UserProfileRestService.class).withSelfRel());
 
+        userResource.add(linkTo(TodoRestService.class).withRel("todos"));
+
         if (hasRole("ROLE_ADMIN")) {
             userResource.add(linkTo(UserRestService.class).withRel("users"));
             userResource.add(linkTo(PersonRestService.class).withRel("people"));
@@ -67,6 +71,10 @@ public class UserProfileAppService {
         //        System.out.println(hasRole("ROLE_ADMIN"));
 
         return userResource;
+    }
+
+    public static Link buildToLink() {
+        return new Link("http://localhost:5001/api/providers", "providers");
     }
 
     private UserProfileResource buildUserProfileResource(final UserDetailsView userDetailsView) {

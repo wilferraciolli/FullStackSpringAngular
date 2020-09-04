@@ -1,14 +1,30 @@
 <p>
   <mat-toolbar color="primary">
-<!--    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">-->
-<!--      <mat-icon>menu</mat-icon>-->
-<!--    </button>-->
+    <!--    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">-->
+    <!--      <mat-icon>menu</mat-icon>-->
+    <!--    </button>-->
     <span>Todo App</span>
+
+    <div class="header-menu">
+      <a mat-button class="btn-no-hover" routerLink="/home">Home</a>
+      <a mat-button class="btn-no-hover" (click)="getTodos()">Todos</a>
+      <a mat-button class="btn-no-hover" [hidden]="!usersAccess" (click)="getUsers()">Users</a>
+    </div>
     <span class="example-spacer"></span>
 
-        <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-      <mat-icon>account_circle</mat-icon>
-    </button>
+    <div *ngIf="currentUser; then userDetails else logInDetails"></div>
+    <ng-template #userDetails>
+      <a mat-button class="btn-no-hover" (click)="logout()">Logout </a>
+      <!--      <button mat-icon-button routerLink="/people" routerLinkActive="active">-->
+      <button mat-icon-button (click)="getProfile()">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+    </ng-template>
+    <ng-template #logInDetails>
+      <a mat-button class="btn-no-hover" routerLink="/register">Register</a>
+      <a mat-button class="btn-no-hover" routerLink="/login">Login</a>
+    </ng-template>
+
   </mat-toolbar>
 </p>
 

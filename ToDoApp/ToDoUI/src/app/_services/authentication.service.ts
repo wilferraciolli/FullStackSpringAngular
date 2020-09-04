@@ -24,7 +24,7 @@ export class AuthenticationService {
     this.isUserLoggedOn = !_.isNull(localStorage.getItem('currentUser'));
   }
 
-  public get currentUserValue() {
+  public get currentUserValue(): any {
     return this.currentUserSubject.value;
   }
 

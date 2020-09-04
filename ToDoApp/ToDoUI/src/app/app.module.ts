@@ -29,6 +29,8 @@ import {ConvertIdsToStringValuePipe} from "./users/user-role-mapper-pipe";
 import {UserComponent} from "./users/user/user.component";
 import {MatConfirmDialogComponent} from "./shared/components/mat-confirm-dialog/mat-confirm-dialog.component";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { TodoListComponent } from './todos/todo-list/todo-list.component';
+import { TodoComponent } from './todos/todo/todo.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
     UserListComponent,
     ConvertIdsToStringValuePipe,
     UserComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    TodoListComponent,
+    TodoComponent
   ],
   imports: [
     BrowserModule,

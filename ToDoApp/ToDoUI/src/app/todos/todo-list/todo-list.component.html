@@ -1,0 +1,43 @@
+<div class="container">
+  <mat-toolbar>
+    <span>Providers</span>
+  </mat-toolbar>
+
+  <div class="provider-list">
+    <div class="provider-list-search">
+      <mat-form-field floatLabel="never" class="full-width">
+        <input matInput type="text" [(ngModel)]="searchKey" placeholder="Search" autocomplete="off"
+               (keyup)="applyFilter()">
+        <button (click)="onSearchClear()" mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="provider-list-search-actions">
+      <button mat-raised-button (click)="create()" [disabled]="!providerCreateAccess">
+        <mat-icon>add</mat-icon>
+        <span>Create</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="provider-list-content">
+
+    <mat-card class="provider-list-content-card" *ngFor="let provider of providers">
+      <div> {{provider.name}}</div>
+      <div> {{provider.description}}</div>
+      <div> {{provider.website}}</div>
+      <div> {{provider.enabled}}</div>
+      <div class="provider-list-content-card-actions">
+        <button mat-icon-button [disabled]="!provider.links.updateProvider.href" (click)="onEdit(provider)">
+          <mat-icon>launch</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" [disabled]="!provider.links.deleteProvider.href"
+                (click)="delete(provider.links.deleteProvider.href)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>
