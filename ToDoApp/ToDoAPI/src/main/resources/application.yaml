@@ -1,0 +1,56 @@
+server:
+  port: 5001
+  servlet:
+    context-path: /api/
+
+spring:
+  application:
+    name: todo-api
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    url: jdbc:h2:mem:database
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        #        default_schema: iam
+        format_sql: true
+    show-sql: false
+
+  # Mail
+  mail:
+    host: smtp.mailtrap.io
+    port: 25
+    username: 5908108b98857f
+    password: 380b8b971bb6ea
+    protocol: smtp
+
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-value: j3H5Ld5nYmGWyULy6xwpOgfSH++NgKXnJMq20vpfd+8=t
+        token:
+          expire-length: 3600000
+
+# Prevent DDos by IP, restrict up to 50 calls per second
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: buckets
+      url: .*
+      rate-limits:
+        - bandwidths:
+            - capacity: 50
+              time: 1
+              unit: seconds
