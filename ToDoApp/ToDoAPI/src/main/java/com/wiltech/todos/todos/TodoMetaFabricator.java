@@ -1,24 +1,21 @@
-package com.wiltech.todos.providers;
+package com.wiltech.todos.todos;
 
 import static com.wiltech.Meta.HIDDEN_AND_READ_ONLY_MAP;
 import static com.wiltech.Meta.MANDATORY_MAP;
 import static com.wiltech.Meta.generateEmbeddedValues;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.wiltech.EmbeddedMetadata;
+import com.wiltech.EmbeddedMetadataSimple;
 import com.wiltech.IMetaFabricator;
 import com.wiltech.Meta;
 
-/**
- * The type Provider meta fabricator.
- */
 @Service
-public class ProviderMetaFabricator implements IMetaFabricator {
+public class TodoMetaFabricator implements IMetaFabricator {
 
     @Override
     public Meta createMetaForTemplate() {
@@ -39,7 +36,7 @@ public class ProviderMetaFabricator implements IMetaFabricator {
         final Meta meta = new Meta();
         meta.getValues().put("id", HIDDEN_AND_READ_ONLY_MAP);
         meta.getValues().put("name", MANDATORY_MAP);
-        meta.getValues().put("baseUrl", MANDATORY_MAP);
+        meta.getValues().put("stateId", MANDATORY_MAP);
 
         return meta;
     }
@@ -48,13 +45,15 @@ public class ProviderMetaFabricator implements IMetaFabricator {
 
         final Meta meta = new Meta();
         meta.getValues().put("id", HIDDEN_AND_READ_ONLY_MAP);
-        meta.getValues()
-                .put("test", generateEmbeddedValues(Map.of(Meta.MANDATORY, Meta.TRUE, Meta.HIDDEN, Meta.TRUE), generatePersonGenderEmbedded()));
+        meta.getValues().put("stateId", generateEmbeddedValues(generateTodoStateEmbedded()));
 
         return meta;
     }
 
-    private List<EmbeddedMetadata> generatePersonGenderEmbedded() {
-        return new ArrayList<>();
+    private List<EmbeddedMetadata> generateTodoStateEmbedded() {
+
+        return TodoStateType.stream()
+                .map(value -> new EmbeddedMetadataSimple(value.name(), value.getDescription()))
+                .collect(Collectors.toList());
     }
 }

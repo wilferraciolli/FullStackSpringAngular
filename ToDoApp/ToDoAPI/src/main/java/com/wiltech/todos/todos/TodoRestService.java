@@ -1,4 +1,4 @@
-package com.wiltech.todos.providers;
+package com.wiltech.todos.todos;
 
 import static org.springframework.http.ResponseEntity.noContent;
 
@@ -24,63 +24,60 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import com.wiltech.BaseRestService;
 
-/**
- * The type Provider controller.
- */
 @CrossOrigin
 @RestController
-//@ExposesResourceFor(ProviderResource.class)
-@RequestMapping("/providers")
-public class ProviderRestService extends BaseRestService {
+//@ExposesResourceFor(TodoResource.class)
+@RequestMapping("/todos")
+public class TodoRestService extends BaseRestService {
 
     @Autowired
-    private ProviderAppService appService;
+    private TodoAppService appService;
 
     @Autowired
-    private ProviderMetaFabricator metaFabricator;
+    private TodoMetaFabricator metaFabricator;
 
     /**
      * Template response entity.
      * @return the response entity
      */
     @GetMapping("/template")
-    public ResponseEntity<ProviderResourceResponse> template() {
+    public ResponseEntity<TodoResourceResponse> template() {
 
-        final ProviderResource resource = ProviderResource.builder()
+        final TodoResource resource = TodoResource.builder()
                 .build();
 
-        final ProviderResourceResponse response = new ProviderResourceResponse(resource, metaFabricator.createMetaForTemplate());
+        final TodoResourceResponse response = new TodoResourceResponse(resource, metaFabricator.createMetaForTemplate());
         response.add(buildSelfLink());
 
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
-    public ResponseEntity<ProviderResourceResponse> create(@Valid @RequestBody final ProviderResource payload) {
-        final ProviderResource createdResource = appService.create(payload);
+    public ResponseEntity<TodoResourceResponse> create(@Valid @RequestBody final TodoResource payload) {
+        final TodoResource createdResource = appService.create(payload);
 
         return ResponseEntity.created(buildLocationHeader(createdResource.getId()))
-                .body(new ProviderResourceResponse(createdResource));
+                .body(new TodoResourceResponse(createdResource));
     }
 
     @GetMapping("")
-    public ResponseEntity<ProviderResourceCollectionResponse> findAll() {
+    public ResponseEntity<TodoResourceCollectionResponse> findAll() {
         final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        final List<ProviderResourceResponse> resources = appService.findAll().stream()
-                .map(ProviderResourceResponse::new)
+        final List<TodoResourceResponse> resources = appService.findAll().stream()
+                .map(TodoResourceResponse::new)
                 .collect(Collectors.toList());
 
-        final ProviderResourceCollectionResponse response;
+        final TodoResourceCollectionResponse response;
         if (resources.size() == 0) {
 
-            response = new ProviderResourceCollectionResponse<>(
+            response = new TodoResourceCollectionResponse<>(
                     new CollectionModel<>(emptyResources()),
-                    ProviderResourceAssembler.createLinksToCollection(),
+                    TodoResourceAssembler.createLinksToCollection(),
                     metaFabricator.createMetaForCollectionResource());
         } else {
-            response = new ProviderResourceCollectionResponse<>(
+            response = new TodoResourceCollectionResponse<>(
                     new CollectionModel<>(resources),
-                    ProviderResourceAssembler.createLinksToCollection(),
+                    TodoResourceAssembler.createLinksToCollection(),
                     metaFabricator.createMetaForCollectionResource());
         }
 
@@ -88,18 +85,18 @@ public class ProviderRestService extends BaseRestService {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProviderResourceResponse> findById(@PathVariable("id") final Long id) {
-        final ProviderResource resource = appService.findById(id);
+    public ResponseEntity<TodoResourceResponse> findById(@PathVariable("id") final Long id) {
+        final TodoResource resource = appService.findById(id);
 
-        return ResponseEntity.ok(new ProviderResourceResponse(resource, metaFabricator.createMetaForSingleResource()));
+        return ResponseEntity.ok(new TodoResourceResponse(resource, metaFabricator.createMetaForSingleResource()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProviderResourceResponse> update(@Valid @PathVariable("id") final Long id,
-            @Valid @RequestBody final ProviderResource providerResource) {
-        final ProviderResource updatedResource = appService.update(id, providerResource);
+    public ResponseEntity<TodoResourceResponse> update(@Valid @PathVariable("id") final Long id,
+            @Valid @RequestBody final TodoResource providerResource) {
+        final TodoResource updatedResource = appService.update(id, providerResource);
 
-        return ResponseEntity.ok(new ProviderResourceResponse(updatedResource));
+        return ResponseEntity.ok(new TodoResourceResponse(updatedResource));
     }
 
     @DeleteMapping("/{id}")
