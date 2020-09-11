@@ -1,10 +1,10 @@
 <div class="container">
   <mat-toolbar>
-    <span>Providers</span>
+    <span>To dos</span>
   </mat-toolbar>
 
-  <div class="provider-list">
-    <div class="provider-list-search">
+  <div class="todo-list">
+    <div class="todo-list-search">
       <mat-form-field floatLabel="never" class="full-width">
         <input matInput type="text" [(ngModel)]="searchKey" placeholder="Search" autocomplete="off"
                (keyup)="applyFilter()">
@@ -14,27 +14,27 @@
       </mat-form-field>
     </div>
 
-    <div class="provider-list-search-actions">
-      <button mat-raised-button (click)="create()" [disabled]="!providerCreateAccess">
+    <div class="todo-list-search-actions">
+      <button mat-raised-button (click)="create()">
         <mat-icon>add</mat-icon>
         <span>Create</span>
       </button>
     </div>
   </div>
 
-  <div class="provider-list-content">
+  <div class="todo-list-content">
 
-    <mat-card class="provider-list-content-card" *ngFor="let provider of providers">
-      <div> {{provider.name}}</div>
-      <div> {{provider.description}}</div>
-      <div> {{provider.website}}</div>
-      <div> {{provider.enabled}}</div>
-      <div class="provider-list-content-card-actions">
-        <button mat-icon-button [disabled]="!provider.links.updateProvider.href" (click)="onEdit(provider)">
+    <mat-card class="todo-list-content-card" *ngFor="let todo of todos">
+      <div> {{todo.name}}</div>
+      <div> {{todo.description}}</div>
+      <div> {{todo.stateId}}</div>
+      <div> {{todo.enabled}}</div>
+      <div class="todo-list-content-card-actions">
+        <button mat-icon-button [disabled]="!todo.links.updateTodo.href" (click)="onEdit(todo)">
           <mat-icon>launch</mat-icon>
         </button>
-        <button mat-icon-button color="warn" [disabled]="!provider.links.deleteProvider.href"
-                (click)="delete(provider.links.deleteProvider.href)">
+        <button mat-icon-button color="warn" [disabled]="!todo.links.deleteTodo.href"
+                (click)="delete(todo.links.deleteTodo.href)">
           <mat-icon>delete_outline</mat-icon>
         </button>
       </div>
