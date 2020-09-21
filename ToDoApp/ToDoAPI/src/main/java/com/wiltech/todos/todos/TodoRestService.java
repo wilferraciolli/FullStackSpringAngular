@@ -43,8 +43,7 @@ public class TodoRestService extends BaseRestService {
     @GetMapping("/template")
     public ResponseEntity<TodoResourceResponse> template() {
 
-        final TodoResource resource = TodoResource.builder()
-                .build();
+        final TodoResource resource = appService.template();
 
         final TodoResourceResponse response = new TodoResourceResponse(resource, metaFabricator.createMetaForTemplate());
         response.add(buildSelfLink());

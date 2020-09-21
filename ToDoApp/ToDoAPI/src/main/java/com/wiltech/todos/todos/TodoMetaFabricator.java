@@ -2,9 +2,12 @@ package com.wiltech.todos.todos;
 
 import static com.wiltech.Meta.HIDDEN_AND_READ_ONLY_MAP;
 import static com.wiltech.Meta.MANDATORY_MAP;
+import static com.wiltech.Meta.READ_ONLY;
+import static com.wiltech.Meta.TRUE;
 import static com.wiltech.Meta.generateEmbeddedValues;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -35,8 +38,12 @@ public class TodoMetaFabricator implements IMetaFabricator {
     private Meta buildBasicMeta() {
         final Meta meta = new Meta();
         meta.getValues().put("id", HIDDEN_AND_READ_ONLY_MAP);
+        meta.getValues().put("typeId", generateEmbeddedValues(Map.of(Meta.MANDATORY, TRUE), generateTodoTypeEmbedded()));
         meta.getValues().put("name", MANDATORY_MAP);
-        meta.getValues().put("stateId", MANDATORY_MAP);
+        meta.getValues().put("createdDateTime", Map.of(READ_ONLY, TRUE));
+        meta.getValues().put("completedDateTime", Map.of(READ_ONLY, TRUE));
+        meta.getValues().put("stateId", generateEmbeddedValues(Map.of(Meta.MANDATORY, TRUE), generateTodoStateEmbedded()));
+        meta.getValues().put("completionStats", Map.of(READ_ONLY, TRUE));
 
         return meta;
     }
@@ -53,6 +60,13 @@ public class TodoMetaFabricator implements IMetaFabricator {
     private List<EmbeddedMetadata> generateTodoStateEmbedded() {
 
         return TodoStateType.stream()
+                .map(value -> new EmbeddedMetadataSimple(value.name(), value.getDescription()))
+                .collect(Collectors.toList());
+    }
+
+    private List<EmbeddedMetadata> generateTodoTypeEmbedded() {
+
+        return TodoType.stream()
                 .map(value -> new EmbeddedMetadataSimple(value.name(), value.getDescription()))
                 .collect(Collectors.toList());
     }

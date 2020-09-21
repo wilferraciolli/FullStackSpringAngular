@@ -28,6 +28,9 @@ public class Todo implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private TodoType typeId;
+
     private String name;
 
     private String description;

@@ -1,5 +1,6 @@
 package com.wiltech.todos.todos;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,18 @@ public class TodoAppService {
 
     @Autowired
     private TodoResourceAssembler todoResourceAssembler;
+
+    public TodoResource template() {
+
+        return TodoResource.builder()
+                .name("Name")
+                .typeId(TodoType.PERSONAL)
+                .stateId(TodoStateType.NEW)
+                .createdDateTime(LocalDateTime.now())
+                .completionStats(0D)
+                .enabled(true)
+                .build();
+    }
 
     /**
      * Find all list.
@@ -36,7 +49,7 @@ public class TodoAppService {
      */
     public TodoResource create(final TodoResource payload) {
 
-        final Todo todo = todoRepository.save(todoResourceAssembler.convertToEntity(payload));
+        final Todo todo = todoRepository.save(todoResourceAssembler.createEntity(payload));
         return todoResourceAssembler.transpose(todo);
     }
 

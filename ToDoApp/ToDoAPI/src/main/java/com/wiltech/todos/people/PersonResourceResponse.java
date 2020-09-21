@@ -51,7 +51,6 @@ public class PersonResourceResponse extends BaseDTO {
             add(linkTo(methodOn(PersonRestService.class).findById(id)).withSelfRel());
             add(linkTo(methodOn(PersonRestService.class).findById(id)).withRel("updatePerson"));
             add(linkTo(methodOn(PersonRestService.class).findById(id)).withRel("deletePerson"));
-            add(linkTo(methodOn(PersonRestService.class).findById(id)).withRel("cars"));
         }
 
         add(linkTo(PersonRestService.class).withRel("people"));

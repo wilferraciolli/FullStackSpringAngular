@@ -3,7 +3,6 @@ package com.wiltech.todos.todos;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,13 +12,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class TodoResourceAssembler {
 
-    public Todo convertToEntity(final TodoResource payload) {
+    public Todo createEntity(final TodoResource payload) {
 
         // used when creating a new todo
         return Todo.builder()
                 .name(payload.getName())
+                .typeId(payload.getTypeId())
                 .description(payload.getDescription())
-                .createdDateTime(LocalDateTime.now())
+                .createdDateTime(payload.getCreatedDateTime())
                 .completedDateTime(payload.getCompletedDateTime())
                 .stateId(payload.getStateId())
                 .completionStats(payload.getCompletionStats())
@@ -30,11 +30,13 @@ public class TodoResourceAssembler {
     public TodoResource transpose(final Todo entity) {
         return TodoResource.builder()
                 .id(entity.getId())
+                .typeId(entity.getTypeId())
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .createdDateTime(entity.getCreatedDateTime())
                 .completedDateTime(entity.getCompletedDateTime())
                 .stateId(entity.getStateId())
+                .completionStats(entity.getCompletionStats())
                 .completionStats(entity.getCompletionStats())
                 .enabled(entity.getEnabled())
                 .build();
