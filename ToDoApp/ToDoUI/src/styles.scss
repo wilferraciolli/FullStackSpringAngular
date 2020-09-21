@@ -1,8 +1,184 @@
 /* You can add global styles to this file, and also import other style files */
+$tabletSize: 800px;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+//html, body { height: 100%; }
+//body { margin: 0; font-family: Roboto, "Segoe UI Symbol", "Helvetica Neue", sans-serif; }
+
+
+*{
+  font-family: "Segoe UI Symbol";
+}
 
 .container {
-  padding: 10px;
+  max-width: 9000px;
+  align-content: center;
+  padding: 5px;
+  position: relative;
+  min-height: 100vh;
+
+  @media (min-width: $tabletSize) {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+
+.content-wrapping {
+  padding-bottom: 2.5rem;
+}
+
+.hidden-small-screen {
+  display: none;
+
+  @media (min-width: $tabletSize) {
+    display: inherit;
+  }
+}
+
+.shown-small-screen {
+  @media (min-width: $tabletSize) {
+    display: none;
+  }
+}
+
+.btn-no-hover:hover {
+  background-color: white !important;
+}
+
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+      Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
+form.normal-form{
+  margin: 10px;
+}
+
+/* notification */
+snack-bar-container.success {
+  background-color: #5cb85c;
+  color : #fff;
+}
+snack-bar-container.warn {
+  background-color: #f99157;
+  color : #fff;
+}
+
+snack-bar-container.notification simple-snack-bar{
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+/* class to make the holl over effect of pointing */
+.pointerCursor {
+  cursor: pointer;
+}
+
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+      Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
+form.normal-form{
+  margin: 10px;
+}
+
+
+/* mat-confirm-dialog (customised dialog) */
+.confirm-dialog-container .mat-dialog-container {
+  border-radius: .25em .25em .4em .4em;
+  padding: 0px;
+}
+.confirm-dialog-container .content-container{
+  margin: 5px 5px 15px 5px;
+  color: #3b4fb5;
+  display: flex;
+}
+.confirm-dialog-container #close-icon{
+  margin-left: auto;
+  order: 2;
+  font-weight: bolder;
+}
+.confirm-dialog-container #close-icon:hover{
+  cursor: pointer;
+}
+.confirm-dialog-container #no-button{
+  height: 50px;
+  width: 50%;
+  background-color: #fc7169;
+  color:white;
+  border-radius: 0px;
+}
+.confirm-dialog-container #yes-button{
+  height: 50px;
+  width: 50%;
+  background-color: #b6bece;
+  color:white;
+  border-radius: 0px;
+}
+.confirm-dialog-container span.content-span{
+  padding:  35px 16px;
+  text-align: center;
+  font-size: 20px;
+}
+
+/* filter controls */
+.search-div{
+  display: flex;
+  margin: 25px 0 22px 0;
+}
+.search-form-field{
+  width: 60%;
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+.search-form-field div.mat-form-field-underline {
+  display: none;
+}
+.search-form-field div.mat-form-field-infix{
+  border-top: 0px;
+}
+.search-form-field div.mat-form-field-wrapper{
+  padding-bottom: 0px;
+}
+.search-form-field div.mat-form-field-suffix button{
+  height: 32px;
+  width: 32px;
+}
+
+/*div.container{*/
+/*  margin: 0px 40px;*/
+/*}*/
+
+.controles-container {
+  width: 100%;
+  padding: 5%;
+}
+
+.controles-container > * {
+  width: 100%;
+}
+
+.add-bottom-padding {
+  padding-bottom: 10px;
+}
+
+.add-top-padding {
+  padding-top: 10px;
+}
+
+.form-action-row  {
+  display: flex;
+  flex-direction: row;
+}
+
+.form-action-row button {
+  margin: 5px;
+}
+
+.full-width {
+  width: 100%;
 }

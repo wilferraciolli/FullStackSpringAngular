@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Link} from '../../shared/response/link';
 import {Observable} from 'rxjs';
 import {BreakpointObserver, Breakpoints, BreakpointState} from '@angular/cdk/layout';
@@ -14,6 +14,8 @@ import {TodoFormBuilder} from '../todo-form-builder';
 import {TodoAdapter} from '../todo.adapter';
 import {TodoResponse} from '../todo-response';
 import {TodoComponent} from '../todo/todo.component';
+import {TodoLinksCollection} from '../todo-links-collection';
+import {LinksService} from '../../_services/links-service';
 
 @Component({
   selector: 'app-todo-list',
@@ -24,11 +26,11 @@ export class TodoListComponent implements OnInit {
 
   searchKey: string;
   todos: Array<Todo>;
-  todo: Todo;
+  canCreate: boolean;
 
-  todoTemplateLink: Link;
-  todoCreateAccess = true;
+  // todoTemplateLink: Link;
   collectionMeta: TodoMeta;
+  collectionLinks: TodoLinksCollection;
 
   isExtraSmall: Observable<BreakpointState> = this.breakpointObserver.observe(Breakpoints.XSmall);
 
@@ -40,7 +42,9 @@ export class TodoListComponent implements OnInit {
               private dialog: MatDialog,
               private router: Router,
               private dialogService: DialogService,
-              private activatedRoute: ActivatedRoute) { }
+              private activatedRoute: ActivatedRoute,
+              private linksService: LinksService) {
+  }
 
   ngOnInit(): void {
 
@@ -58,21 +62,15 @@ export class TodoListComponent implements OnInit {
     this.getAll(this.todoService.todosUrl);
   }
 
-
   getAll(url: string): void {
     this.todoService.getAll<TodoResponse>(url)
       .subscribe((response: TodoResponse) => {
-        // const embedded = response['_embedded'];
-        const embedded = response._embedded;
-        const metaLinks = response._links;
-        const meta = response._meta;
 
-        this.todoTemplateLink = metaLinks.createTodo;
+        this.todos = this.convertResponse(response._embedded.collection);
+        this.collectionMeta = this.resolveCollectionMeta(response._meta);
+        this.collectionLinks = this.resolveCollectinLinks(response._links);
 
-        // todos.
-        const collectionBody: any[] = embedded.collection;
-        this.todos = this.convertResponse(collectionBody);
-        // console.log(this.todo);
+        this.canCreate = this.linksService.hasLink(this.collectionLinks.createTodo);
       });
   }
 
@@ -92,20 +90,12 @@ export class TodoListComponent implements OnInit {
   }
 
   create(): void {
-    // get the template and populate with default values
-    this.todo = this.getTemplate(this.todoTemplateLink.href);
-    this.todoFormBuilder.initializeFormGroupWithTemplateValues(this.todo);
-
-    // set default values
-    console.log('The form value is ', this.todoFormBuilder.getFormValue());
-    this.todoFormBuilder.initializeFormGroup();
-
     const dialogConfig = this.dialog.open(TodoComponent, {
       width: '50%',
       height: '50%',
       maxWidth: '100vw',
       maxHeight: '100vh',
-      data: {todoMeta: this.collectionMeta }
+      data: {todoLink: this.collectionLinks.createTodo}
     });
 
     // subscribe to screen size
@@ -121,35 +111,17 @@ export class TodoListComponent implements OnInit {
     });
   }
 
-  /**
-   * Method used to pre-populate the form before creation.
-   * @param url the url
-   */
-  getTemplate(url: string): Todo {
-    let todoTemplate;
-    this.todoService.getTemplate(url)
-      .subscribe(response => {
-        const data = response['_data'];
-        const links = response['_links'];
-        const meta = response['meta'];
-
-        todoTemplate = this.adapter.adapt(data, links, meta);
-      });
-
-    return todoTemplate;
-  }
-
   onEdit(row: Todo): void {
 
-    this.getSingleTodo(row.links.self.href).then((data) => {
-      this.todoFormBuilder.populateForm(this.adapter.adapt(data._data, data._links, data._meta));
+   // this.getSingleTodo(new Link(row.links.self.href)).then((data) => {
+    //  this.todoFormBuilder.populateForm(this.adapter.adapt(data._data, data._links, data._meta));
 
       const dialogConfig = this.dialog.open(TodoComponent, {
         width: '50%',
         height: '50%',
         maxWidth: '100vw',
         maxHeight: '100vh',
-        data: {todoMeta: data._meta}
+        data: { todoLink: new Link(row.links.self.href) }
       });
 
       // subscribe to screen size
@@ -163,12 +135,12 @@ export class TodoListComponent implements OnInit {
       dialogConfig.afterClosed().subscribe(result => {
         smallDialogSubscription.unsubscribe();
       });
-    });
+   // });
   }
 
   getSingleTodo(url: string): Promise<any> {
 
-    return this.todoService.getById(url);
+    return this.todoService.getByUrl(url);
   }
 
   delete(url: string): void {
@@ -191,5 +163,15 @@ export class TodoListComponent implements OnInit {
 
     // refresh todos
     this.getAll(this.todoService.todosUrl);
+  }
+
+  private resolveCollectionMeta(collectionMeta: any): TodoMeta {
+
+    return collectionMeta;
+  }
+
+  private resolveCollectinLinks(collectionLinks: any): TodoLinksCollection {
+
+    return collectionLinks;
   }
 }

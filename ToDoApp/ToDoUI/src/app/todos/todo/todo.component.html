@@ -1,1 +1,92 @@
-<p>todo works!</p>
+<!-- header -->
+<mat-card>
+  <div class="hidden-small-screen">
+    <mat-toolbar>
+      <span>{{todoFormBuilder.form.controls['$key'].value ? "Modify Todo" : "New Todo"}}</span>
+      <span class="fill-remaining-space"></span>
+      <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-toolbar>
+  </div>
+  <div class="shown-small-screen" align="end">
+    <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabindex="-1">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+
+  <mat-card-content>
+    <form [formGroup]="todoFormBuilder.form" class="normal-form">
+      <div class="todo-dialog-form-container">
+
+        <div class="todo-dialog-form-content">
+          <input type="hidden" formControlName="$key">
+
+          <mat-form-field color="primary">
+            <input formControlName="name" matInput placeholder="Todo Name" required>
+            <!-- adding validation message based on error type -->
+            <mat-error *ngIf="todoFormBuilder.form.controls['name'].errors?.required">Mandatory</mat-error>
+            <mat-error *ngIf="todoFormBuilder.form.controls['name'].errors?.minLength">Minimum 2 characters
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+            <input formControlName="description" matInput placeholder="Description">
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="typeId">
+              <mat-option *ngFor="let todoType of todoTypes" [value]="todoType.value">
+                {{todoType.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+            <mat-label>Creation Date</mat-label>
+            <input matInput [matDatepicker]="picker" placeholder="Choose a date" formControlName="createdDateTime">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="todoFormBuilder.form.controls['typeId'].errors?.required">Mandatory</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="todo-dialog-form-content">
+          <mat-form-field color="primary">
+            <input formControlName="completedDateTime" matInput placeholder="Completed on">
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="stateId">
+              <mat-option *ngFor="let todoStatus of todoStates" [value]="todoStatus.value">
+                {{todoStatus.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+            <input formControlName="completionStats" matInput placeholder="Progress">
+          </mat-form-field>
+
+          <div class="add-bottom-padding">
+            <mat-checkbox formControlName="published"><span>Published</span></mat-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <mat-card-actions class="todo-dialog-form-actions">
+        <div align="end">
+          <button mat-raised-button (click)="onClear()">Clear</button>
+          <span class="fill-remaining-space"></span>
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="todoFormBuilder.form.invalid"
+                  (click)="onSubmit()">Submit
+          </button>
+        </div>
+      </mat-card-actions>
+    </form>
+
+  </mat-card-content>
+</mat-card>

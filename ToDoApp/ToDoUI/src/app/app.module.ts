@@ -31,6 +31,8 @@ import {MatConfirmDialogComponent} from "./shared/components/mat-confirm-dialog/
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { TodoListComponent } from './todos/todo-list/todo-list.component';
 import { TodoComponent } from './todos/todo/todo.component';
+import {Todo} from './todos/todo';
+import { BooleanPipePipe } from './todos/boolean-pipe.pipe';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,8 @@ import { TodoComponent } from './todos/todo/todo.component';
     UserComponent,
     PageNotFoundComponent,
     TodoListComponent,
-    TodoComponent
+    TodoComponent,
+    BooleanPipePipe
   ],
   imports: [
     BrowserModule,
@@ -69,7 +72,7 @@ import { TodoComponent } from './todos/todo/todo.component';
   ],
   bootstrap: [AppComponent],
 // add components used in pop ups
-  entryComponents: [ UserComponent, MatConfirmDialogComponent]
+  entryComponents: [ UserComponent, TodoComponent, MatConfirmDialogComponent]
 })
 export class AppModule {
 }

@@ -11,12 +11,14 @@ export class Todo {
   completedDateTime?: string;
   stateId: string;
   completionStats: number;
-  enabled: string;
+  published: string;
   links: TodoLinks;
   meta: Array<TodoMeta>;
 
 
-  constructor(id: string, typeId: string, name: string, description: string, createdDateTime: string, completedDateTime: string, stateId: string, completionStats: number, enabled: string, links: TodoLinks, meta: Array<TodoMeta>) {
+  constructor(id: string, typeId: string, name: string, description: string, createdDateTime: string,
+              completedDateTime: string, stateId: string, completionStats: number, published: string,
+              links: TodoLinks, meta: Array<TodoMeta>) {
     this.id = id;
     this.typeId = typeId;
     this.name = name;
@@ -25,7 +27,7 @@ export class Todo {
     this.completedDateTime = completedDateTime;
     this.stateId = stateId;
     this.completionStats = completionStats;
-    this.enabled = enabled;
+    this.published = published;
     this.links = links;
     this.meta = meta;
   }

@@ -51,7 +51,7 @@ export class HttpBaseService {
   //     });
   // }
 
-  async getById<T>(url: string): Promise<any> {
+  async getByUrl<T>(url: string): Promise<any> {
 
     const data = await this.httpClient.get<T>(url)
       .toPromise();

@@ -166,7 +166,7 @@ export class UserListComponent implements OnInit {
 
   getSingleUser(url: string): Promise<any> {
 
-    return this.userService.getById(url);
+    return this.userService.getByUrl(url);
   }
 
   delete(url: string): void {

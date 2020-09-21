@@ -1,15 +1,17 @@
 
 <div class="container">
-  <nav mat-tab-nav-bar>
-    <a mat-tab-link
-       *ngFor="let routeLink  of routeLinks"
-       [routerLink]="routeLink.link"
-       routerLinkActive #rla="routerLinkActive"
-       [active]="rla.isActive">
-      {{routeLink.label}}
-    </a>
-  </nav>
-</div>
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link
+         *ngFor="let routeLink  of routeLinks"
+         [routerLink]="routeLink.link"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        {{routeLink.label}}
+      </a>
+    </nav>
 
-<!--<router-outlet (activate)="onActivate($event)"></router-outlet>-->
-<router-outlet></router-outlet>
+  <div class="add-top-padding">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

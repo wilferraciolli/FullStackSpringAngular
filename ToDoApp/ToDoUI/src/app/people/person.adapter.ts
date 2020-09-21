@@ -24,8 +24,7 @@ export class PersonAdapter implements Adapter<Person> {
       new PersonLinks(links.self,
         links.updatePerson,
         links.deletePerson,
-        links.people,
-        links.cars),
+        links.people),
       meta);
   }
 }

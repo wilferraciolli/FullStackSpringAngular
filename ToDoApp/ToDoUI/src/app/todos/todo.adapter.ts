@@ -19,7 +19,7 @@ export class TodoAdapter implements Adapter<Todo> {
       data.todo.completedDateTime,
       data.todo.stateId,
       data.todo.completionStats,
-      data.todo.enabled,
+      data.todo.published,
       new TodoLinks(links.self,
         links.createTodo,
         links.todos,

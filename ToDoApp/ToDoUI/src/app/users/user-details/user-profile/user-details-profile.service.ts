@@ -72,7 +72,6 @@ export class UserDetailsProfileService extends HttpBaseService {
           updatePerson: person.links.updatePerson,
           deletePerson: person.links.deletePerson,
           people: person.links.people,
-          cars: person.links.cars
         },
         meta: person.meta
       }

@@ -34,12 +34,17 @@ export class UserProfileComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('Calling user profile');
     this.getDataFromParentComponent();
 
-    this.userDetailsProfileService.getById(this.personSelfLink)
+    console.log('this.getDataFromParentComponent()' ,this.personSelfLink);
+
+    this.userDetailsProfileService.getByUrl(this.personSelfLink)
       .then((data) => {
         this.userDetailsProfileService.populateForm(this.adapter.adapt(data._data, data._links, data._meta));
         this.person = this.adapter.adapt(data._data, data._links, data._meta);
+
+        console.log('this.getDataFromParentComponent()' ,this.personSelfLink);
 
         this.genders = this.getGenders(Object.values(this.person.meta).filter(g => g.hasOwnProperty('genderId')));
         this.maritalStatuses = this.getMaritalStatuses(Object.values(this.person.meta).filter(g => g.hasOwnProperty('maritalStatusId')));

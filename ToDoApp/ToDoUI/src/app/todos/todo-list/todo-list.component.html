@@ -28,7 +28,7 @@
       <div> {{todo.name}}</div>
       <div> {{todo.description}}</div>
       <div> {{todo.stateId}}</div>
-      <div> {{todo.enabled}}</div>
+      <div> {{todo.published | booleanPipe }}</div>
       <div class="todo-list-content-card-actions">
         <button mat-icon-button [disabled]="!todo.links.updateTodo.href" (click)="onEdit(todo)">
           <mat-icon>launch</mat-icon>

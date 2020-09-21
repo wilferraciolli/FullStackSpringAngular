@@ -14,7 +14,6 @@ export class UserDetailsComponent implements OnInit {
   id: string;
   userProfile: UserProfile;
   personSelfLink: string;
-  personCarsLink: string;
 
   activeLinkIndex = -1;
   routeLinks: any[];
@@ -29,10 +28,6 @@ export class UserDetailsComponent implements OnInit {
         label: 'Profile',
         link: './profile',
         index: 0
-      }, {
-        label: 'Cars',
-        link: './cars',
-        index: 1
       }
     ];
   }
@@ -52,7 +47,6 @@ export class UserDetailsComponent implements OnInit {
       this.id = this.activatedRoute.snapshot.params.id;
       this.userProfile = history.state.data.userProfile;
       this.personSelfLink = this.userProfile.links.person.href;
-      this.personCarsLink = this.userProfile.links.users.href;
     }
   }
 

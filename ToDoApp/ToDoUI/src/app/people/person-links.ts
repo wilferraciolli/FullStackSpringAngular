@@ -5,13 +5,11 @@ export class PersonLinks {
   updatePerson: Link;
   deletePerson: Link;
   people: Link;
-  cars: Link;
 
-  constructor(self: Link, updatePerson: Link, deletePerson: Link, people: Link, cars: Link) {
+  constructor(self: Link, updatePerson: Link, deletePerson: Link, people: Link) {
     this.self = self;
     this.updatePerson = updatePerson;
     this.deletePerson = deletePerson;
     this.people = people;
-    this.cars = cars;
   }
 }
