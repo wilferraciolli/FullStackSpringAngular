@@ -2,6 +2,7 @@ drop table IF EXISTS todo;
 create TABLE todo
 (
     id                  BIGINT       NOT NULL auto_increment,
+    person_id           BIGINT       NOT NULL,
     type_id             VARCHAR(255) NOT NULL,
     name                VARCHAR(255) NOT NULL,
     description         VARCHAR(2000),

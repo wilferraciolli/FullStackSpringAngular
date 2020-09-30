@@ -1,7 +1,8 @@
-package com.wiltech.todos.todos;
+package com.wiltech.todos.organizer.todos;
 
 import static org.springframework.http.ResponseEntity.noContent;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,28 +22,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import com.wiltech.BaseRestService;
+import com.wiltech.todos.todos.TodoMetaFabricator;
+import com.wiltech.todos.todos.TodoResource;
+import com.wiltech.todos.todos.TodoResourceAssembler;
+import com.wiltech.todos.todos.TodoResourceCollectionResponse;
+import com.wiltech.todos.todos.TodoResourceResponse;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/todos")
-public class TodoRestService extends BaseRestService {
+@RequestMapping("/organizer/people/{personId}/todos")
+public class PersonToDoRestService extends BaseRestService {
 
     @Autowired
-    private TodoAppService appService;
+    private PersonTodoAppService appService;
 
     @Autowired
     private TodoMetaFabricator metaFabricator;
 
-    /**
-     * Template response entity.
-     * @return the response entity
-     */
     @GetMapping("/template")
-    public ResponseEntity<TodoResourceResponse> template() {
+    public ResponseEntity<TodoResourceResponse> template(@PathVariable("personId") final Long personId) {
 
-        final TodoResource resource = appService.template();
+        final TodoResource resource = appService.template(personId);
 
         final TodoResourceResponse response = new TodoResourceResponse(resource, metaFabricator.createMetaForTemplate());
         response.add(buildSelfLink());
@@ -51,17 +54,31 @@ public class TodoRestService extends BaseRestService {
     }
 
     @PostMapping("")
-    public ResponseEntity<TodoResourceResponse> create(@Valid @RequestBody final TodoResource payload) {
-        final TodoResource createdResource = appService.create(payload);
+    public ResponseEntity<TodoResourceResponse> create(@PathVariable("personId") final Long personId,
+            @Valid @RequestBody final TodoResource payload) {
+        final TodoResource createdResource = appService.create(personId, payload);
 
-        return ResponseEntity.created(buildLocationHeader(createdResource.getId()))
+        return ResponseEntity.created(buildLocationHeader(personId, createdResource.getId()))
                 .body(new TodoResourceResponse(createdResource));
     }
 
+    // method to add the location header
+    // TODO needs moving to a lib class
+    private URI buildLocationHeader(Long personId, Long id) {
+
+        //        return UriComponentsBuilder.fromPath("/organizer/people/{personId}/todos").buildAndExpand(personId, id).toUri();
+        return MvcUriComponentsBuilder
+                .fromMethodName(this.getClass(), "findById", personId, id)
+                .buildAndExpand(personId, id)
+                .toUri();
+
+        //  return MvcUriComponentsBuilder.fromController(this.getClass()).path("/{id}").buildAndExpand(new Object[] {id}).toUri();
+    }
+
     @GetMapping("")
-    public ResponseEntity<TodoResourceCollectionResponse> findAll() {
+    public ResponseEntity<TodoResourceCollectionResponse> findAll(@PathVariable("personId") final Long personId) {
         final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        final List<TodoResourceResponse> resources = appService.findAll().stream()
+        final List<TodoResourceResponse> resources = appService.findAllForPersonId(personId).stream()
                 .map(TodoResourceResponse::new)
                 .collect(Collectors.toList());
 
@@ -83,25 +100,24 @@ public class TodoRestService extends BaseRestService {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TodoResourceResponse> findById(@PathVariable("id") final Long id) {
-        final TodoResource resource = appService.findById(id);
+    public ResponseEntity<TodoResourceResponse> findById(@PathVariable("personId") final Long personId, @PathVariable("id") final Long id) {
+        final TodoResource resource = appService.findById(personId, id);
 
         return ResponseEntity.ok(new TodoResourceResponse(resource, metaFabricator.createMetaForSingleResource()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TodoResourceResponse> update(@Valid @PathVariable("id") final Long id,
+    public ResponseEntity<TodoResourceResponse> update(@PathVariable("personId") final Long personId, @Valid @PathVariable("id") final Long id,
             @Valid @RequestBody final TodoResource providerResource) {
-        final TodoResource updatedResource = appService.update(id, providerResource);
+        final TodoResource updatedResource = appService.update(personId, id, providerResource);
 
         return ResponseEntity.ok(new TodoResourceResponse(updatedResource));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable("id") final Long id) {
-        appService.deleteById(id);
+    public ResponseEntity deleteById(@PathVariable("personId") final Long personId, @PathVariable("id") final Long id) {
+        appService.deleteById(personId, id);
 
         return noContent().build();
     }
-
 }

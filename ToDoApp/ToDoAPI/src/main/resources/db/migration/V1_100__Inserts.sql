@@ -26,53 +26,53 @@ values (2001, 1001, 'George', 'Ferraciolli', 'George@wiltech.com', 'MALE', '+44 
 insert into person(id, user_Id, first_name, last_name, email, gender, phone_Number, date_of_birth, marital_status, number_of_dependants)
 values (2002, 1002, 'Maria', 'Georgiou', 'Maria@wiltech.com', 'FEMALE', '+44 7540595289', '2015-07-13', 'SINGLE', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3000, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3000, 2000, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3001, 2000, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3009, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3009, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3008, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3008, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3003, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3003, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3004, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3004, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3005, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3005, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3006, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3006, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (3010, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (3010, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30011, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30011, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30092, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30092, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30083, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30083, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30034, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30034, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30045, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30045, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30056, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30056, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30067, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30067, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
-insert into todo(id, type_id, name, description, created_date_time, state_id, enabled)
-values (30069, 'PERSONAL', 'Last Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
+values (30069, 2001, 'PERSONAL', 'Last Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);

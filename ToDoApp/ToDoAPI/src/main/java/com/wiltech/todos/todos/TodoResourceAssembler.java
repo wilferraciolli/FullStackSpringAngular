@@ -12,10 +12,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class TodoResourceAssembler {
 
+    @Deprecated
     public Todo createEntity(final TodoResource payload) {
 
         // used when creating a new todo
         return Todo.builder()
+                .personId(2000L)
+                .name(payload.getName())
+                .typeId(payload.getTypeId())
+                .description(payload.getDescription())
+                .createdDateTime(payload.getCreatedDateTime())
+                .completedDateTime(payload.getCompletedDateTime())
+                .stateId(payload.getStateId())
+                .completionStats(payload.getCompletionStats())
+                .enabled(payload.getEnabled())
+                .build();
+    }
+
+    public Todo createEntity(final Long personId, final TodoResource payload) {
+
+        // used when creating a new todo
+        return Todo.builder()
+                .personId(personId)
                 .name(payload.getName())
                 .typeId(payload.getTypeId())
                 .description(payload.getDescription())
@@ -28,8 +46,10 @@ public class TodoResourceAssembler {
     }
 
     public TodoResource transpose(final Todo entity) {
+
         return TodoResource.builder()
                 .id(entity.getId())
+                .personId(entity.getPersonId())
                 .typeId(entity.getTypeId())
                 .name(entity.getName())
                 .description(entity.getDescription())
@@ -53,4 +73,5 @@ public class TodoResourceAssembler {
 
         return Arrays.asList(selfRel, createLink);
     }
+
 }

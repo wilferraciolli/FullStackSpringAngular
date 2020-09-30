@@ -24,6 +24,9 @@ public class TodoResource implements Serializable {
     private Long id;
 
     @NotNull
+    private Long personId;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     private TodoType typeId;
 

@@ -38,6 +38,7 @@ public class TodoMetaFabricator implements IMetaFabricator {
     private Meta buildBasicMeta() {
         final Meta meta = new Meta();
         meta.getValues().put("id", HIDDEN_AND_READ_ONLY_MAP);
+        meta.getValues().put("personId", HIDDEN_AND_READ_ONLY_MAP);
         meta.getValues().put("typeId", generateEmbeddedValues(Map.of(Meta.MANDATORY, TRUE), generateTodoTypeEmbedded()));
         meta.getValues().put("name", MANDATORY_MAP);
         meta.getValues().put("createdDateTime", Map.of(READ_ONLY, TRUE));
