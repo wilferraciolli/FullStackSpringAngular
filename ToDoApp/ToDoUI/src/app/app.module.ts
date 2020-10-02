@@ -33,6 +33,7 @@ import { TodoListComponent } from './todos/todo-list/todo-list.component';
 import { TodoComponent } from './todos/todo/todo.component';
 import {Todo} from './todos/todo';
 import { BooleanPipePipe } from './todos/boolean-pipe.pipe';
+import {MatSliderModule} from '@angular/material/slider';
 
 @NgModule({
   declarations: [
@@ -54,15 +55,16 @@ import { BooleanPipePipe } from './todos/boolean-pipe.pipe';
     TodoComponent,
     BooleanPipePipe
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpClientModule,
-    ProjectMaterialModule,
-    ReactiveFormsModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        HttpClientModule,
+        ProjectMaterialModule,
+        ReactiveFormsModule,
+        MatSliderModule
+    ],
   providers: [
     {provide: MatDialogRef, useValue: {}},
     {provide: MAT_DIALOG_DATA, useValue: []},

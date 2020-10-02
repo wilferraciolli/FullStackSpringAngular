@@ -44,17 +44,24 @@
           </mat-form-field>
 
           <mat-form-field color="primary">
-            <mat-label>Creation Date</mat-label>
-            <input matInput [matDatepicker]="picker" placeholder="Choose a date" formControlName="createdDateTime">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="todoFormBuilder.form.controls['typeId'].errors?.required">Mandatory</mat-error>
+            <mat-label>Created Date</mat-label>
+            <input matInput [matDatepicker]="pickerCreatedDate" placeholder="Choose a date"
+                   formControlName="createdDateTime">
+            <mat-datepicker-toggle matSuffix [for]="pickerCreatedDate"></mat-datepicker-toggle>
+            <mat-datepicker #pickerCreatedDate></mat-datepicker>
+            <mat-error *ngIf="todoFormBuilder.form.controls['createdDateTime'].errors?.required">Mandatory</mat-error>
           </mat-form-field>
+
         </div>
 
         <div class="todo-dialog-form-content">
           <mat-form-field color="primary">
-            <input formControlName="completedDateTime" matInput placeholder="Completed on">
+            <mat-label>Completed on</mat-label>
+            <input matInput [matDatepicker]="pickerCompletedDate" placeholder="Choose a date"
+                   formControlName="completedDateTime">
+            <mat-datepicker-toggle matSuffix [for]="pickerCompletedDate"></mat-datepicker-toggle>
+            <mat-datepicker #pickerCompletedDate></mat-datepicker>
+            <mat-error *ngIf="todoFormBuilder.form.controls['completedDateTime'].errors?.required">Mandatory</mat-error>
           </mat-form-field>
 
           <mat-form-field color="primary">
@@ -66,9 +73,14 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field color="primary">
-            <input formControlName="completionStats" matInput placeholder="Progress">
-          </mat-form-field>
+          <mat-label>Progress</mat-label>
+          <mat-slider formControlName="completionStats"
+                      min="0"
+                      max="100"
+                      [(ngModel)]="todo.completionStats"
+                      thumbLabel
+                      [displayWith]="progressLabel">
+          </mat-slider>
 
           <div class="add-bottom-padding">
             <mat-checkbox formControlName="published"><span>Published</span></mat-checkbox>

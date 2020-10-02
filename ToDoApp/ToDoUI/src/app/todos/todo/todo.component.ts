@@ -12,6 +12,7 @@ import {ActivatedRoute} from '@angular/router';
 import {TodoMeta} from '../todo-meta';
 import {Link} from '../../shared/response/link';
 import {TodoLinks} from '../todo-links';
+import {ProgressBarMode} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-todo',
@@ -19,6 +20,11 @@ import {TodoLinks} from '../todo-links';
   styleUrls: ['./todo.component.scss']
 })
 export class TodoComponent implements OnInit {
+
+  // completion status progress bar
+  // mode: ProgressBarMode = 'determinate';
+  // value = 50;
+  // bufferValue = 75;
 
   selfLink: Link;
   todo: Todo;
@@ -126,6 +132,11 @@ export class TodoComponent implements OnInit {
     this.todoFormBuilder.form.reset();
     // this.todoFormBuilder.initializeFormGroup();
     this.dialogRef.close();
+  }
+
+  progressLabel(value: number){
+
+      return value + '%';
   }
 
   private getAvailableTodoTypes(values: any): Array<ValueViewValue> {

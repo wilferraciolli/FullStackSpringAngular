@@ -12,6 +12,7 @@ export class TodoAdapter implements Adapter<Todo> {
   adapt(data: any, links: any, meta: any): Todo {
 
     return new Todo(data.todo.id,
+      data.todo.personId,
       data.todo.typeId,
       data.todo.name,
       data.todo.description,

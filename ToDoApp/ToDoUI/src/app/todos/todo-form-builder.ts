@@ -18,6 +18,7 @@ export class TodoFormBuilder {
 
     this.form = this.formBuilder.group({
       $key: [null],
+      personId: ['', Validators.required],
       typeId: ['', Validators.required],
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: [''],
@@ -46,6 +47,7 @@ export class TodoFormBuilder {
 
     const todo = new Todo(
       this.form.controls.$key.value,
+      this.form.controls.personId.value,
       this.form.controls.typeId.value,
       this.form.controls.name.value,
       this.form.controls.description.value,
@@ -65,6 +67,7 @@ export class TodoFormBuilder {
 
     this.form.setValue({
       $key: _.isUndefined(todo) ? '' : todo.id,
+      personId: _.isUndefined(todo) ? '' : todo.personId,
       typeId: _.isUndefined(todo) ? '' : todo.typeId,
       name: _.isUndefined(todo) ? '' : todo.name,
       description: _.isUndefined(todo) ? '' : todo.description,
@@ -84,6 +87,7 @@ export class TodoFormBuilder {
       {
         $key: todo.id,
         typeId: todo.typeId,
+        personId: todo.personId,
         name: todo.name,
         description: todo.description,
         createdDateTime: todo.createdDateTime,

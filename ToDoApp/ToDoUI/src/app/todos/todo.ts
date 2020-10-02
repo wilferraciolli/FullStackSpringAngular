@@ -4,6 +4,7 @@ import {TodoMeta} from './todo-meta';
 export class Todo {
 
   id: string;
+  personId: string;
   typeId: string;
   name: string;
   description: string;
@@ -16,10 +17,11 @@ export class Todo {
   meta: Array<TodoMeta>;
 
 
-  constructor(id: string, typeId: string, name: string, description: string, createdDateTime: string,
+  constructor(id: string, personId: string, typeId: string, name: string, description: string, createdDateTime: string,
               completedDateTime: string, stateId: string, completionStats: number, published: string,
               links: TodoLinks, meta: Array<TodoMeta>) {
     this.id = id;
+    this.personId = personId;
     this.typeId = typeId;
     this.name = name;
     this.description = description;
