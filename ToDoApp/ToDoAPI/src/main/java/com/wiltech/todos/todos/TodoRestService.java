@@ -2,6 +2,7 @@ package com.wiltech.todos.todos;
 
 import static org.springframework.http.ResponseEntity.noContent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,12 +71,14 @@ public class TodoRestService extends BaseRestService {
 
             response = new TodoResourceCollectionResponse<>(
                     new CollectionModel<>(emptyResources()),
-                    TodoResourceAssembler.createLinksToCollection(),
+                    //TodoResourceAssembler.createLinksToCollection(),
+                    new ArrayList<>(),
                     metaFabricator.createMetaForCollectionResource());
         } else {
             response = new TodoResourceCollectionResponse<>(
                     new CollectionModel<>(resources),
-                    TodoResourceAssembler.createLinksToCollection(),
+                    // TodoResourceAssembler.createLinksToCollection(),
+                    new ArrayList<>(),
                     metaFabricator.createMetaForCollectionResource());
         }
 

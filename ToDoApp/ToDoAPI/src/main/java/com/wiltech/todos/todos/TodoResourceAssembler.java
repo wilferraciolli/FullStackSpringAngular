@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
+import com.wiltech.todos.organizer.todos.PersonToDoRestService;
+
 @Service
 public class TodoResourceAssembler {
 
@@ -62,14 +64,14 @@ public class TodoResourceAssembler {
                 .build();
     }
 
-    public static List<Link> createLinksToCollection() {
+    public static List<Link> createLinksToCollection(final Long personId) {
         //add self link to the list
-        final Link selfRel = linkTo(methodOn(TodoRestService.class)
-                .findAll()).withSelfRel();
+        final Link selfRel = linkTo(methodOn(PersonToDoRestService.class)
+                .findAll(personId)).withSelfRel();
 
-        //add create/tempalte link to the list
-        final Link createLink = linkTo(methodOn(TodoRestService.class)
-                .template()).withRel("createTodo");
+        //add create/template link to the list
+        final Link createLink = linkTo(methodOn(PersonToDoRestService.class)
+                .template(personId)).withRel("createTodo");
 
         return Arrays.asList(selfRel, createLink);
     }

@@ -6,11 +6,15 @@
  */
 package com.wiltech.todos.users;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * The interface User details view repository.
  */
 public interface UserDetailsViewRepository extends JpaRepository<UserDetailsView, Long> {
+    
+    Optional<UserDetailsView> findByPersonId(Long personId);
 
 }

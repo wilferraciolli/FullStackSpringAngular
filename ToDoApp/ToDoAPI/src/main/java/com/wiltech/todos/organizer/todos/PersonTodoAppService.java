@@ -30,7 +30,7 @@ public class PersonTodoAppService {
                 .typeId(TodoType.PERSONAL)
                 .stateId(TodoStateType.NEW)
                 .createdDateTime(LocalDateTime.now())
-                .completionStats(0D)
+                .completionStats(50D)
                 .enabled(true)
                 .build();
     }

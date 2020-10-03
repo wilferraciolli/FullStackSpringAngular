@@ -1,11 +1,47 @@
-.home-container{
-  padding: 50px;
-}
-.example-card {
-  max-width: 400px;
-}
+$tabletSize: 800px;
+$laptopSize: 1000px;
 
-.example-header-image {
-  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-  background-size: cover;
+//.home-container{
+//  padding: 50px;
+//  display: flex;
+//}
+
+.home {
+  width: 100%;
+  display: flex;
+
+  @media (min-width: $tabletSize) {
+    padding-top: 20px;
+  }
+
+  &-section {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: column nowrap;
+    padding: 10px;
+    width: 100%;
+
+    @media (min-width: $laptopSize) {
+      padding-top: 100px;
+      flex-flow: row wrap;
+    }
+
+    &-item {
+      //display: flex;
+      width: 100%;
+      min-width: 150px;
+      padding-bottom: 10px;
+
+      @media (min-width: $laptopSize) {
+        padding-top: 10px;
+        max-width: 33%;
+      }
+
+      &-action {
+        //flex-direction: row;
+        padding-right: 20px;
+        justify-content: flex-end;
+      }
+    }
+  }
 }

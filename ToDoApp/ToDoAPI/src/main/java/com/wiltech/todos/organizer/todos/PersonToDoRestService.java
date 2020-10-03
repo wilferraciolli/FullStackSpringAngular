@@ -47,7 +47,7 @@ public class PersonToDoRestService extends BaseRestService {
 
         final TodoResource resource = appService.template(personId);
 
-        final TodoResourceResponse response = new TodoResourceResponse(resource, metaFabricator.createMetaForTemplate());
+        final TodoResourceResponse response = new TodoResourceResponse(resource, metaFabricator.createMetaForTemplate(personId));
         response.add(buildSelfLink());
 
         return ResponseEntity.ok(response);
@@ -59,20 +59,7 @@ public class PersonToDoRestService extends BaseRestService {
         final TodoResource createdResource = appService.create(personId, payload);
 
         return ResponseEntity.created(buildLocationHeader(personId, createdResource.getId()))
-                .body(new TodoResourceResponse(createdResource));
-    }
-
-    // method to add the location header
-    // TODO needs moving to a lib class
-    private URI buildLocationHeader(Long personId, Long id) {
-
-        //        return UriComponentsBuilder.fromPath("/organizer/people/{personId}/todos").buildAndExpand(personId, id).toUri();
-        return MvcUriComponentsBuilder
-                .fromMethodName(this.getClass(), "findById", personId, id)
-                .buildAndExpand(personId, id)
-                .toUri();
-
-        //  return MvcUriComponentsBuilder.fromController(this.getClass()).path("/{id}").buildAndExpand(new Object[] {id}).toUri();
+                .body(new TodoResourceResponse(createdResource, metaFabricator.createMetaForTemplate(personId)));
     }
 
     @GetMapping("")
@@ -87,13 +74,13 @@ public class PersonToDoRestService extends BaseRestService {
 
             response = new TodoResourceCollectionResponse<>(
                     new CollectionModel<>(emptyResources()),
-                    TodoResourceAssembler.createLinksToCollection(),
-                    metaFabricator.createMetaForCollectionResource());
+                    TodoResourceAssembler.createLinksToCollection(personId),
+                    metaFabricator.createMetaForCollectionResource(personId));
         } else {
             response = new TodoResourceCollectionResponse<>(
                     new CollectionModel<>(resources),
-                    TodoResourceAssembler.createLinksToCollection(),
-                    metaFabricator.createMetaForCollectionResource());
+                    TodoResourceAssembler.createLinksToCollection(personId),
+                    metaFabricator.createMetaForCollectionResource(personId));
         }
 
         return ResponseEntity.ok(response);
@@ -103,7 +90,7 @@ public class PersonToDoRestService extends BaseRestService {
     public ResponseEntity<TodoResourceResponse> findById(@PathVariable("personId") final Long personId, @PathVariable("id") final Long id) {
         final TodoResource resource = appService.findById(personId, id);
 
-        return ResponseEntity.ok(new TodoResourceResponse(resource, metaFabricator.createMetaForSingleResource()));
+        return ResponseEntity.ok(new TodoResourceResponse(resource, metaFabricator.createMetaForTemplate(personId)));
     }
 
     @PutMapping("/{id}")
@@ -111,7 +98,7 @@ public class PersonToDoRestService extends BaseRestService {
             @Valid @RequestBody final TodoResource providerResource) {
         final TodoResource updatedResource = appService.update(personId, id, providerResource);
 
-        return ResponseEntity.ok(new TodoResourceResponse(updatedResource));
+        return ResponseEntity.ok(new TodoResourceResponse(updatedResource, metaFabricator.createMetaForTemplate(personId)));
     }
 
     @DeleteMapping("/{id}")
@@ -119,5 +106,18 @@ public class PersonToDoRestService extends BaseRestService {
         appService.deleteById(personId, id);
 
         return noContent().build();
+    }
+
+    // method to add the location header
+    // TODO needs moving to a lib class
+    private URI buildLocationHeader(Long personId, Long id) {
+
+        //        return UriComponentsBuilder.fromPath("/organizer/people/{personId}/todos").buildAndExpand(personId, id).toUri();
+        return MvcUriComponentsBuilder
+                .fromMethodName(this.getClass(), "findById", personId, id)
+                .buildAndExpand(personId, id)
+                .toUri();
+
+        //  return MvcUriComponentsBuilder.fromController(this.getClass()).path("/{id}").buildAndExpand(new Object[] {id}).toUri();
     }
 }

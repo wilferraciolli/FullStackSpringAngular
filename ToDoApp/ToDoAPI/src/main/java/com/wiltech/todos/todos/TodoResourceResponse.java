@@ -10,6 +10,7 @@ import org.springframework.hateoas.server.core.Relation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wiltech.BaseDTO;
 import com.wiltech.Meta;
+import com.wiltech.todos.organizer.todos.PersonToDoRestService;
 
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +33,7 @@ public class TodoResourceResponse extends BaseDTO {
         this.data = resource;
         final Long id = resource.getId();
 
-        addLinks(id);
+        addLinks(resource.getPersonId(), id);
     }
 
     public TodoResourceResponse(final TodoResource resource, final Meta meta) {
@@ -40,16 +41,16 @@ public class TodoResourceResponse extends BaseDTO {
         super.setMeta(meta);
         final Long id = resource.getId();
 
-        addLinks(id);
+        addLinks(resource.getPersonId(), id);
     }
 
-    private void addLinks(final Long id) {
+    private void addLinks(final Long personId, final Long id) {
         if (Objects.nonNull(id)) {
-            add(linkTo(methodOn(TodoRestService.class).findById(id)).withSelfRel());
-            add(linkTo(methodOn(TodoRestService.class).findById(id)).withRel("updateTodo"));
-            add(linkTo(methodOn(TodoRestService.class).findById(id)).withRel("deleteTodo"));
+            add(linkTo(methodOn(PersonToDoRestService.class).findById(personId, id)).withSelfRel());
+            add(linkTo(methodOn(PersonToDoRestService.class).findById(personId, id)).withRel("updateTodo"));
+            add(linkTo(methodOn(PersonToDoRestService.class).findById(personId, id)).withRel("deleteTodo"));
         }
 
-        add(linkTo(TodoRestService.class).withRel("todos"));
+        add(linkTo(methodOn(PersonToDoRestService.class).findAll(personId)).withRel("todos"));
     }
 }

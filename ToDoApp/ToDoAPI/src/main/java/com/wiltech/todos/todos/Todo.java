@@ -48,9 +48,12 @@ public class Todo implements Serializable {
 
     private Boolean enabled;
 
-    public void update(TodoResource todoResource) {
+    public void update(final TodoResource todoResource) {
         this.name = todoResource.getName();
         this.description = todoResource.getDescription();
+        this.completedDateTime = todoResource.getCompletedDateTime();
+        this.stateId = todoResource.getStateId();
+        this.completionStats = todoResource.getCompletionStats();
         this.enabled = todoResource.getEnabled();
     }
 }

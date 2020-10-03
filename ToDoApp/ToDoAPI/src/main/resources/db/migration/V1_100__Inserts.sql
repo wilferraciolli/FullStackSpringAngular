@@ -33,10 +33,10 @@ insert into todo(id, person_id, type_id, name, description, created_date_time, s
 values (3001, 2000, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
 
 insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
-values (3009, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
+values (3009, 2000, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
 
 insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
-values (3008, 2001, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-01-31 19:00:00', 'STARTED', 1);
+values (3008, 2000, 'PERSONAL', 'Sample To do 2', ' Description of sample to do 2', '2020-03-31 19:00:00', 'STARTED', 1);
 
 insert into todo(id, person_id, type_id, name, description, created_date_time, state_id, enabled)
 values (3003, 2001, 'WORK', 'Sample To do', ' Description of sample to do', '2020-01-01 12:00:00', 'NEW', 1);
