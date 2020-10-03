@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+//@NamedQuery(name = "Todo.findByPersonIdAndState", query = "SELECT t FROM Todo t WHERE t.personId = :personId AND t.stateId = :stateType")
 public class Todo implements Serializable {
 
     @Id

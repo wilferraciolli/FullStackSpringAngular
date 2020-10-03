@@ -13,4 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     List<Todo> findAllByPersonIdOrderByCreatedDateTimeAsc(Long personId);
+
+    List<Todo> findAllByPersonIdAndStateIdOrderByCompletedDateTimeDesc(Long personId, TodoStateType stateId);
 }

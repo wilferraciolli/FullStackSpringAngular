@@ -49,6 +49,9 @@ public class UserProfileAppService {
         userResource.add(linkTo(UserProfileRestService.class).withSelfRel());
 
         userResource.add(linkTo(methodOn(PersonToDoRestService.class).findAll(userDetailsView.getPersonId())).withRel("todos"));
+        userResource.add(linkTo(methodOn(PersonToDoRestService.class).findAll(userDetailsView.getPersonId())).withRel("completedTodos"));
+        userResource.add(linkTo(methodOn(PersonToDoRestService.class).findAll(userDetailsView.getPersonId())).withRel("activeTodos"));
+        userResource.add(linkTo(methodOn(PersonToDoRestService.class).findAll(userDetailsView.getPersonId())).withRel("newTodos"));
 
         if (hasRole("ROLE_ADMIN")) {
             userResource.add(linkTo(UserRestService.class).withRel("users"));
@@ -68,7 +71,7 @@ public class UserProfileAppService {
 
         return userResource;
     }
-    
+
     private UserProfileResource buildUserProfileResource(final UserDetailsView userDetailsView) {
 
         return UserProfileResource.builder()

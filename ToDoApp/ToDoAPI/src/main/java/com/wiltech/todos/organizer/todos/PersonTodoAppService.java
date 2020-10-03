@@ -43,6 +43,16 @@ public class PersonTodoAppService {
                 .collect(Collectors.toList());
     }
 
+    public List<TodoResource> findAllForPersonIdByState(final Long personId, final String stateId) {
+
+        final List<Todo> todos = todoRepository.
+                findAllByPersonIdAndStateIdOrderByCompletedDateTimeDesc(personId, TodoStateType.valueOf(stateId));
+
+        return todos.stream()
+                .map(todoResourceAssembler::transpose)
+                .collect(Collectors.toList());
+    }
+
     public TodoResource create(final Long personId, final TodoResource payload) {
         final Todo todo = todoRepository.save(todoResourceAssembler.createEntity(personId, payload));
 
