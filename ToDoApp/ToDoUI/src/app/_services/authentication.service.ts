@@ -131,6 +131,7 @@ export class AuthenticationService {
     // remove user from local storage and set current user to null
     this.stopRefreshTokenTimer();
     localStorage.removeItem('currentUser');
+    // localStorage.removeItem('userProfileData');
     this.currentUserSubject.next(null);
   }
 

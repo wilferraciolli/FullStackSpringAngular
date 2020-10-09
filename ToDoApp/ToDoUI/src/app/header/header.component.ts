@@ -68,8 +68,9 @@ export class HeaderComponent implements OnInit {
       this.userProfileService.loadUserProfile()
         .then((data) => {
           this.userProfile = new UserProfile(data);
-
-          console.log('HEADER userProfile', this.userProfile);
+          // localStorage.setItem('userProfileData', data);
+          //
+          console.log('HEADER userProfile and adding to local storage', this.userProfile);
 
           this.usersAccess = this.linksService.hasLink(this.userProfile.links.users);
           this.peopleAccess = this.linksService.hasLink(this.userProfile.links.people);
