@@ -1,0 +1,10 @@
+<nav class="navigation">
+  <div class="navigation-container">
+    <div class="navigation-left"></div>
+    <div class="navigation-right">
+      <ul>
+        <li *ngFor="let navItem of navItems" (click)="onNavigationSelection(navItem)">{{ navItem.label }}</li>
+      </ul>
+    </div>
+  </div>
+</nav>

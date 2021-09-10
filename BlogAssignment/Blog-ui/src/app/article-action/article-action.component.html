@@ -1,0 +1,20 @@
+<div class="postInteraction">
+  {{darkColor}}
+  <button
+    [ngClass]="getThumbsUpImageBackground(darkColor)"
+    type="button"
+    [disabled]="!enableThumbsUp"
+    (click)="incrementValue()">
+    <img>
+  </button>
+
+  <span>{{likeCount}}</span>
+
+  <button
+    [ngClass]="getThumbsDownImageBackground(darkColor)"
+    type="button"
+    [disabled]="!enableThumbsDown"
+    (click)="decrementValue()">
+    <img>
+  </button>
+</div>
