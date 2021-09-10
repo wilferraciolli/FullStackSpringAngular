@@ -15,6 +15,7 @@ import { PortfolioComponent } from './portfolio/portfolio.component';
 import { SideNavNavigationComponent } from './side-nav-navigation/side-nav-navigation.component';
 import { ArticleActionComponent } from './article-action/article-action.component';
 import { ArticleTagsComponent } from './article-tags/article-tags.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { ArticleTagsComponent } from './article-tags/article-tags.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
