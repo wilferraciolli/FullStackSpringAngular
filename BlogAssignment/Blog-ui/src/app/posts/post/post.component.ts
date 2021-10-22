@@ -1,16 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-
-import {Observable, throwError} from 'rxjs';
-import {catchError, map, retry} from 'rxjs/operators';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 
 @Component({
-  selector: 'app-article',
-  templateUrl: './article.component.html',
-  styleUrls: ['./article.component.scss']
+  selector: 'app-post',
+  templateUrl: './post.component.html',
+  styleUrls: ['./post.component.scss']
 })
-export class ArticleComponent implements OnInit {
+export class PostComponent implements OnInit {
 
   @Input()
   even: boolean;

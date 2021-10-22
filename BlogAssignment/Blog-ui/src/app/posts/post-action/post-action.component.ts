@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-article-action',
-  templateUrl: './article-action.component.html',
-  styleUrls: ['./article-action.component.scss']
+  selector: 'app-post-action',
+  templateUrl: './post-action.component.html',
+  styleUrls: ['./post-action.component.scss']
 })
-export class ArticleActionComponent implements OnInit {
+export class PostActionComponent implements OnInit {
 
   @Input()
   darkColor: boolean;
@@ -51,4 +51,5 @@ export class ArticleActionComponent implements OnInit {
       return 'thumbsUpDark';
     }
   }
+
 }
