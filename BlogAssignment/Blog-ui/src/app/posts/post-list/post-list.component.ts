@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {Post} from '../post/post';
+import {Component, OnInit} from '@angular/core';
+import {Post} from '../post';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
+import {Profile} from '../../interfaces/profile';
 
 @Component({
   selector: 'app-post-list',
@@ -8,15 +11,26 @@ import {Post} from '../post/post';
 })
 export class PostListComponent implements OnInit {
 
-  articles: Array<Post>;
+  profile: Profile;
+  posts: Array<Post>;
 
-  constructor() {
-    // this.articles = [new Post()];
-    // console.log(this.articles.length);
+  constructor(private http: HttpClient) {
   }
 
   ngOnInit(): void {
-    this.articles = [new Post(), new Post(), new Post(), new Post(), new Post(), new Post()];
+    this.profile = JSON.parse(localStorage.getItem('blog-profile'));
+
+    if (this.profile && this.profile.links && this.profile.links.find(link => link.name === 'posts')) {
+      console.log('doing a get on posts ');
+      this.http.get(environment.baseUrl + this.profile.links.find(link => link.name === 'posts').href)
+        .subscribe((posts: Array<Post>) => {
+            console.log('posts response ', posts);
+
+            this.posts = posts;
+            // this.posts = [new Post(), new Post(), new Post(), new Post(), new Post(), new Post()];
+          }
+        );
+    }
   }
 
   isEven(index: number): boolean {

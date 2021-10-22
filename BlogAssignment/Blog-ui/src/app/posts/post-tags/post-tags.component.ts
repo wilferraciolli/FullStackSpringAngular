@@ -9,7 +9,6 @@ export class PostTagsComponent implements OnInit {
 
   @Input()
   tags: Array<string> = [];
-  // tags: Array<string> = ['#tag1', '#tag2', '#tag3'];
 
   constructor() {
   }

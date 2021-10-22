@@ -1,5 +1,5 @@
 
-<div *ngFor="let article of articles; let i=index">
-  <app-post [even]="isEven(i)"></app-post>
+<div *ngFor="let post of posts; let i=index">
+  <app-post [post]="post" [even]="isEven(i)"></app-post>
 </div>
 

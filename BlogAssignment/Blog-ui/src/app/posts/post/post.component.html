@@ -1,8 +1,10 @@
 <article [ngClass]="{'darkColor': even}" class="blogPost">
   <div class="blogPost-container">
     <div class="sectionContent">
-      <h3>Heading one</h3>
+      <h3>{{post.title}}</h3>
+      <span>{{post.creationDateTime | date:'short'}}</span>
       <div class="sectionContentText">
+        <p>{{post.content}}</p>
         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
           industry's standard dummy text ever
           since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen
