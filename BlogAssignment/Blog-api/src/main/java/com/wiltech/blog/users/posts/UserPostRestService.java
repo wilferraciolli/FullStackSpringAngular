@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wiltech.blog.posts.PostDTO;
+
 import lombok.RequiredArgsConstructor;
 
 @CrossOrigin
@@ -17,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserPostRestService {
 
-    private final PostApplicationService postApplicationService;
+    private final UserPostApplicationService postApplicationService;
 
     @GetMapping("")
     public ResponseEntity<List<PostDTO>> getAllPostsForUser(@PathVariable("userId") final Long userId) {

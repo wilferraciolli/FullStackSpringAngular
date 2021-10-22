@@ -1,4 +1,4 @@
-package com.wiltech.blog.users.profile;
+package com.wiltech.blog.profile;
 
 import java.util.List;
 
@@ -23,7 +23,8 @@ public class ProfileApplicationService {
 
     private List<Link> generateLinks(final Long id) {
         return List.of(
-                Link.builder().name("posts").href("users/" + id + "/posts").build()
+                Link.builder().name("userPosts").href("users/" + id + "/posts").build(),
+                Link.builder().name("posts").href("posts").build()
         );
     }
 }

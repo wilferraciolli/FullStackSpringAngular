@@ -1,4 +1,4 @@
-package com.wiltech.blog.users.posts;
+package com.wiltech.blog.posts;
 
 import java.util.List;
 

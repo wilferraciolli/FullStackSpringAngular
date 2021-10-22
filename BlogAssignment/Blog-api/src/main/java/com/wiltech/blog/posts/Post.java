@@ -1,4 +1,4 @@
-package com.wiltech.blog.users.posts;
+package com.wiltech.blog.posts;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

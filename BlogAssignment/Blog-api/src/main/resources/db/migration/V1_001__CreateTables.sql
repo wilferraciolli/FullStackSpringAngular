@@ -18,11 +18,12 @@ create TABLE post_tag
     PRIMARY KEY (id)
 );
 
-drop table IF EXISTS post_like;
-create TABLE post_like
+drop table IF EXISTS post_vote;
+create TABLE post_vote
 (
     id                   BIGINT       NOT NULL auto_increment,
     user_id              BIGINT       NOT NULL,
     post_id              BIGINT       NOT NULL,
+    vote_value           VARCHAR(36)  NOT NULL,
     PRIMARY KEY (id)
 );

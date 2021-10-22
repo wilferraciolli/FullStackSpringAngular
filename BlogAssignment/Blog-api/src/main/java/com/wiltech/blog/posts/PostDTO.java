@@ -1,4 +1,4 @@
-package com.wiltech.blog.users.posts;
+package com.wiltech.blog.posts;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.wiltech.blog.core.Link;
 
 import lombok.Builder;
 import lombok.Value;
@@ -37,4 +38,6 @@ public class PostDTO {
     private List<String> tags;
 
     private Integer likesCount;
+
+    private List<Link> links;
 }

@@ -1,6 +1,8 @@
-package com.wiltech.blog.users.posts.likes;
+package com.wiltech.blog.users.votes;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,12 +15,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "post_like")
+@Table(name = "post_vote")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostLike {
+public class PostVote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +31,13 @@ public class PostLike {
 
     @NotNull
     private Long postId;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private PostVoteType voteValue;
+
+    public void updateVote(final PostVoteType voteValue) {
+
+        this.voteValue = voteValue;
+    }
 }

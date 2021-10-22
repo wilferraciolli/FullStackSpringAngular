@@ -1,4 +1,4 @@
-package com.wiltech.blog.users.posts;
+package com.wiltech.blog.posts;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

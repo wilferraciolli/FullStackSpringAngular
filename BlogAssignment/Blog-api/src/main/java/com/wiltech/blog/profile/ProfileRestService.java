@@ -1,4 +1,4 @@
-package com.wiltech.blog.users.profile;
+package com.wiltech.blog.profile;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class ProfileRestService {
     @GetMapping("")
     public ResponseEntity<ProfileDTO> getProfile() {
 
-        final ProfileDTO profile = profileApplicationService.getProfile(100L);
+        final ProfileDTO profile = profileApplicationService.getProfile(1000L);
 
         return ResponseEntity.ok(profile);
     }

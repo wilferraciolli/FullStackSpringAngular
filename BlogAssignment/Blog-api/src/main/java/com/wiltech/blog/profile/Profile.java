@@ -1,4 +1,4 @@
-package com.wiltech.blog.users.profile;
+package com.wiltech.blog.profile;
 
 import lombok.Value;
 
