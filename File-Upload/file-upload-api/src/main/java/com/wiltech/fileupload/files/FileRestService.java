@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/files")
+@CrossOrigin
 public class FileRestService {
     @Autowired
     private FileService storageService;
@@ -56,6 +57,7 @@ public class FileRestService {
                             .fromCurrentContextPath()
                             .path("/files/")
                             .path(dbFile.getId())
+                            .path("/download")
                             .toUriString();
 
                     return new ResponseFile(
