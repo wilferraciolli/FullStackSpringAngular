@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'file-upload-ui';
+  title: string = 'Angular Material File upload with preview';
 }
