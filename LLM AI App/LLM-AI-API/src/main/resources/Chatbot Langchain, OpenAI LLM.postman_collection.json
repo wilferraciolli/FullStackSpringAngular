@@ -1,0 +1,37 @@
+{
+	"info": {
+		"_postman_id": "22b7442b-33de-45f5-a34f-efaed15303da",
+		"name": "Chatbot Langchain, OpenAI LLM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "78090"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userMsg\": \"Tell me about the Ottomans\",\r\n    \"newChatThread\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/chat",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"chat"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

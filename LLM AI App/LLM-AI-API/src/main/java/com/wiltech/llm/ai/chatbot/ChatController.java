@@ -16,16 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/chat")
 public class ChatController {
     @Autowired
-    ChatService chatService;
+    ChatAppService chatService;
 
     @Autowired
     DataIngestionService dataIngestionService;
 
     @PostMapping
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://localhost:4200")
     public ChatResponse processMsg(@RequestBody ChatRequest chatRequest) {
         var aiMessage = chatService.rag(chatRequest);
         var response = ChatResponse.builder().aiMsg(aiMessage).build();
+
         return response;
     }
 
