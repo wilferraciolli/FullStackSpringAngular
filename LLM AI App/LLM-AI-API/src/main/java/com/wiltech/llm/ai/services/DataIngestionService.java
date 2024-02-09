@@ -1,6 +1,5 @@
 package com.wiltech.llm.ai.services;
 
-import com.wiltech.llm.ai.db.ChatConstants;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.Metadata;

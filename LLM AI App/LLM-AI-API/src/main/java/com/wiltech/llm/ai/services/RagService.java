@@ -1,11 +1,11 @@
 package com.wiltech.llm.ai.services;
 
 
-import static com.wiltech.llm.ai.db.ChatConstants.COLLECTION_NAME;
-import static com.wiltech.llm.ai.db.ChatConstants.OPENAI_API_KEY;
-import static com.wiltech.llm.ai.db.ChatConstants.QDRANT_API_KEY;
-import static com.wiltech.llm.ai.db.ChatConstants.QDRANT_GRPC_HOST;
-import static com.wiltech.llm.ai.db.ChatConstants.QDRANT_GRPC_PORT;
+import static com.wiltech.llm.ai.services.ChatConstants.COLLECTION_NAME;
+import static com.wiltech.llm.ai.services.ChatConstants.OPENAI_API_KEY;
+import static com.wiltech.llm.ai.services.ChatConstants.QDRANT_API_KEY;
+import static com.wiltech.llm.ai.services.ChatConstants.QDRANT_GRPC_HOST;
+import static com.wiltech.llm.ai.services.ChatConstants.QDRANT_GRPC_PORT;
 import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_3_5_TURBO;
 
 import dev.langchain4j.data.segment.TextSegment;
