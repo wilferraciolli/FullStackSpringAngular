@@ -24,6 +24,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
         ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
 
-        chatService.sendMesssage(chatMessage);
+        chatService.sendMessage(chatMessage);
     }
 }
