@@ -20,10 +20,9 @@ public class ChatController {
 
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
-    public ChatMessage sendMessage(ChatMessage message) {
-        chatService.sendMessage(message);
-
-        return message;
+    public ChatMessage sendMessage(ChatMessage chatMessage) {
+        chatService.sendMessage(chatMessage);
+        return chatMessage;
     }
 
     @SubscribeMapping("/chat.getMessages")

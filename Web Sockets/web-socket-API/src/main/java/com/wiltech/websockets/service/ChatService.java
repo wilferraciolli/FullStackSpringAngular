@@ -15,8 +15,7 @@ public class ChatService {
     private final FluxSink<ChatMessage> chatSink = chatProcessor.sink();
 
     public Flux<ChatMessage> getChatMessages() {
-        return chatProcessor.publish()
-                .autoConnect();
+        return chatProcessor.publish().autoConnect();
     }
 
     public void sendMessage(ChatMessage message) {

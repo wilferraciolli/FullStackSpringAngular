@@ -20,10 +20,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(final WebSocketSession session, final TextMessage message) throws Exception {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
         ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
-
         chatService.sendMessage(chatMessage);
     }
 }
