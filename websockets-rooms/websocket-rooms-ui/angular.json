@@ -35,12 +35,7 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -107,6 +102,6 @@
     }
   },
   "cli": {
-    "analytics": "c40b6f21-8126-4507-8a45-c72a25d395e3"
+    "analytics": "7a4830b9-63ab-4269-abd3-03ff42edcc2d"
   }
 }

@@ -1,9 +1,9 @@
 # WebsocketRoomsUi
-Project used to be the UI for a WebSocket server
+Angular websockets project
 
-## Dependiecies
+## Dependencies
+### Material
+`ng add @angular/material`
 
-### Material 
-```bash
-  ng add @angular/material
-  ```
+### Socket io client
+`npm install socket.io-client --save`
