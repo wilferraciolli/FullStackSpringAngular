@@ -39,15 +39,15 @@ export class SocketComponent implements OnInit, OnDestroy {
       .on<SimpleMessage>('client-connected')
       .subscribe((message: SimpleMessage) => {
         this._clientId.set(message.clientId);
-        this.messages.push({
-          id: 'SOME ID',
-          clientId: message.clientId,
-          feature: 'SOME ID',
-          subFeature: 'SOME ID',
-          resourceId: 'resourceId',
-          message: message.message,
-          timestamp: new Date,
-        });
+        // this.messages.push({
+        //   id: 'SOME ID',
+        //   clientId: message.clientId,
+        //   feature: 'SOME ID',
+        //   subFeature: 'SOME ID',
+        //   resourceId: 'resourceId',
+        //   message: message.message,
+        //   timestamp: new Date,
+        // });
       });
 
     // Listen for connection events (optional)
@@ -68,7 +68,9 @@ export class SocketComponent implements OnInit, OnDestroy {
         feature: 'checkIns',
         subFeature: 'checkIn',
         resourceId: 'resourceId',
+        messageType: 'commend-added',
         message: this.messageInput.value.trim(),
+        ommitSender: false,
         timestamp: new Date()
       };
 

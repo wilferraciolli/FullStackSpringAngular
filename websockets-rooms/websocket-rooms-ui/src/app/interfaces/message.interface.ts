@@ -4,6 +4,8 @@ export interface Message {
   feature: string;
   subFeature: string;
   resourceId: string;
+  messageType: string;
   message: string;
+  omitSender: boolean;
   timestamp: Date;
 }
