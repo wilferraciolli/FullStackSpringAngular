@@ -1,0 +1,40 @@
+name: my-db-stack  # Optional: names the stack in Docker to avoid duplicate volume names when running ti from different areas
+services:
+  # ==============================
+  # DATABASE (MySQL)
+  # ==============================
+  mysql-db:
+    image: mysql:8.4
+    container_name: org-chart-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: org-chart
+      MYSQL_USER: dbUser
+      MYSQL_PASSWORD: dbPassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+  # ==============================
+  # DB INTERFACE (phpMyAdmin)
+  # ==============================
+  db-admin:
+    image: phpmyadmin/phpmyadmin
+    container_name: mysql-admin-ui
+    environment:
+      PMA_HOST: mysql-db
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql-db
+
+# Define the volume for persistence
+volumes:
+  mysql-data:

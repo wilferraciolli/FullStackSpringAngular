@@ -21,3 +21,4 @@ Running Spring Boot on http://localhost:5100
 
 ###  DB and EB interface
 Running MySQL port 3306 and MyPHP Admin on http://localhost:8081/
+Note that the DB container has its own folder and can be started manually

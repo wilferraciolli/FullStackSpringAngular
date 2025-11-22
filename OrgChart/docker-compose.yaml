@@ -1,3 +1,7 @@
+# Import the database configuration
+include:
+  - path: ./database/docker-compose.yaml
+
 services:
   # ==============================
   # FRONTEND (Angular)
@@ -27,43 +31,10 @@ services:
       - "5001:5001" # Expose API on localhost:8080
     restart: always
     environment:
-      # Example: Pass DB credentials here if needed later
-      - SPRING_PROFILES_ACTIVE=prod
+      # Note: We can refer to 'mysql-db' even though it's in the other file!
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/org-chart
+      - SPRING_DATASOURCE_USERNAME=dbUser
+      - SPRING_DATASOURCE_PASSWORD=dbPassword
     depends_on: 
-      - mysql-db
-
-  # ==============================
-  # DATABASE (MySQL)
-  # ==============================
-  mysql-db:
-    image: mysql:8.4  # Using 8.4 LTS for stability
-    container_name: org-chart-db
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: org-chart
-      MYSQL_USER: dbUser
-      MYSQL_PASSWORD: dbPassword
-    ports:
-      - "3306:3306" 
-    volumes:
-      - mysql-data:/var/lib/mysql
-    restart: always
-    
-  # ==============================
-  # DB INTERFACE (phpMyAdmin)
-  # ==============================
-  db-admin:
-    image: phpmyadmin/phpmyadmin
-    container_name: mysql-admin-ui
-    environment:
-      # Point this to the service name of your database
-      PMA_HOST: mysql-db
-      PMA_PORT: 3306
-    ports:
-      - "8081:80"     # Access GUI at http://localhost:8081
-    depends_on:
-      - mysql-db
-
-# Define the volume for persistence
-volumes:
-  mysql-data:
+      mysql-db:
+        condition: service_healthy
