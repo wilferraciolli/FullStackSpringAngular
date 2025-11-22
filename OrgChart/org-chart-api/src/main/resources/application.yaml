@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: org-chart-api
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/org-chart?useSSL=false&allowPublicKeyRetrieval=true  # Connect to Docker MySQL
+    username: dbUser
+    password: dbPassword
+    driver-class-name: com.mysql.cj.jdbc.Driver  # For MySQL 8+
+
+  jpa:
+    hibernate:
+      ddl-auto: none  # since using flyway set it to none
+    show-sql: true  # Log SQL for debugging
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect  # MySQL-specific
+        format_sql: true
+    database-platform: org.hibernate.dialect.MySqlDialect
+
+  flyway:
+    enabled: true  # Enable Flyway
+    baseline-on-migrate: true  # Auto-baseline if DB is empty
+    locations: classpath:db/migration  # Default location for scripts
+
+server:
+  port: 5001
+  servlet:
+    context-path: /api/
