@@ -12,8 +12,42 @@ There is also a parent docker compose file which will be used to build this imag
 ```
 
 ## Dependencies
+### Angular animations
+npm install @angular/animations --legacy-peer-deps
+
 ### Material
 ng add @angular/material
 
 ### ngx signals store
 npm install @ngrx/signals
+
+### Prime NG for the org chart
+This library will be used to display the org chart, it needs installing the dependency plus adding the styles manually
+Eg
+Open styles.scss add these imports
+```scss
+    /* PrimeIcons (Optional, if you use their icons) */
+    @import "primeicons/primeicons.css";
+```
+Also PrimeNG needs Angular animations to be enabled. Within the app.config.ts add the provider function [lus the theme provider]
+```ts
+import {provideAnimations} from '@angular/platform-browser/animations'; // <--- Import this
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideAnimationsAsync(), // <--- Add this provider
+    // NEW: Configure PrimeNG Theme here
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: false || 'none' // Optional: Disable dark mode if you want light only
+        }
+      }
+    })
+  ]
+};
+```
+npm install primeng primeicons --legacy-peer-deps
+npm install @primeng/themes --legacy-peer-deps

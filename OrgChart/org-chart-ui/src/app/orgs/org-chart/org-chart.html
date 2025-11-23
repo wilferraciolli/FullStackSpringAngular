@@ -1,1 +1,86 @@
-<p>org-chart works!</p>
+<div class="chart-container">
+  <p-organizationChart [value]="data()">
+
+    <ng-template let-node pTemplate="ORG">
+      <div class="node-card"
+           [ngClass]="node.data.isRoot ? 'root-org' : 'sub-org'">
+        <div class="card-header">
+          <mat-icon>{{ node.data.isRoot ? 'language' : 'business' }}</mat-icon>
+          <span class="vis-badge">{{ node.data.visibility }}</span>
+        </div>
+        <div class="card-body">
+          <div class="node-title">{{ node.label }}</div>
+          <div class="node-subtitle">{{ node.data.title }}</div>
+        </div>
+      </div>
+    </ng-template>
+
+<!--    <ng-template let-node pTemplate="DEPT">-->
+<!--      <div class="node-card dept-card">-->
+<!--        <div class="card-header">-->
+<!--          <mat-icon>folder_open</mat-icon> </div>-->
+<!--        <div class="card-body">-->
+<!--          <div class="node-title">{{ node.label }}</div>-->
+<!--          <div class="node-subtitle">Department</div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </ng-template>-->
+
+    <ng-template let-node pTemplate="DEPT">
+      <div class="node-card dept-card">
+
+        <div class="card-header">
+          <mat-icon>domain</mat-icon>
+          <span class="header-text">DEPT</span>
+        </div>
+
+        @if (node.data.reportingJob) {
+          <div class="manager-section" [class.vacant]="node.data.reportingJob.vacant">
+            <div class="mini-avatar">
+              <mat-icon>{{ node.data.reportingJob.avatar || 'person' }}</mat-icon>
+            </div>
+            <div class="manager-details">
+              <div class="manager-title">{{ node.data.reportingJob.title }}</div>
+              @if (node.data.reportingJob.vacant) {
+                <div class="manager-name vacant-text">VACANT</div>
+              } @else {
+                <div class="manager-name">{{ node.data.reportingJob.name }}</div>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="card-body">
+          <div class="node-title">{{ node.label }}</div>
+          <div class="node-subtitle">{{ node.data.title }}</div>
+        </div>
+
+      </div>
+    </ng-template>
+
+    <ng-template let-node pTemplate="JOB">
+      <div class="job-card" [class.vacant-job]="node.data.vacant">
+
+        <div class="job-avatar">
+          @if (node.data.vacant) {
+            <mat-icon>help_outline</mat-icon>
+          } @else {
+            <mat-icon>{{ node.data.avatar || 'account_circle' }}</mat-icon>
+          }
+        </div>
+
+        <div class="job-info">
+          <div class="job-role">{{ node.label }}</div>
+
+          @if (node.data.vacant) {
+            <div class="job-status vacant">OPEN ROLE</div>
+          } @else {
+            <div class="job-status filled">{{ node.data.assignee }}</div>
+          }
+        </div>
+
+      </div>
+    </ng-template>
+
+  </p-organizationChart>
+</div>
