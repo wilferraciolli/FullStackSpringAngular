@@ -11,6 +11,9 @@ There is also a parent docker compose file which will be used to build this imag
     docker run -d -p 4200:80 --name org-chart-ui-container org-chart-ui-app
 ```
 
-
-
 ## Dependencies
+### Material
+ng add @angular/material
+
+### ngx signals store
+npm install @ngrx/signals

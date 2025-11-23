@@ -1,0 +1,47 @@
+<div class="login-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Login</mat-card-title>
+      <mat-card-subtitle>Angular 21 + Spring Boot 4</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      @if (store.error()) {
+        <div class="error-msg">
+          <mat-icon>error</mat-icon>
+          {{ store.error() }}
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()">
+
+        <div class="dev-tools">
+          <mat-form-field appearance="fill" class="full-width dev-select">
+            <mat-label>⚡ Quick Login</mat-label>
+            <mat-select (selectionChange)="fillCredentials($event.value)">
+              @for (user of demoUsers; track user.username) {
+                <mat-option [value]="user">
+                  <div class="option-row">
+                    <mat-icon>{{ user.role === 'ADMIN' ? 'admin_panel_settings' : 'person' }}</mat-icon>
+                    <span>{{ user.username }}</span>
+                  </div>
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="store.isLoading()">
+            @if (store.isLoading()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              Login
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
