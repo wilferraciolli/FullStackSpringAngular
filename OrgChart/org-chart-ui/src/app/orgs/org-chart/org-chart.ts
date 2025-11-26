@@ -19,75 +19,125 @@ export class OrgChart implements OnInit {
   ngOnInit() {
     this.data.set([
       {
-        label: 'Global Corp',
+        label: 'Global Org',
         type: 'ORG',
         expanded: true,
-        data: { title: 'Headquarters', visibility: 'PUBLIC', isRoot: true },
+        data: {title: 'Headquarters', visibility: 'PUBLIC'},
         children: [
           {
             label: 'Board Members',
             type: 'DEPT',
             expanded: true,
-            // DATA CHANGE: Added reportingJob here
             data: {
               title: 'Governance',
-              reportingJob: { title: 'Chairman', name: 'Mr. X', avatar: 'gavel', vacant: false }
+              reportingJob: {title: 'Chairman', name: 'Mr. X', avatar: 'face', vacant: false}
             },
             children: [
               {
                 label: 'CLOSED ENTITY',
-                type: 'ORG',
+                type: 'ORG_ENTITY',
                 expanded: true,
-                data: { title: 'Closed Entity', visibility: 'CLOSED', isRoot: false },
+                data: {title: 'Closed Entity', visibility: 'CLOSED'},
                 children: [
                   {
                     label: 'R&D Lab',
                     type: 'DEPT',
                     expanded: true,
-                    // DATA CHANGE: Dr. Smith is now EMBEDDED here
                     data: {
                       title: 'Research',
-                      reportingJob: { title: 'Lead Scientist', name: 'Dr. Smith', avatar: 'science', vacant: false }
+                      reportingJob: {title: 'Lead Scientist', name: 'Dr. Smith', avatar: 'face', vacant: false}
                     },
                     // Dr. Smith is removed from children, only his subordinates remain
                     children: [
-                      { label: 'Jr Researcher', type: 'JOB', data: { assignee: null, vacant: true } },
-                      { label: 'Lab Assistant', type: 'JOB', data: { assignee: 'Bob', vacant: false, avatar: 'face_4' } }
+                      {label: 'Jr Researcher', type: 'JOB', data: {assignee: null, vacant: true}},
+                      {label: 'Lab Assistant', type: 'JOB', data: {assignee: 'Bob', vacant: false, avatar: 'face'}}
                     ]
                   }
                 ]
-
-
               },
               {
-                label: 'Other Department',
+                label: 'Software Engineering',
                 type: 'DEPT',
                 expanded: true,
                 data: {
-                  title: 'Governance',
-                  reportingJob: { title: 'Some Manager', name: 'Mr. X', avatar: 'gavel', vacant: false }
+                  title: 'Software Development',
+                  reportingJob: {title: 'Software Manager', name: 'Mr. Manager', avatar: 'face', vacant: false}
                 },
                 children: [
                   {
                     label: 'OPEN ENTITY',
-                    type: 'ORG',
+                    type: 'ORG_ENTITY',
                     expanded: true,
-                    data: { title: 'Open Entity', visibility: 'PUBLIC', isRoot: false },
+                    data: {title: 'Open Entity UI', visibility: 'OPEN'},
                     children: [
                       {
-                        label: 'R&D Lab',
+                        label: 'Software Engineering Frontend',
                         type: 'DEPT',
                         expanded: true,
-                        // DATA CHANGE: Dr. Smith is now EMBEDDED here
                         data: {
-                          title: 'Research',
-                          reportingJob: { title: 'Lead Scientist', name: 'Dr. Smith', avatar: 'science', vacant: false }
+                          title: 'Engineering',
+                          reportingJob: {title: 'Software Manager', name: 'Dr. Wil', avatar: 'face', vacant: false}
                         },
-                        // Dr. Smith is removed from children, only his subordinates remain
                         children: [
-                          { label: 'Jr Researcher', type: 'JOB', data: { assignee: null, vacant: true } },
-                          { label: 'Lab Assistant', type: 'JOB', data: { assignee: 'Bob', vacant: false, avatar: 'face_4' } }
+                          {label: 'Jr Dev', type: 'JOB', data: {assignee: 'Olivia', vacant: false, avatar: 'face'}},
+                          {
+                            label: 'Angular Dev',
+                            type: 'JOB',
+                            data: {assignee: 'Bob', vacant: false, avatar: 'face'}
+                          }
                         ]
+                      }
+                    ]
+                  },
+                  {
+                    label: 'OPEN ENTITY',
+                    type: 'ORG_ENTITY',
+                    expanded: true,
+                    data: {title: 'Open Entity API', visibility: 'OPEN'},
+                    children: [
+                      {
+                        label: 'Software Engineering Backend',
+                        type: 'DEPT',
+                        expanded: true,
+                        data: {
+                          title: 'Engineering',
+                          reportingJob: {title: 'Software Manager', name: 'Dr. Wil', avatar: 'face', vacant: false}
+                        },
+                        children: [
+                          {
+                            label: 'Jr Dev',
+                            type: 'JOB',
+                            data: {assignee: 'George', vacant: false, avatar: 'face'}
+                          },
+                          {
+                            label: 'Java Dev',
+                            type: 'JOB',
+                            data: {assignee: 'Bob', vacant: false, avatar: 'face'}
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    label: 'UX & Prod Design',
+                    type: 'DEPT',
+                    expanded: true,
+                    data: {title: 'UX and Product Design', visibility: 'OPEN'},
+                    children: [
+                      {
+                        label: 'UX Dev',
+                        type: 'JOB',
+                        data: {assignee: 'Ash', vacant: false, avatar: 'face'}
+                      },
+                      {
+                        label: 'UX Tester',
+                        type: 'JOB',
+                        data: {assignee: 'Mia', vacant: false, avatar: 'face'}
+                      },
+                      {
+                        label: 'Product Designer',
+                        type: 'JOB',
+                        data: {assignee: 'Rebecca', vacant: false, avatar: 'face'}
                       }
                     ]
                   }
@@ -98,6 +148,5 @@ export class OrgChart implements OnInit {
         ]
       }
     ]);
-
   }
 }

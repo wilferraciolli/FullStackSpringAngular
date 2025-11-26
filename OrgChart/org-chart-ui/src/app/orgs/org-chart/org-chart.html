@@ -2,10 +2,9 @@
   <p-organizationChart [value]="data()">
 
     <ng-template let-node pTemplate="ORG">
-      <div class="node-card"
-           [ngClass]="node.data.isRoot ? 'root-org' : 'sub-org'">
+      <div class="node-card root-org">
         <div class="card-header">
-          <mat-icon>{{ node.data.isRoot ? 'language' : 'business' }}</mat-icon>
+          <mat-icon>{{ 'language' }}</mat-icon>
           <span class="vis-badge">{{ node.data.visibility }}</span>
         </div>
         <div class="card-body">
@@ -15,16 +14,18 @@
       </div>
     </ng-template>
 
-<!--    <ng-template let-node pTemplate="DEPT">-->
-<!--      <div class="node-card dept-card">-->
-<!--        <div class="card-header">-->
-<!--          <mat-icon>folder_open</mat-icon> </div>-->
-<!--        <div class="card-body">-->
-<!--          <div class="node-title">{{ node.label }}</div>-->
-<!--          <div class="node-subtitle">Department</div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </ng-template>-->
+    <ng-template let-node pTemplate="ORG_ENTITY">
+      <div class="node-card sub-org">
+        <div class="card-header">
+          <mat-icon>{{ 'business' }}</mat-icon>
+          <span class="vis-badge">{{ node.data.visibility }}</span>
+        </div>
+        <div class="card-body">
+          <div class="node-title">{{ node.label }}</div>
+          <div class="node-subtitle">{{ node.data.title }}</div>
+        </div>
+      </div>
+    </ng-template>
 
     <ng-template let-node pTemplate="DEPT">
       <div class="node-card dept-card">
