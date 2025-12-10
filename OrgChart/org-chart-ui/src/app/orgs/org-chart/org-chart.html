@@ -1,87 +1,75 @@
-<div class="chart-container">
-  <p-organizationChart [value]="data()">
+<div class="canvas-viewport">
+  <div class="canvas-surface" wtPannable>
+    <mat-tree
+      #tree
+      [dataSource]="treeData()"
+      [childrenAccessor]="childrenAccessor"
+      class="org-tree">
 
-    <ng-template let-node pTemplate="ORG">
-      <div class="node-card root-org">
-        <div class="card-header">
-          <mat-icon>{{ 'language' }}</mat-icon>
-          <span class="vis-badge">{{ node.data.visibility }}</span>
-        </div>
-        <div class="card-body">
-          <div class="node-title">{{ node.label }}</div>
-          <div class="node-subtitle">{{ node.data.title }}</div>
-        </div>
-      </div>
-    </ng-template>
+      <mat-tree-node *matTreeNodeDef="let node">
 
-    <ng-template let-node pTemplate="ORG_ENTITY">
-      <div class="node-card sub-org">
-        <div class="card-header">
-          <mat-icon>{{ 'business' }}</mat-icon>
-          <span class="vis-badge">{{ node.data.visibility }}</span>
-        </div>
-        <div class="card-body">
-          <div class="node-title">{{ node.label }}</div>
-          <div class="node-subtitle">{{ node.data.title }}</div>
-        </div>
-      </div>
-    </ng-template>
-
-    <ng-template let-node pTemplate="DEPT">
-      <div class="node-card dept-card">
-
-        <div class="card-header">
-          <mat-icon>domain</mat-icon>
-          <span class="header-text">DEPT</span>
-        </div>
-
-        @if (node.data.reportingJob) {
-          <div class="manager-section" [class.vacant]="node.data.reportingJob.vacant">
-            <div class="mini-avatar">
-              <mat-icon>{{ node.data.reportingJob.avatar || 'person' }}</mat-icon>
+        @if (isJob(node)) {
+          <div class="job-card" [class.vacant]="!node.occupancy">
+            <div class="job-header">
+              <mat-icon class="job-icon">work</mat-icon>
+              <span class="job-title">{{ node.title }}</span>
             </div>
-            <div class="manager-details">
-              <div class="manager-title">{{ node.data.reportingJob.title }}</div>
-              @if (node.data.reportingJob.vacant) {
-                <div class="manager-name vacant-text">VACANT</div>
-              } @else {
-                <div class="manager-name">{{ node.data.reportingJob.name }}</div>
-              }
+
+            @if (node.occupancy; as person) {
+              <div class="occupant-info">
+                <mat-icon class="person-icon">person</mat-icon>
+                <div class="details">
+                  <span class="name">{{ person.personName }}</span>
+                  <span class="dates">
+                  Since {{ person.startDate | date:'mediumDate' }}
+                </span>
+                </div>
             </div>
+            } @else {
+              <div class="vacant-info">
+                <span>VACANT POSITION</span>
+            </div>
+            }
           </div>
         }
+      </mat-tree-node>
 
-        <div class="card-body">
-          <div class="node-title">{{ node.label }}</div>
-          <div class="node-subtitle">{{ node.data.title }}</div>
+      <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+        <div class="container-node-wrapper">
+          <button mat-icon-button matTreeNodeToggle>
+            <mat-icon class="mat-icon-rtl-mirror">
+              {{ tree.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+            </mat-icon>
+          </button>
+
+          <div class="container-card"
+               [ngClass]="{
+               'type-org': node.type === OrgNodeType.ORG,
+               'type-entity': node.type === OrgNodeType.ORG_ENTITY,
+               'type-dept': node.type === OrgNodeType.DEPARTMENT
+             }">
+
+            @if (node.type === OrgNodeType.ORG) {
+              <mat-icon>corporate_fare</mat-icon>
+            }
+            @if (node.type === OrgNodeType.ORG_ENTITY) {
+              <mat-icon>account_balance</mat-icon>
+            }
+            @if (node.type === OrgNodeType.DEPARTMENT) {
+              <mat-icon>domain</mat-icon>
+            }
+
+            <span class="node-title">{{ node.title }}</span>
         </div>
-
       </div>
-    </ng-template>
+      </mat-tree-node>
 
-    <ng-template let-node pTemplate="JOB">
-      <div class="job-card" [class.vacant-job]="node.data.vacant">
+    </mat-tree>
+  </div>
 
-        <div class="job-avatar">
-          @if (node.data.vacant) {
-            <mat-icon>help_outline</mat-icon>
-          } @else {
-            <mat-icon>{{ node.data.avatar || 'account_circle' }}</mat-icon>
-          }
-        </div>
-
-        <div class="job-info">
-          <div class="job-role">{{ node.label }}</div>
-
-          @if (node.data.vacant) {
-            <div class="job-status vacant">OPEN ROLE</div>
-          } @else {
-            <div class="job-status filled">{{ node.data.assignee }}</div>
-          }
-        </div>
-
-      </div>
-    </ng-template>
-
-  </p-organizationChart>
+  <div class="canvas-controls">
+    <div class="hint-text">
+      Click and drag to move
+    </div>
+  </div>
 </div>

@@ -1,194 +1,364 @@
-.chart-container {
-  padding: 20px;
-  background-color: #f4f7f6;
-  min-height: 100vh;
-  overflow: auto;
-  text-align: center;
+.org-tree {
+  --mat-tree-node-min-height: 3.5rem;
 }
 
-/* =========================================
-   1. ENTITY CARDS (Orgs & Depts)
-   ========================================= */
-.node-card {
-  width: 180px;
-  background: white;
+ /************* Canvas Fixed Window ***********************/
+.canvas-viewport {
+  width: 100%;
+  height: 80vh; /* Adjust height as needed */
+  background-color: #f0f2f5; /* Light grey canvas background */
+  overflow: hidden; /* Hide scrollbars */
+  position: relative;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  overflow: hidden;
-  border: 1px solid #ddd;
 
-  .card-header {
-    padding: 8px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-
-    mat-icon { font-size: 18px; width: 18px; height: 18px; }
-    .vis-badge { font-size: 9px; border: 1px solid rgba(255,255,255,0.4); padding: 2px 4px; border-radius: 4px; }
-  }
-
-  .card-body { padding: 10px; text-align: left; }
-  .node-title { font-weight: bold; font-size: 13px; color: #333; margin-bottom: 2px; }
-  .node-subtitle { font-size: 11px; color: #777; }
+  /* Grid pattern background for that "Design Tool" feel */
+  background-image:
+    linear-gradient(#e0e0e0 1px, transparent 1px),
+    linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
-/* --- VARIATION: ROOT ORG (Dark Navy) --- */
-.root-org {
-  border-top: 4px solid #1a237e; /* Thick top border */
-  transform: scale(1.1); /* Slightly larger */
-  margin-bottom: 10px;
-
-  .card-header { background: #1a237e; }
+/************* Canvas Movable surface ***********************/
+.canvas-surface {
+  min-width: 100%;
+  min-height: 100%;
+  padding: 50px; /* Initial padding so tree isn't stuck to edge */
+  display: inline-block; /* Allow it to grow with content */
+  /* transform and cursor are handled by the directive */
 }
 
-/* --- VARIATION: SUB ORG (Teal) --- */
-.sub-org {
-  .card-header { background: #00897b; }
-}
-
-/* --- VARIATION: DEPARTMENT (Orange/Folder) --- */
-.dept-card {
-  .card-header {
-    background: #fb8c00;
-    justify-content: center; /* Center icon */
-  }
-}
-
-
-/* =========================================
-   2. JOB CARDS (ID Badge Style)
-   ========================================= */
-.job-card {
-  display: flex; /* Horizontal Layout */
-  align-items: center;
-  width: 200px;
+.canvas-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
   background: white;
-  border-radius: 50px; /* Pill shape / ID Badge shape */
-  padding: 5px;
+  padding: 8px 12px;
+  border-radius: 20px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border: 1px solid #e0e0e0;
-  margin: 5px;
-  transition: transform 0.2s;
+  pointer-events: none; /* Let clicks pass through */
 
-  &:hover { transform: scale(1.05); }
-
-  /* Left Side: Avatar Circle */
-  .job-avatar {
-    width: 40px;
-    height: 40px;
-    background-color: #e8f5e9; /* Light Green bg */
-    color: #2e7d32;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    flex-shrink: 0;
-
-    mat-icon { font-size: 24px; width: 24px; height: 24px; }
-  }
-
-  /* Right Side: Text */
-  .job-info {
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .job-role { font-weight: bold; font-size: 12px; color: #333; }
-
-  .job-status { font-size: 11px; }
-  .job-status.filled { color: #2e7d32; font-weight: 600; }
-}
-
-/* --- VARIATION: VACANT JOB (Red/Dashed) --- */
-.job-card.vacant-job {
-  border: 1px dashed #e53935;
-  background: #ffebee;
-
-  .job-avatar {
-    background-color: #ef9a9a;
-    color: white;
-  }
-
-  .job-role { color: #c62828; }
-  .job-status.vacant {
-    color: white;
-    background-color: #c62828;
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 9px;
-    margin-top: 2px;
-    align-self: flex-start;
+  .hint-text {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
   }
 }
 
-.dept-card {
-  /* Make Dept card slightly taller to fit the manager */
-  min-height: 110px;
-
-  .card-header {
-    background: #fb8c00;
-    justify-content: center;
-    gap: 5px;
-
-    .header-text { font-size: 10px; opacity: 0.8; font-weight: bold; }
-  }
+/* --- Container Nodes (Org, Entity, Dept) --- */
+.container-node-wrapper {
+  display: flex;
+  align-items: center;
 }
 
-/* =========================================
-   EMBEDDED MANAGER SECTION
-   ========================================= */
-.manager-section {
-  background-color: #f1f8e9; /* Very light green */
-  border-bottom: 1px solid #c8e6c9;
-  padding: 8px;
+.container-card {
   display: flex;
   align-items: center;
   gap: 8px;
-  text-align: left;
+  padding: 8px 16px;
+  border-radius: 6px;
+  min-width: 200px;
+  border: 1px solid transparent;
 
-  /* Animation/Hover for the manager part specifically */
-  transition: background-color 0.2s;
-  &:hover { background-color: #dcedc8; }
+  &.type-org {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    font-weight: 700;
+    font-size: 1.1em;
+    border-color: #bbdefb;
+  }
 
-  .mini-avatar {
-    width: 32px;
-    height: 32px;
-    background: white;
-    border: 1px solid #43a047;
-    border-radius: 50%;
+  &.type-entity {
+    background-color: #f3e5f5;
+    color: #4a148c;
+    border: 1px dashed #ab47bc; /* Dashed line for Sub-Entities */
+  }
+
+  &.type-dept {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-left: 4px solid #4caf50; /* Green Left Border */
+  }
+}
+
+/* --- Job Nodes (Leaves) --- */
+.leaf-node-container {
+  min-height: 80px; /* Taller to fit person details */
+  align-items: flex-start; /* Align to top */
+  padding-top: 10px;
+}
+
+.job-card {
+  margin-left: 40px; /* Indent from the expander arrow column */
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 280px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  &.vacant {
+    border-color: #ffcdd2;
+    background: #ffebee;
+
+    .job-header {
+      background-color: transparent;
+      color: #c62828;
+    }
+  }
+
+  .job-header {
     display: flex;
-    justify-content: center;
     align-items: center;
-    color: #2e7d32;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
 
-    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    .job-icon { font-size: 18px; width: 18px; height: 18px; }
   }
 
-  .manager-details {
+  .occupant-info {
     display: flex;
-    flex-direction: column;
-    line-height: 1.2;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+
+    .person-icon {
+      background: #e0f7fa;
+      color: #006064;
+      border-radius: 50%;
+      padding: 4px;
+      width: 32px;
+      height: 32px;
+      font-size: 24px;
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+
+      .name { font-weight: 500; font-size: 0.9rem; }
+      .dates { font-size: 0.75rem; color: #666; }
+    }
   }
 
-  .manager-title { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
-  .manager-name { font-size: 12px; font-weight: bold; color: #2e7d32; }
+  .vacant-info {
+    padding: 10px 12px;
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 }
 
-/* VACANT MANAGER VARIATION */
-.manager-section.vacant {
-  background-color: #ffebee; /* Light Red */
-  border-bottom: 1px solid #ffcdd2;
 
-  .mini-avatar {
-    border-color: #e53935;
-    color: #e53935;
-  }
 
-  .manager-name.vacant-text {
-    color: #c62828;
-    font-style: italic;
-  }
-}
+
+
+
+
+
+
+//.chart-container {
+//  padding: 20px;
+//  background-color: #f4f7f6;
+//  min-height: 100vh;
+//  overflow: auto;
+//  text-align: center;
+//}
+//
+///* =========================================
+//   1. ENTITY CARDS (Orgs & Depts)
+//   ========================================= */
+//.node-card {
+//  width: 180px;
+//  background: white;
+//  border-radius: 8px;
+//  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+//  overflow: hidden;
+//  border: 1px solid #ddd;
+//
+//  .card-header {
+//    padding: 8px 12px;
+//    display: flex;
+//    justify-content: space-between;
+//    align-items: center;
+//    color: white;
+//
+//    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+//    .vis-badge { font-size: 9px; border: 1px solid rgba(255,255,255,0.4); padding: 2px 4px; border-radius: 4px; }
+//  }
+//
+//  .card-body { padding: 10px; text-align: left; }
+//  .node-title { font-weight: bold; font-size: 13px; color: #333; margin-bottom: 2px; }
+//  .node-subtitle { font-size: 11px; color: #777; }
+//}
+//
+///* --- VARIATION: ROOT ORG (Dark Navy) --- */
+//.root-org {
+//  border-top: 4px solid #1a237e; /* Thick top border */
+//  transform: scale(1.1); /* Slightly larger */
+//  margin-bottom: 10px;
+//
+//  .card-header { background: #1a237e; }
+//}
+//
+///* --- VARIATION: SUB ORG (Teal) --- */
+//.sub-org {
+//  .card-header { background: #00897b; }
+//}
+//
+///* --- VARIATION: DEPARTMENT (Orange/Folder) --- */
+//.dept-card {
+//  .card-header {
+//    background: #fb8c00;
+//    justify-content: center; /* Center icon */
+//  }
+//}
+//
+//
+///* =========================================
+//   2. JOB CARDS (ID Badge Style)
+//   ========================================= */
+//.job-card {
+//  display: flex; /* Horizontal Layout */
+//  align-items: center;
+//  width: 200px;
+//  background: white;
+//  border-radius: 50px; /* Pill shape / ID Badge shape */
+//  padding: 5px;
+//  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+//  border: 1px solid #e0e0e0;
+//  margin: 5px;
+//  transition: transform 0.2s;
+//
+//  &:hover { transform: scale(1.05); }
+//
+//  /* Left Side: Avatar Circle */
+//  .job-avatar {
+//    width: 40px;
+//    height: 40px;
+//    background-color: #e8f5e9; /* Light Green bg */
+//    color: #2e7d32;
+//    border-radius: 50%;
+//    display: flex;
+//    align-items: center;
+//    justify-content: center;
+//    margin-right: 10px;
+//    flex-shrink: 0;
+//
+//    mat-icon { font-size: 24px; width: 24px; height: 24px; }
+//  }
+//
+//  /* Right Side: Text */
+//  .job-info {
+//    text-align: left;
+//    display: flex;
+//    flex-direction: column;
+//  }
+//
+//  .job-role { font-weight: bold; font-size: 12px; color: #333; }
+//
+//  .job-status { font-size: 11px; }
+//  .job-status.filled { color: #2e7d32; font-weight: 600; }
+//}
+//
+///* --- VARIATION: VACANT JOB (Red/Dashed) --- */
+//.job-card.vacant-job {
+//  border: 1px dashed #e53935;
+//  background: #ffebee;
+//
+//  .job-avatar {
+//    background-color: #ef9a9a;
+//    color: white;
+//  }
+//
+//  .job-role { color: #c62828; }
+//  .job-status.vacant {
+//    color: white;
+//    background-color: #c62828;
+//    padding: 1px 6px;
+//    border-radius: 4px;
+//    font-size: 9px;
+//    margin-top: 2px;
+//    align-self: flex-start;
+//  }
+//}
+//
+//.dept-card {
+//  /* Make Dept card slightly taller to fit the manager */
+//  min-height: 110px;
+//
+//  .card-header {
+//    background: #fb8c00;
+//    justify-content: center;
+//    gap: 5px;
+//
+//    .header-text { font-size: 10px; opacity: 0.8; font-weight: bold; }
+//  }
+//}
+//
+///* =========================================
+//   EMBEDDED MANAGER SECTION
+//   ========================================= */
+//.manager-section {
+//  background-color: #f1f8e9; /* Very light green */
+//  border-bottom: 1px solid #c8e6c9;
+//  padding: 8px;
+//  display: flex;
+//  align-items: center;
+//  gap: 8px;
+//  text-align: left;
+//
+//  /* Animation/Hover for the manager part specifically */
+//  transition: background-color 0.2s;
+//  &:hover { background-color: #dcedc8; }
+//
+//  .mini-avatar {
+//    width: 32px;
+//    height: 32px;
+//    background: white;
+//    border: 1px solid #43a047;
+//    border-radius: 50%;
+//    display: flex;
+//    justify-content: center;
+//    align-items: center;
+//    color: #2e7d32;
+//
+//    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+//  }
+//
+//  .manager-details {
+//    display: flex;
+//    flex-direction: column;
+//    line-height: 1.2;
+//  }
+//
+//  .manager-title { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+//  .manager-name { font-size: 12px; font-weight: bold; color: #2e7d32; }
+//}
+//
+///* VACANT MANAGER VARIATION */
+//.manager-section.vacant {
+//  background-color: #ffebee; /* Light Red */
+//  border-bottom: 1px solid #ffcdd2;
+//
+//  .mini-avatar {
+//    border-color: #e53935;
+//    color: #e53935;
+//  }
+//
+//  .manager-name.vacant-text {
+//    color: #c62828;
+//    font-style: italic;
+//  }
+//}

@@ -21,7 +21,7 @@ ng add @angular/material
 ### ngx signals store
 npm install @ngrx/signals
 
-### Prime NG for the org chart
+### Prime NG for the org chart (Replaced by Angular material)
 This library will be used to display the org chart, it needs installing the dependency plus adding the styles manually
 Eg
 Open styles.scss add these imports
