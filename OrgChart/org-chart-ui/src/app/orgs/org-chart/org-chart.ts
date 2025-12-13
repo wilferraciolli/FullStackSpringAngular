@@ -6,11 +6,12 @@ import {MatTreeModule} from '@angular/material/tree';
 import {OrgNodeType} from '../org-node-type.constant';
 import {OrgChartStore} from '../store/org-chart.store';
 import {OrgTreeNode, OrgTreeNodeJob} from '../org-tree-node.interface';
-import {Pannable} from '../directives/pannable.directive';
+import {Pannable} from '../../shared/directives/pannable.directive';
+import {CanvasWrapper} from '../../shared/components/canvas-wrapper/canvas-wrapper';
 
 @Component({
   selector: 'wt-org-chart',
-  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, DatePipe, Pannable],
+  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule, DatePipe, Pannable, CanvasWrapper],
   templateUrl: './org-chart.html',
   styleUrl: './org-chart.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

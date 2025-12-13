@@ -1,5 +1,4 @@
-<div class="canvas-viewport">
-  <div class="canvas-surface" wtPannable>
+<wt-canvas-wrapper >
     <mat-tree
       #tree
       [dataSource]="treeData()"
@@ -65,11 +64,4 @@
       </mat-tree-node>
 
     </mat-tree>
-  </div>
-
-  <div class="canvas-controls">
-    <div class="hint-text">
-      Click and drag to move
-    </div>
-  </div>
-</div>
+</wt-canvas-wrapper>

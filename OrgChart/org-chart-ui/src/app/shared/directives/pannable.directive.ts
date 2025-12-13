@@ -18,7 +18,6 @@ export class Pannable {
   private lastMouseY: number = 0;
 
   constructor(private el: ElementRef, private renderer: Renderer2) {
-    // Initial style setup
     this.renderer.setStyle(this.el.nativeElement, 'transform-origin', '0 0');
     this.renderer.setStyle(this.el.nativeElement, 'position', 'absolute'); // Allow free movement
     this._updateCursor();
@@ -57,15 +56,14 @@ export class Pannable {
   }
 
   @HostListener('document:mouseup')
-  // @HostListener('document:mouseleave')
-  onMouseUp(): void {
+  public onMouseUp(): void {
     this.isMouseDown = false;
     this._stopPanning();
     this._updateCursor();
   }
 
   @HostListener('document:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent): void {
+  public onKeyDown(event: KeyboardEvent): void {
     if (event.code === 'Space' && !this.isSpacebarHeld) {
       event.preventDefault();
 
@@ -84,7 +82,7 @@ export class Pannable {
   }
 
   @HostListener('document:keyup', ['$event'])
-  onKeyUp(event: KeyboardEvent) {
+  public onKeyUp(event: KeyboardEvent) {
     if (event.code === 'Space') {
       this.isSpacebarHeld = false;
       this._stopPanning();
