@@ -1,42 +1,45 @@
-/************* Canvas Fixed Window ***********************/
-.canvas-viewport {
-  width: 100%;
-  height: 80vh; /* Adjust height as needed */
-  background-color: #f0f2f5; /* Light grey canvas background */
-  overflow: hidden; /* Hide scrollbars */
-  position: relative;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.canvas-wrapper {
+  /************* Canvas Fixed Window ***********************/
+  &-viewport {
+    width: 100%;
+    height: 80vh;
+    background-color: #f0f2f5;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 
+    /* Grid pattern background for that "Design Tool" feel */
+    background-image: linear-gradient(#e0e0e0 1px, transparent 1px),
+    linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
 
-  /* Grid pattern background for that "Design Tool" feel */
-  background-image: linear-gradient(#e0e0e0 1px, transparent 1px),
-  linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
-  background-size: 20px 20px;
-}
+  /************* Canvas Movable surface ***********************/
+  &-surface {
+    min-width: 100%;
+    min-height: 100%;
+    padding: 50px; /* Initial padding so tree isn't stuck to edge */
+    display: inline-block; /* Allow it to grow with content */
+    /* transform and cursor are handled by the directive */
+  }
 
-/************* Canvas Movable surface ***********************/
-.canvas-surface {
-  min-width: 100%;
-  min-height: 100%;
-  padding: 50px; /* Initial padding so tree isn't stuck to edge */
-  display: inline-block; /* Allow it to grow with content */
-  /* transform and cursor are handled by the directive */
-}
+  &-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    pointer-events: none; /* Let clicks pass through */
+  }
 
-.canvas-controls {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  pointer-events: none; /* Let clicks pass through */
-
-  .hint-text {
+  &-hint-text {
     font-size: 0.8rem;
     color: #666;
     font-weight: 500;
   }
 }
+
+

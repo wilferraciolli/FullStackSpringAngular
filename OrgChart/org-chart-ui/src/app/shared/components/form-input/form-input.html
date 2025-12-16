@@ -1,0 +1,21 @@
+<mat-form-field appearance="outline">
+  <mat-label> {{ label() }}</mat-label>
+  <input
+    #inputEl
+    [type]="type()"
+    [value]="value()"
+    (input)="value.set(inputEl.value)"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    (blur)="touched.set(true)"
+    [placeholder]="placeholder()"
+  />
+  @if (invalid() && touched()) {
+    <mat-error>
+      @for (error of errors(); track error.kind) {
+        <span>{{ error.message }}</span>
+      }
+    </mat-error>
+  }
+
+</mat-form-field>
