@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
-import {form,Field, minLength, required} from '@angular/forms/signals';
+import {email, Field, form, minLength, required} from '@angular/forms/signals';
 import {FormInput} from '../../shared/components/form-input/form-input';
 
 @Component({
@@ -13,26 +13,27 @@ import {FormInput} from '../../shared/components/form-input/form-input';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StructureForm {
-  registrationModel = signal({
+  model = signal({
     username: '',
     email: '',
   });
 
-  registrationForm = form(
-    this.registrationModel,
+  simpleForm = form(
+    this.model,
     (schemaPath) => {
       required(schemaPath.username, {message: 'Username is required'});
-      minLength(schemaPath.username, 3, {message: 'Username must be at least 3 characters'});
+      minLength(schemaPath.username, 3, {message: 'Minimum 3 characters'});
       required(schemaPath.email, {message: 'Email is required'});
+      email(schemaPath.email, {message: 'Email is invalid'});
     }
   );
 
   onSubmit() {
-    if (this.registrationForm().invalid()) {
-      this.registrationForm().markAsTouched();
-      return;
+    if (this.simpleForm().valid()) {
+      this.simpleForm().markAsTouched();
+      console.log('Invalid:', this.simpleForm().value());
+      // return;
     }
-    console.log('Form submitted:', this.registrationForm().value());
-    // Handle submission logic here
+    console.log('Submitted:', this.simpleForm().value());
   }
 }

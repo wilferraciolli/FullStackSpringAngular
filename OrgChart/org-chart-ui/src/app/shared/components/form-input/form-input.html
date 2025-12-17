@@ -1,7 +1,8 @@
 <mat-form-field appearance="outline">
-  <mat-label> {{ label() }}</mat-label>
+  <mat-label>{{ label() }}</mat-label>
   <input
     #inputEl
+    matInput
     [type]="type()"
     [value]="value()"
     (input)="value.set(inputEl.value)"
@@ -17,5 +18,4 @@
       }
     </mat-error>
   }
-
 </mat-form-field>

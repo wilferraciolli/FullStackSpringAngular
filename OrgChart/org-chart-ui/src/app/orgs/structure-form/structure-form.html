@@ -1,17 +1,23 @@
-<form (submit)="onSubmit()">
+<form>
   <wt-form-input
-    [field]="registrationForm.username"
+    [field]="simpleForm.username"
     label="Username"
-    placeholder="Enter your username"/>
-
+    placeholder="Enter username"
+  />
   <wt-form-input
-    [field]="registrationForm.email"
+    [field]="simpleForm.email"
     label="Email"
-    placeholder="Enter your email"
-    type="email"/>
-
+    placeholder="Enter email"
+    type="email"
+  />
   <button type="submit"
-          [disabled]="registrationForm().invalid()
-  || registrationForm().submitting()">Register
+          [disabled]="simpleForm().invalid()"
+          (click)="onSubmit()"
+  >Submit
   </button>
 </form>
+
+<pre>invalid: {{ simpleForm().invalid() }}</pre>
+<pre>Touched: {{ simpleForm().touched() }}</pre>
+<pre>Submitting: {{ simpleForm().submitting() }}</pre>
+<pre>{{ simpleForm().value() }}</pre>
