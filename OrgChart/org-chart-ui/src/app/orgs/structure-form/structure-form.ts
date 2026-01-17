@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
-import {form, FormField, minLength, required} from '@angular/forms/signals';
+import {email, form, FormField, minLength, required} from '@angular/forms/signals';
 import {FormInput} from '../../shared/components/form-input/form-input';
 import {JsonPipe} from '@angular/common';
 
@@ -25,7 +25,8 @@ export class StructureForm {
     (schemaPath) => [
       required(schemaPath.username, {message: 'Username is required'}),
       minLength(schemaPath.username, 3, {message: 'Username must be at least 3 characters'}),
-      required(schemaPath.email, {message: 'Email is required'})
+      required(schemaPath.email, {message: 'Email is required'}),
+      email(schemaPath.email, {message: 'Email format invalid'})
     ]
   );
 
