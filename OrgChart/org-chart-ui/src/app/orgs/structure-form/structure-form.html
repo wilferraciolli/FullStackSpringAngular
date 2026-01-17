@@ -1,11 +1,11 @@
 <form (submit)="onSubmit()">
   <wt-form-input
-    [field]="registrationForm.username"
+    [formField]="registrationForm.username"
     label="Username"
     placeholder="Enter your username"/>
 
   <wt-form-input
-    [field]="registrationForm.email"
+    [formField]="registrationForm.email"
     label="Email"
     placeholder="Enter your email"
     type="email"/>
@@ -15,3 +15,6 @@
   || registrationForm().submitting()">Register
   </button>
 </form>
+
+<pre>{{registrationForm().value() | json}}</pre>
+<pre>{{registrationForm().errors() | json}}</pre>

@@ -1,6 +1,8 @@
-<mat-form-field appearance="outline">
+<mat-form-field appearance="outline"
+                [class.mat-form-field-invalid]="invalid() && touched()">
   <mat-label> {{ label() }}</mat-label>
   <input
+    matInput
     #inputEl
     [type]="type()"
     [value]="value()"
@@ -10,12 +12,19 @@
     (blur)="touched.set(true)"
     [placeholder]="placeholder()"
   />
+
   @if (invalid() && touched()) {
-    <mat-error>
+    <mat-error style="display: block !important;">
       @for (error of errors(); track error.kind) {
         <span>{{ error.message }}</span>
       }
     </mat-error>
   }
-
 </mat-form-field>
+<!--@if (invalid() && touched()) {-->
+<!--  <mat-error style="display: block !important;">-->
+<!--    @for (error of errors(); track error.kind) {-->
+<!--      <span>{{ error.message }}</span>-->
+<!--    }-->
+<!--  </mat-error>-->
+<!--}-->

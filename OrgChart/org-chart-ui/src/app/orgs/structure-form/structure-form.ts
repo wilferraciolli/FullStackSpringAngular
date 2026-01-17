@@ -1,12 +1,14 @@
 import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
-import {form,Field, minLength, required} from '@angular/forms/signals';
+import {form, FormField, minLength, required} from '@angular/forms/signals';
 import {FormInput} from '../../shared/components/form-input/form-input';
+import {JsonPipe} from '@angular/common';
 
 @Component({
   selector: 'wt-structure-form',
   imports: [
     FormInput,
-    Field
+    FormField,
+    JsonPipe
   ],
   templateUrl: './structure-form.html',
   styleUrl: './structure-form.scss',
@@ -20,11 +22,11 @@ export class StructureForm {
 
   registrationForm = form(
     this.registrationModel,
-    (schemaPath) => {
-      required(schemaPath.username, {message: 'Username is required'});
-      minLength(schemaPath.username, 3, {message: 'Username must be at least 3 characters'});
-      required(schemaPath.email, {message: 'Email is required'});
-    }
+    (schemaPath) => [
+      required(schemaPath.username, {message: 'Username is required'}),
+      minLength(schemaPath.username, 3, {message: 'Username must be at least 3 characters'}),
+      required(schemaPath.email, {message: 'Email is required'})
+    ]
   );
 
   onSubmit() {

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, input, InputSignal, model, ModelSignal} from '@angular/core';
-import {MatError, MatFormField, MatLabel} from "@angular/material/input";
+import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {FormValueControl, ValidationError} from '@angular/forms/signals';
 
 @Component({
@@ -7,7 +7,8 @@ import {FormValueControl, ValidationError} from '@angular/forms/signals';
   imports: [
     MatError,
     MatFormField,
-    MatLabel
+    MatLabel,
+    MatInput
   ],
   templateUrl: './form-input.html',
   styleUrl: './form-input.scss',
@@ -18,13 +19,16 @@ export class FormInput implements FormValueControl<string> {
   public value: ModelSignal<string> = model<string>('');
 
   // Optional read-only state (provided by the form)
-  disabled: InputSignal<boolean> = input<boolean>(false);
-  readonly: InputSignal<boolean> = input<boolean>(false);
-  invalid: InputSignal<boolean> = input<boolean>(false);
-  errors: InputSignal<readonly ValidationError[]> = input<readonly ValidationError[]>([]);
+  public disabled: InputSignal<boolean> = input<boolean>(false);
+  public readonly: InputSignal<boolean> = input<boolean>(false);
+  public invalid: InputSignal<boolean> = input<boolean>(false);
+  // public touched: ModelSignal<boolean> = model(false);
+
+  public touched: ModelSignal<boolean> = model(false);
+  public errors: InputSignal<readonly ValidationError[]> = input<readonly ValidationError[]>([]);
 
   // Custom inputs for flexibility (not form-related)
-  label: InputSignal<string> = input<string>('Input Label');
-  placeholder: InputSignal<string> = input<string>('');
-  type: InputSignal<string> = input<string>('text');
+  public label: InputSignal<string> = input<string>('Input Label');
+  public placeholder: InputSignal<string> = input<string>('');
+  public type: InputSignal<string> = input<string>('text');
 }
