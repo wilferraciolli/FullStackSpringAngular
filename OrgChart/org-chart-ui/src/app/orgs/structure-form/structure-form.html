@@ -4,11 +4,12 @@
     label="Name"
     placeholder="Enter structure name"/>
 
-  <wt-form-input
+  <wt-form-select
     [formField]="registrationForm.structureType"
-    label="Email"
-    placeholder="Enter your email"
-    type="email"/>
+    [addInitialBlankOption]=true
+    [options]="structureTypeOptions"
+    label="Structure type"
+    type="select"/>
 
   <button type="submit"
           matButton="filled"

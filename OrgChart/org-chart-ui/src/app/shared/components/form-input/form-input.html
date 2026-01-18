@@ -16,6 +16,7 @@
       [placeholder]="placeholder()"
     />
   </mat-form-field>
+
   @if (invalid() && touched()) {
     <mat-error style="display: block !important;">
       @for (error of errors(); track error.kind) {

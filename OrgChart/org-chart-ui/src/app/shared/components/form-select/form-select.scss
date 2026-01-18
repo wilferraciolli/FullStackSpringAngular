@@ -1,0 +1,11 @@
+@use 'shared' as app;
+
+.FormSelect {
+  &-container {
+    @include app.form-field-spacing;
+  }
+
+  &-field {
+    width: 100%;
+  }
+}

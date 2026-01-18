@@ -5,6 +5,8 @@ import {JsonPipe} from '@angular/common';
 import {MatButton} from '@angular/material/button';
 import {StructureFormBody} from './structure.form';
 import {OrgNodeType} from '../org-node-type.constant';
+import {FormSelect} from '../../shared/components/form-select/form-select';
+import {FormSelectOption} from '../../shared/components/form-select/form-select-option';
 
 @Component({
   selector: 'wt-structure-form',
@@ -12,7 +14,8 @@ import {OrgNodeType} from '../org-node-type.constant';
     FormInput,
     FormField,
     JsonPipe,
-    MatButton
+    MatButton,
+    FormSelect
   ],
   templateUrl: './structure-form.html',
   styleUrl: './structure-form.scss',
@@ -22,10 +25,29 @@ export class StructureForm {
   protected registrationModel: WritableSignal<StructureFormBody> = signal<StructureFormBody>({
     id: null,
     name: '',
-    structureType: OrgNodeType.JOB,
+    structureType: '',
     startDate: '',
     endDate: '',
   });
+
+  protected structureTypeOptions: Array<FormSelectOption> = [
+    {
+      id: OrgNodeType.ORGANISATION,
+      label: 'Organisation'
+    },
+    {
+      id: OrgNodeType.ORGANISATION_ENTITY,
+      label: 'Organisation Entity'
+    },
+    {
+      id: OrgNodeType.DEPARTMENT,
+      label: 'Department'
+    },
+    {
+      id: OrgNodeType.JOB,
+      label: 'Job'
+    },
+  ];
 
   protected submitEnabled: Signal<boolean> = computed(() => {
     return this.registrationForm()?.invalid()
