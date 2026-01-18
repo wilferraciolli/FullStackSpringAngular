@@ -47,8 +47,8 @@ export class OrgChartService {
     });
 
     // 3. Populate Map with Containers
-    orgs.forEach(i => nodeMap.set(i.id, createContainer(i, OrgNodeType.ORG)));
-    entities.forEach(i => nodeMap.set(i.id, createContainer(i, OrgNodeType.ORG_ENTITY)));
+    orgs.forEach(i => nodeMap.set(i.id, createContainer(i, OrgNodeType.ORGANISATION)));
+    entities.forEach(i => nodeMap.set(i.id, createContainer(i, OrgNodeType.ORGANISATION_ENTITY)));
     depts.forEach(i => nodeMap.set(i.id, createContainer(i, OrgNodeType.DEPARTMENT)));
 
     // 4. Process Jobs (The Leaf Nodes)
@@ -92,7 +92,7 @@ export class OrgChartService {
         if ('children' in parent) {
 
           // RULE: OrgEntity cannot have Jobs directly
-          // if (node.type === OrgNodeType.JOB && parent.type === OrgNodeType.ORG_ENTITY) {
+          // if (node.type === OrgNodeType.JOB && parent.type === OrgNodeType.ORGANISATION_ENTITY) {
           //   console.warn(`[Data Integrity] Job '${node.title}' cannot report directly to Entity '${parent.title}'. Skipping.`);
           //   return;
           // }

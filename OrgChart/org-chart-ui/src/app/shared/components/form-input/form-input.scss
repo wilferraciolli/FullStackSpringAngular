@@ -1,3 +1,11 @@
-mat-form-field {
-  width: 100%;
+@use 'shared' as app;
+
+.FormField {
+  &-container {
+    @include app.form-field-spacing;
+  }
+
+  &-field {
+    width: 100%;
+  }
 }

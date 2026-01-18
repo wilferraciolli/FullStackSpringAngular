@@ -9,7 +9,7 @@ interface OrgTreeNodeBase {
 }
 
 export interface OrgTreeNodeUnit extends OrgTreeNodeBase {
-  type: OrgNodeType.ORG | OrgNodeType.ORG_ENTITY | OrgNodeType.DEPARTMENT;
+  type: OrgNodeType.ORGANISATION | OrgNodeType.ORGANISATION_ENTITY | OrgNodeType.DEPARTMENT;
   children: OrgTreeNode[]; // Recursive children
 }
 

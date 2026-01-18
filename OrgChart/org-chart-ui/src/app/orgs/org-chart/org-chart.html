@@ -43,15 +43,15 @@
 
           <div class="container-card"
                [ngClass]="{
-               'type-org': node.type === OrgNodeType.ORG,
-               'type-entity': node.type === OrgNodeType.ORG_ENTITY,
+               'type-org': node.type === OrgNodeType.ORGANISATION,
+               'type-entity': node.type === OrgNodeType.ORGANISATION_ENTITY,
                'type-dept': node.type === OrgNodeType.DEPARTMENT
              }">
 
-            @if (node.type === OrgNodeType.ORG) {
+            @if (node.type === OrgNodeType.ORGANISATION) {
               <mat-icon>corporate_fare</mat-icon>
             }
-            @if (node.type === OrgNodeType.ORG_ENTITY) {
+            @if (node.type === OrgNodeType.ORGANISATION_ENTITY) {
               <mat-icon>account_balance</mat-icon>
             }
             @if (node.type === OrgNodeType.DEPARTMENT) {

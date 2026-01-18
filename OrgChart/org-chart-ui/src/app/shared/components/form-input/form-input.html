@@ -1,23 +1,26 @@
-<mat-form-field appearance="outline"
-                [class.mat-form-field-invalid]="invalid() && touched()"
-                subscriptSizing="dynamic">
-  <mat-label> {{ label() }}</mat-label>
-  <input
-    matInput
-    #inputEl
-    [type]="type()"
-    [value]="value()"
-    (input)="value.set(inputEl.value)"
-    [disabled]="disabled()"
-    [readonly]="readonly()"
-    (blur)="touched.set(true)"
-    [placeholder]="placeholder()"
-  />
-</mat-form-field>
-@if (invalid() && touched()) {
-  <mat-error style="display: block !important;">
-    @for (error of errors(); track error.kind) {
-      <span>{{ error.message }}</span>
-    }
-  </mat-error>
-}
+<div class="FormField-container">
+  <mat-form-field appearance="outline"
+                  class="FormField-field"
+                  [class.mat-form-field-invalid]="invalid() && touched()"
+                  subscriptSizing="dynamic">
+    <mat-label> {{ label() }}</mat-label>
+    <input
+      matInput
+      #inputEl
+      [type]="type()"
+      [value]="value()"
+      (input)="value.set(inputEl.value)"
+      [disabled]="disabled()"
+      [readonly]="readonly()"
+      (blur)="touched.set(true)"
+      [placeholder]="placeholder()"
+    />
+  </mat-form-field>
+  @if (invalid() && touched()) {
+    <mat-error style="display: block !important;">
+      @for (error of errors(); track error.kind) {
+        <span>{{ error.message }}</span>
+      }
+    </mat-error>
+  }
+</div>
