@@ -1,0 +1,30 @@
+<div class="FormDate-container">
+  <mat-form-field appearance="outline"
+                  class="FormDate-field"
+                  [class.mat-form-field-invalid]="invalid() && touched()"
+                  subscriptSizing="dynamic">
+    <mat-label> {{ label() }}</mat-label>
+
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [value]="businessDayObject()"
+      (dateInput)="onDateChange($event.value)"
+      (dateChange)="onDateChange($event.value)"
+      (blur)="touched.set(true)"
+      [disabled]="disabled()"
+      [placeholder]="placeholder()"
+    />
+
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker (closed)="touched.set(true)"></mat-datepicker>
+  </mat-form-field>
+
+  @if (invalid() && touched()) {
+    <mat-error style="display: block !important;">
+      @for (error of errors(); track error.kind) {
+        <span>{{ error.message }}</span>
+      }
+    </mat-error>
+  }
+</div>

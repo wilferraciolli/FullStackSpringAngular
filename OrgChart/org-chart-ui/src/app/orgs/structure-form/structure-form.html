@@ -1,11 +1,14 @@
 <form (submit)="onSubmit()">
   <wt-form-input
-    [formField]="registrationForm.name"
+    [formField]="structureForm.name"
     label="Name"
     placeholder="Enter structure name"/>
+  <wt-form-date
+   [formField]="structureForm.startDate"
+  />
 
   <wt-form-select
-    [formField]="registrationForm.structureType"
+    [formField]="structureForm.structureType"
     [addInitialBlankOption]=true
     [options]="structureTypeOptions"
     label="Structure type"
@@ -18,5 +21,5 @@
   </button>
 </form>
 
-<pre>{{registrationForm().value() | json}}</pre>
-<pre>{{registrationForm().errors() | json}}</pre>
+<pre>{{structureForm().value() | json}}</pre>
+<pre>{{structureForm().errors() | json}}</pre>
