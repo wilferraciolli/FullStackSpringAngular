@@ -21,6 +21,10 @@ ng add @angular/material
 ### ngx signals store
 npm install @ngrx/signals
 
+### Interactive Org Chart
+https://github.com/zeyadelshaf3y/ngx-interactive-org-chart?tab=readme-ov-file
+npm install ngx-interactive-org-chart
+
 ### Prime NG for the org chart (Replaced by Angular material)
 This library will be used to display the org chart, it needs installing the dependency plus adding the styles manually
 Eg

@@ -1,0 +1,87 @@
+<div class="controls-overlay">
+  <button (click)="highlightManager()">Focus Engineering</button>
+  <button (click)="orgChart.zoomIn()">+</button>
+  <button (click)="orgChart.zoomOut()">-</button>
+  <!--  <button (click)="orgChart.center()">Center Chart</button>-->
+</div>
+
+<div class="org-chart-wrapper">
+  @if (orgChartData()) {
+    <ngx-interactive-org-chart
+      [data]="orgChartData()!"
+      [themeOptions]="themeOptions"
+      [displayChildrenCount]="false"
+      layout="horizontal"
+    >
+      <ng-template #nodeTemplate let-node>
+        <div
+          class="custom-node"
+          [ngClass]="node.nodeClass"
+          [style.--node-background]="node.style['--node-background']"
+          (click)="onNodeSelected(node.data)"
+        >
+          @if (node.data.reportingJob) {
+            <div class="manager-header">
+              <img [src]="node.data.reportingJob.person.thumbnail" class="manager-avatar" />
+              <div class="manager-info">
+                <div class="manager-name">{{ node.data.reportingJob.person.name }}</div>
+                <div class="manager-title">{{ node.data.reportingJob.title }}</div>
+              </div>
+              <div class="manager-badge">LEAD</div>
+            </div>
+            <div class="node-divider"></div>
+          }
+
+          <span class="node-icon">
+            @switch (node.data.type) {
+              @case (nodeTypeEnum.Organisation) {
+                🏢
+              }
+              @case (nodeTypeEnum.OrganisationEntity) {
+                🌐
+              }
+              @case (nodeTypeEnum.Department) {
+                📁
+              }
+              @case (nodeTypeEnum.Job) {
+                💼
+              }
+            }
+          </span>
+
+          <div class="node-header">
+            <span class="type-badge">{{ node.data.type }}</span>
+          </div>
+
+          <div class="node-body">
+            @if (node.data.type === nodeTypeEnum.Job) {
+              <div class="job-container">
+                @if (node.data.status === 'occupied' && node.data.person) {
+                  <img [src]="node.data.person.thumbnail" class="avatar" alt="User">
+                  <div class="info">
+                    <div class="name">{{ node.data.person.name }}</div>
+                    <div class="title">{{ node.data.person.title }}</div>
+                    <span class="tag">
+                {{ node.data.person.type === dataTypeEnum.Contractor ? '🛠️ Contractor' : '👥 Staff' }}
+              </span>
+                  </div>
+                } @else {
+                  <div class="vacant-placeholder">
+                    <div class="status">⚠️ Position Vacant</div>
+                    <div class="subtext">Recruitment active</div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="entity-info">
+                <div class="entity-name">{{ node.data.name }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      </ng-template>
+    </ngx-interactive-org-chart>
+  } @else {
+    <div class="loading-spinner">Building Organization Chart...</div>
+  }
+</div>
