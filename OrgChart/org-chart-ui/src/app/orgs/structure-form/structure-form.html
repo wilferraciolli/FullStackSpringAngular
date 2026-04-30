@@ -1,23 +1,25 @@
-<form>
+<form (submit)="onSubmit()">
   <wt-form-input
-    [field]="simpleForm.username"
-    label="Username"
-    placeholder="Enter username"
+    [formField]="structureForm.name"
+    label="Name"
+    placeholder="Enter structure name"/>
+  <wt-form-date
+   [formField]="structureForm.startDate"
   />
-  <wt-form-input
-    [field]="simpleForm.email"
-    label="Email"
-    placeholder="Enter email"
-    type="email"
-  />
+
+  <wt-form-select
+    [formField]="structureForm.structureType"
+    [addInitialBlankOption]=true
+    [options]="structureTypeOptions"
+    label="Structure type"
+    type="select"/>
+
   <button type="submit"
-          [disabled]="simpleForm().invalid()"
-          (click)="onSubmit()"
-  >Submit
+          matButton="filled"
+          [disabled]="submitEnabled()">
+    Submit
   </button>
 </form>
 
-<pre>invalid: {{ simpleForm().invalid() }}</pre>
-<pre>Touched: {{ simpleForm().touched() }}</pre>
-<pre>Submitting: {{ simpleForm().submitting() }}</pre>
-<pre>{{ simpleForm().value() }}</pre>
+<pre>{{structureForm().value() | json}}</pre>
+<pre>{{structureForm().errors() | json}}</pre>

@@ -3,6 +3,7 @@ import {Login} from './users/login/login';
 import {App} from './app';
 import {OrgChart} from './orgs/org-chart/org-chart';
 import {StructureForm} from './orgs/structure-form/structure-form';
+import {OrganisationChart} from './orgs/organisation-chart/organisation-chart';
 
 export const routes: Routes = [
   {
@@ -16,6 +17,10 @@ export const routes: Routes = [
   {
     path: 'org-chart',
     component: OrgChart
+  },
+  {
+    path: 'organisation-chart',
+    component: OrganisationChart
   },
   {
     path: 'structure-form',

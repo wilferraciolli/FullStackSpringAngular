@@ -1,0 +1,29 @@
+<div class="FormSelect-container">
+  <mat-form-field appearance="outline"
+                  class="FormSelect-field"
+                  [class.mat-form-field-invalid]="invalid() && touched()"
+                  subscriptSizing="dynamic">
+    <mat-label> {{ label() }}</mat-label>
+    <mat-select
+      [value]="value()"
+      (selectionChange)="value.set($event.value)"
+      (openedChange)="!$event ? touched.set(true) : null"
+      [disabled]="disabled()">
+
+      @if (addInitialBlankOption()) {
+        <mat-option value=""></mat-option>
+      }
+      @for (option of options(); track option.id) {
+        <mat-option [value]=option.id>{{ option.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (invalid() && touched()) {
+    <mat-error style="display: block !important;">
+      @for (error of errors(); track error.kind) {
+        <span>{{ error.message }}</span>
+      }
+    </mat-error>
+  }
+</div>

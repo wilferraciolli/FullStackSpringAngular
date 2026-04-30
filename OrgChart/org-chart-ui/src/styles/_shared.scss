@@ -1,0 +1,36 @@
+// 1. spacing
+$spacing-mobile: 10px;
+$spacing-desktop: 20px;
+
+// media query
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+
+// fonts
+$font-size-label: 14px;
+$font-size-header: 24px;
+$font-weight-bold: 700;
+$font-weight-medium: 500;
+
+// Mixins
+@mixin form-field-spacing {
+  padding: $spacing-mobile;
+
+  @media (min-width: $breakpoint-desktop) {
+    padding: $spacing-desktop;
+  }
+}
+
+@mixin typography($style) {
+  @if $style == 'label' {
+    font-size: $font-size-label;
+    font-weight: $font-weight-medium;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+  }
+  @else if $style == 'header' {
+    font-size: $font-size-header;
+    font-weight: $font-weight-bold;
+    line-height: 1.5;
+  }
+}

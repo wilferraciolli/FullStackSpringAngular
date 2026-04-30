@@ -1,0 +1,16 @@
+@use 'shared' as app;
+//
+//:host {
+//  display: block; // Critical for positioning logic
+//  @include app.form-field-spacing;
+//}
+
+.FormDate {
+  &-container {
+    @include app.form-field-spacing;
+  }
+
+  &-field {
+    width: 100%;
+  }
+}

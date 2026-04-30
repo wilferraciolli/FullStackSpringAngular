@@ -1,6 +1,6 @@
 @use 'shared' as app;
 
-.FormField {
+.FormSelect {
   &-container {
     @include app.form-field-spacing;
   }
