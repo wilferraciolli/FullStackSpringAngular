@@ -1,1 +1,13 @@
-<p>query-manager works!</p>
+<mat-tab-group>
+  <mat-tab label="Saved Queries">
+    <ng-template matTabContent>
+      <app-query-viewer />
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="Query Builder">
+    <ng-template matTabContent>
+      <app-query-builder />
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

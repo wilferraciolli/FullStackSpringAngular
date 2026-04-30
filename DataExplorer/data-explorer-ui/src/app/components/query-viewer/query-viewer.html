@@ -1,0 +1,67 @@
+<div class="QueryViewer-container">
+
+  <!-- Top bar: search left, new category right -->
+  <div class="QueryViewer-toolbar">
+    <mat-form-field class="QueryViewer-toolbar-search" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Search queries</mat-label>
+      <input matInput
+             [ngModel]="searchTerm()"
+             (ngModelChange)="onSearch($event)"
+             placeholder="e.g. Get All Users" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" class="QueryViewer-toolbar-new-category">
+      <mat-icon>create_new_folder</mat-icon>
+      New Category
+    </button>
+  </div>
+
+  <!-- Body: categories left, queries right -->
+  <div class="QueryViewer-body">
+
+    <!-- Category list -->
+    <mat-card class="QueryViewer-categories">
+      <mat-card-header>
+        <mat-card-title>Categories</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-nav-list>
+          @for (cat of categories; track cat.id) {
+            <a mat-list-item
+               class="QueryViewer-categories-item"
+               [class.QueryViewer-categories-item--active]="selectedCategory()?.id === cat.id"
+               (click)="selectCategory(cat)">
+              <mat-icon matListItemIcon>folder</mat-icon>
+              <span matListItemTitle>{{ cat.name }}</span>
+            </a>
+          }
+        </mat-nav-list>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Query list -->
+    <mat-card class="QueryViewer-queries">
+      <mat-card-header>
+        <mat-card-title>
+          {{ selectedCategory() ? selectedCategory()!.name : 'All Queries' }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (filteredQueries().length === 0) {
+          <p class="QueryViewer-queries-empty">No queries found.</p>
+        }
+        <mat-nav-list>
+          @for (query of filteredQueries(); track query.id) {
+            <a mat-list-item class="QueryViewer-queries-item">
+              <mat-icon matListItemIcon>code</mat-icon>
+              <span matListItemTitle>{{ query.name }}</span>
+              <span matListItemLine>{{ query.description }}</span>
+            </a>
+          }
+        </mat-nav-list>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

@@ -1,0 +1,62 @@
+.QueryViewer {
+  &-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
+
+  &-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &-search {
+      flex: 1;
+    }
+
+    &-new-category {
+      white-space: nowrap;
+    }
+  }
+
+  &-body {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  &-categories {
+    width: 220px;
+    flex-shrink: 0;
+
+    &-item {
+      cursor: pointer;
+      border-radius: 4px;
+
+      &--active {
+        background-color: rgba(98, 0, 238, 0.1);
+        font-weight: 600;
+      }
+    }
+  }
+
+  &-queries {
+    flex: 1;
+
+    &-empty {
+      color: #888;
+      padding: 1rem 0;
+      text-align: center;
+    }
+
+    &-item {
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
