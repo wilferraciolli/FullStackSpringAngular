@@ -1,0 +1,58 @@
+.Home {
+  &-container {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1.5rem;
+	border-radius: 0.5rem;
+	background-color: #f6f9ff;
+  }
+
+  &-title {
+	margin: 0;
+	font-size: 2rem;
+	font-weight: 600;
+	color: #1d2a44;
+  }
+
+  &-description {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: #33415c;
+  }
+
+  &-section {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+  }
+
+  &-section-title {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: #1d2a44;
+  }
+
+  &-feature-list {
+	margin: 0;
+	padding-left: 1.25rem;
+  }
+
+  &-feature-item {
+	margin: 0.25rem 0;
+	color: #24324a;
+  }
+
+  &-actions {
+	display: flex;
+	justify-content: flex-end;
+	padding-top: 0.5rem;
+  }
+
+  &-actions-fab {
+	font-size: 1rem;
+  }
+}
+
