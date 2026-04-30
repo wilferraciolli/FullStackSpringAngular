@@ -20,7 +20,7 @@
   <!-- Body: data fields left, query right -->
   <div class="QueryBuilder-body">
 
-    <!-- Data Fields card -->
+    <!-- ── Data Fields card ─────────────────────────── -->
     <mat-card class="QueryBuilder-fields">
       <mat-card-header>
         <mat-card-title>Data Fields</mat-card-title>
@@ -28,23 +28,25 @@
       </mat-card-header>
 
       <mat-card-content>
-
-        <!-- Area selector chips -->
-        <div class="QueryBuilder-fields-areas">
-          @for (area of dataAreas; track area.key) {
-            <button mat-stroked-button
-                    class="QueryBuilder-fields-area-btn"
-                    [class.QueryBuilder-fields-area-btn--active]="selectedArea()?.key === area.key"
-                    (click)="selectArea(area)">
-              <mat-icon>{{ area.icon }}</mat-icon>
-              {{ area.label }}
-            </button>
-          }
-        </div>
+        <!-- Area selector -->
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-fields-area-select">
+          <mat-label>Area</mat-label>
+          <mat-select [ngModel]="selectedArea()"
+                      (ngModelChange)="selectedArea.set($event)"
+                      [compareWith]="compareAreas">
+            <mat-option [value]="null">— None —</mat-option>
+            @for (area of dataAreas; track area.key) {
+              <mat-option [value]="area">
+                <mat-icon>{{ area.icon }}</mat-icon>
+                {{ area.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
         <mat-divider class="QueryBuilder-fields-divider" />
 
-        <!-- Field checkboxes (shown after area selected) -->
+        <!-- Field checkboxes -->
         @if (selectedArea()) {
           <div class="QueryBuilder-fields-list">
             <p class="QueryBuilder-fields-list-heading">{{ selectedArea()!.label }} Fields</p>
@@ -57,27 +59,177 @@
         } @else {
           <p class="QueryBuilder-fields-empty">Choose an area above to see its fields.</p>
         }
-
       </mat-card-content>
     </mat-card>
 
-    <!-- Query preview card -->
+    <!-- ── Query card ───────────────────────────────── -->
     <mat-card class="QueryBuilder-query">
-      <mat-card-header>
+
+      <!-- Header with Save button -->
+      <mat-card-header class="QueryBuilder-query-header">
         <mat-card-title>Query</mat-card-title>
-        <mat-card-subtitle>Selected fields will appear here</mat-card-subtitle>
+        <mat-card-subtitle>Configure fields, date range and filters</mat-card-subtitle>
+        <button mat-stroked-button color="primary" class="QueryBuilder-query-header-save" (click)="saveQuery()">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
       </mat-card-header>
+
       <mat-card-content>
-        @if (selectedFields.length > 0) {
-          <mat-chip-set class="QueryBuilder-query-chips">
-            @for (field of selectedFields; track field.key) {
-              <mat-chip>{{ field.label }}</mat-chip>
+        <mat-accordion class="QueryBuilder-query-accordion" multi>
+
+          <!-- Accordion 1: Selected Fields -->
+          <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+              <mat-panel-title class="QueryBuilder-query-panel-title">
+                <mat-icon>checklist</mat-icon>
+                Selected Fields
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ selectedFields.length }} field(s) chosen
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            @if (selectedFields.length > 0) {
+              <mat-chip-set class="QueryBuilder-query-chips">
+                @for (field of selectedFields; track field.key) {
+                  <mat-chip>{{ field.label }}</mat-chip>
+                }
+              </mat-chip-set>
+            } @else {
+              <p class="QueryBuilder-query-empty">No fields selected yet. Pick an area and tick some fields.</p>
             }
-          </mat-chip-set>
-        } @else {
-          <p class="QueryBuilder-query-empty">No fields selected yet.</p>
-        }
+          </mat-expansion-panel>
+
+          <!-- Accordion 2: Date Range -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title class="QueryBuilder-query-panel-title">
+                <mat-icon>date_range</mat-icon>
+                Date Range
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ dateRangeLabel }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="QueryBuilder-query-daterange">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-query-daterange-select">
+                <mat-label>Period</mat-label>
+                <mat-select [ngModel]="dateRangeOption()" (ngModelChange)="dateRangeOption.set($event)">
+                  @for (opt of dateRangeOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              @if (dateRangeOption() === 'custom') {
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-query-daterange-picker">
+                  <mat-label>Custom range</mat-label>
+                  <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate [(ngModel)]="customDateStart" placeholder="Start date" />
+                    <input matEndDate   [(ngModel)]="customDateEnd"   placeholder="End date" />
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker" />
+                  <mat-date-range-picker #picker />
+                </mat-form-field>
+              }
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Accordion 3: Filters -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title class="QueryBuilder-query-panel-title">
+                <mat-icon>filter_list</mat-icon>
+                Filters
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ activeFilters.length }} active filter(s)
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <!-- Search to add a field -->
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-query-filters-search">
+              <mat-label>Search fields to filter</mat-label>
+              <input matInput
+                     [ngModel]="filterSearchTerm()"
+                     (ngModelChange)="filterSearchTerm.set($event)"
+                     [matAutocomplete]="filterAuto"
+                     placeholder="e.g. Salary, Absence…" />
+              <mat-icon matSuffix>search</mat-icon>
+              <mat-autocomplete #filterAuto
+                                [displayWith]="() => ''"
+                                (optionSelected)="addFieldToFilter($event.option.value)">
+                @for (field of fieldSuggestions; track field.key) {
+                  <mat-option [value]="field">
+                    <span class="QueryBuilder-query-filters-option">
+                      <span class="QueryBuilder-query-filters-option-area">{{ field.areaLabel }}</span>
+                      <span>{{ field.label }}</span>
+                    </span>
+                  </mat-option>
+                }
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <!-- Added filter rows -->
+            @if (addedFilters.length === 0) {
+              <p class="QueryBuilder-query-empty">Search for a field above to add a filter.</p>
+            } @else {
+              <div class="QueryBuilder-query-filters">
+                @for (filter of addedFilters; track filter.fieldKey) {
+                  <div class="QueryBuilder-query-filters-row">
+
+                    <div class="QueryBuilder-query-filters-row-label">
+                      <span class="QueryBuilder-query-filters-row-label-area">{{ filter.areaLabel }}</span>
+                      <span>{{ filter.fieldLabel }}</span>
+                    </div>
+
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-query-filters-row-op">
+                      <mat-label>Condition</mat-label>
+                      <mat-select [ngModel]="filter.operator"
+                                  (ngModelChange)="onOperatorChange(filter, $event)">
+                        @for (op of filterOperators; track op.value) {
+                          <mat-option [value]="op.value">{{ op.label }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+
+                    @if (!needsNoValue(filter.operator)) {
+                      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-query-filters-row-value">
+                        <mat-label>Value</mat-label>
+                        <input matInput
+                               [ngModel]="filter.value"
+                               (ngModelChange)="onFilterValueChange(filter, $event)" />
+                      </mat-form-field>
+                    }
+
+                    <button mat-icon-button
+                            color="warn"
+                            class="QueryBuilder-query-filters-row-remove"
+                            matTooltip="Remove filter"
+                            (click)="removeFilter(filter.fieldKey)">
+                      <mat-icon>remove_circle_outline</mat-icon>
+                    </button>
+
+                  </div>
+                }
+              </div>
+            }
+
+          </mat-expansion-panel>
+
+        </mat-accordion>
       </mat-card-content>
+
+      <!-- Run button at the bottom -->
+      <mat-card-actions class="QueryBuilder-query-actions">
+        <button mat-fab extended color="primary" (click)="runQuery()">
+          <mat-icon>play_arrow</mat-icon>
+          Run Query
+        </button>
+      </mat-card-actions>
+
     </mat-card>
 
   </div>
