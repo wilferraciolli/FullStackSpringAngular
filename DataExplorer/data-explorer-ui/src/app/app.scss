@@ -1,0 +1,38 @@
+.App {
+  &-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 10%;
+  }
+
+  &-header-container {
+    width: 100%;
+    display: flex;
+  }
+
+  &-header {
+    display: flex;
+    align-items: center; // keeps text + icons on same line/vertical center
+    width: 100%;
+    gap: 8px;
+  }
+
+  //&-header-menu {
+  //  display: flex;
+  //  flex-direction: row;
+  //  align-self: flex-end;
+  //}
+
+  &-header-actions {
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+  }
+
+  &-content {
+    width: 100%;
+    background-color: blue;
+  }
+}
