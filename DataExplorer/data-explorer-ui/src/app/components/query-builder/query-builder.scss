@@ -1,0 +1,97 @@
+.QueryBuilder {
+  &-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
+
+  &-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &-prompt {
+      flex: 1;
+    }
+
+    &-ai-btn {
+      white-space: nowrap;
+    }
+  }
+
+  &-body {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  &-fields {
+    width: 280px;
+    flex-shrink: 0;
+
+    &-areas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+    }
+
+    &-area-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      &--active {
+        background-color: rgba(98, 0, 238, 0.1);
+        border-color: blueviolet !important;
+        color: blueviolet;
+        font-weight: 600;
+      }
+    }
+
+    &-divider {
+      margin: 0.75rem 0 !important;
+    }
+
+    &-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      &-heading {
+        margin: 0 0 0.5rem;
+        font-weight: 600;
+        color: #1d2a44;
+      }
+
+      &-item {
+        display: flex;
+      }
+    }
+
+    &-empty {
+      color: #888;
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+    }
+  }
+
+  &-query {
+    flex: 1;
+
+    &-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.5rem 0;
+    }
+
+    &-empty {
+      color: #888;
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+    }
+  }
+}
+

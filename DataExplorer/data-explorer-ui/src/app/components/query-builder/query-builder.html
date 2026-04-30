@@ -1,1 +1,84 @@
-<p>query-builder works!</p>
+<div class="QueryBuilder-container">
+
+  <!-- Top bar: AI prompt left, button right -->
+  <div class="QueryBuilder-toolbar">
+    <mat-form-field class="QueryBuilder-toolbar-prompt" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Describe your query</mat-label>
+      <input matInput
+             [ngModel]="aiPrompt()"
+             (ngModelChange)="aiPrompt.set($event)"
+             placeholder="e.g. Get all people who were absent last month" />
+      <mat-icon matPrefix>auto_awesome</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="accent" class="QueryBuilder-toolbar-ai-btn" (click)="buildWithAi()">
+      <mat-icon>smart_toy</mat-icon>
+      Build with AI
+    </button>
+  </div>
+
+  <!-- Body: data fields left, query right -->
+  <div class="QueryBuilder-body">
+
+    <!-- Data Fields card -->
+    <mat-card class="QueryBuilder-fields">
+      <mat-card-header>
+        <mat-card-title>Data Fields</mat-card-title>
+        <mat-card-subtitle>Select an area, then pick fields</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <!-- Area selector chips -->
+        <div class="QueryBuilder-fields-areas">
+          @for (area of dataAreas; track area.key) {
+            <button mat-stroked-button
+                    class="QueryBuilder-fields-area-btn"
+                    [class.QueryBuilder-fields-area-btn--active]="selectedArea()?.key === area.key"
+                    (click)="selectArea(area)">
+              <mat-icon>{{ area.icon }}</mat-icon>
+              {{ area.label }}
+            </button>
+          }
+        </div>
+
+        <mat-divider class="QueryBuilder-fields-divider" />
+
+        <!-- Field checkboxes (shown after area selected) -->
+        @if (selectedArea()) {
+          <div class="QueryBuilder-fields-list">
+            <p class="QueryBuilder-fields-list-heading">{{ selectedArea()!.label }} Fields</p>
+            @for (field of selectedArea()!.fields; track field.key) {
+              <mat-checkbox class="QueryBuilder-fields-list-item" [(ngModel)]="field.selected">
+                {{ field.label }}
+              </mat-checkbox>
+            }
+          </div>
+        } @else {
+          <p class="QueryBuilder-fields-empty">Choose an area above to see its fields.</p>
+        }
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Query preview card -->
+    <mat-card class="QueryBuilder-query">
+      <mat-card-header>
+        <mat-card-title>Query</mat-card-title>
+        <mat-card-subtitle>Selected fields will appear here</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (selectedFields.length > 0) {
+          <mat-chip-set class="QueryBuilder-query-chips">
+            @for (field of selectedFields; track field.key) {
+              <mat-chip>{{ field.label }}</mat-chip>
+            }
+          </mat-chip-set>
+        } @else {
+          <p class="QueryBuilder-query-empty">No fields selected yet.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>
