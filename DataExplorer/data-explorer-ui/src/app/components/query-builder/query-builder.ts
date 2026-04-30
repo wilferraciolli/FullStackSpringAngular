@@ -15,6 +15,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 export interface DataField {
   key: string;
@@ -69,6 +70,7 @@ export type DateRangeOption = 'today' | 'this_week' | 'this_month' | 'custom';
     MatNativeDateModule,
     MatAutocompleteModule,
     MatTooltipModule,
+    DragDropModule,
   ],
   templateUrl: './query-builder.html',
   styleUrl: './query-builder.scss',
@@ -76,6 +78,9 @@ export type DateRangeOption = 'today' | 'this_week' | 'this_month' | 'custom';
 export class QueryBuilder {
   aiPrompt = signal('');
   selectedArea = signal<DataArea | null>(null);
+
+  // Ordered list of selected field keys (drives both display order and drag-drop)
+  selectedFieldKeys = signal<string[]>([]);
 
   // Date range
   dateRangeOption = signal<DateRangeOption>('this_month');
@@ -223,8 +228,36 @@ export class QueryBuilder {
     return this.dateRangeOptions.find(o => o.value === this.dateRangeOption())?.label ?? '';
   }
 
-  get selectedFields(): DataField[] {
-    return this.selectedArea()?.fields.filter(f => f.selected) ?? [];
+  get selectedFields(): IndexedField[] {
+    const keyOrder = this.selectedFieldKeys();
+    const allFields = this.allIndexedFields;
+    return keyOrder
+      .map(k => allFields.find(f => f.key === k))
+      .filter((f): f is IndexedField => f !== undefined);
+  }
+
+  onFieldToggle(field: DataField, checked: boolean) {
+    field.selected = checked;
+    if (checked) {
+      if (!this.selectedFieldKeys().includes(field.key)) {
+        this.selectedFieldKeys.set([...this.selectedFieldKeys(), field.key]);
+      }
+    } else {
+      this.selectedFieldKeys.set(this.selectedFieldKeys().filter(k => k !== field.key));
+    }
+  }
+
+  removeSelectedField(fieldKey: string) {
+    // Uncheck the field object so the checkbox reflects removal
+    const field = this.allIndexedFields.find(f => f.key === fieldKey);
+    if (field) field.selected = false;
+    this.selectedFieldKeys.set(this.selectedFieldKeys().filter(k => k !== fieldKey));
+  }
+
+  onFieldDrop(event: CdkDragDrop<string[]>) {
+    const keys = [...this.selectedFieldKeys()];
+    moveItemInArray(keys, event.previousIndex, event.currentIndex);
+    this.selectedFieldKeys.set(keys);
   }
 
   selectArea(area: DataArea) {

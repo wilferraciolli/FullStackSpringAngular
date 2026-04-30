@@ -76,12 +76,74 @@
       align-items: center;
       gap: 0.4rem;
     }
-
-    &-chips {
+    // Accordion 1 – draggable field list
+    &-field-list {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 0.4rem;
-      padding: 0.5rem 0;
+      padding: 0.25rem 0;
+    }
+
+    &-field-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      background: #fff;
+      cursor: default;
+
+      &:hover {
+        border-color: #bbb;
+        background: #fafafa;
+      }
+
+      &-drag {
+        cursor: grab;
+        color: #aaa;
+        flex-shrink: 0;
+
+        &:active { cursor: grabbing; }
+      }
+
+      &-label {
+        flex: 1;
+        font-size: 0.9rem;
+        color: #1d2a44;
+      }
+
+      &-remove {
+        flex-shrink: 0;
+        width: 28px !important;
+        height: 28px !important;
+        line-height: 28px !important;
+
+        mat-icon { font-size: 16px; }
+      }
+
+      &-placeholder {
+        height: 42px;
+        border-radius: 6px;
+        border: 2px dashed #c084fc;
+        background: rgba(192, 132, 252, 0.08);
+      }
+    }
+
+    // CDK drag preview (floating clone while dragging)
+    .cdk-drag-preview {
+      border-radius: 6px;
+      border: 1px solid #c084fc;
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      padding: 0.4rem 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cdk-drag-animating {
+      transition: transform 200ms ease;
     }
 
     &-daterange {

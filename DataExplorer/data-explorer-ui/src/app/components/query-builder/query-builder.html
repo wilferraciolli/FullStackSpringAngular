@@ -51,7 +51,9 @@
           <div class="QueryBuilder-fields-list">
             <p class="QueryBuilder-fields-list-heading">{{ selectedArea()!.label }} Fields</p>
             @for (field of selectedArea()!.fields; track field.key) {
-              <mat-checkbox class="QueryBuilder-fields-list-item" [(ngModel)]="field.selected">
+              <mat-checkbox class="QueryBuilder-fields-list-item"
+                            [ngModel]="field.selected"
+                            (ngModelChange)="onFieldToggle(field, $event)">
                 {{ field.label }}
               </mat-checkbox>
             }
@@ -91,11 +93,24 @@
             </mat-expansion-panel-header>
 
             @if (selectedFields.length > 0) {
-              <mat-chip-set class="QueryBuilder-query-chips">
+              <div class="QueryBuilder-query-field-list"
+                   cdkDropList
+                   (cdkDropListDropped)="onFieldDrop($event)">
                 @for (field of selectedFields; track field.key) {
-                  <mat-chip>{{ field.label }}</mat-chip>
+                  <div class="QueryBuilder-query-field-item" cdkDrag>
+                    <mat-icon class="QueryBuilder-query-field-item-drag" cdkDragHandle>drag_indicator</mat-icon>
+                    <span class="QueryBuilder-query-field-item-label">{{ field.label }}</span>
+                    <button mat-icon-button
+                            class="QueryBuilder-query-field-item-remove"
+                            matTooltip="Remove field"
+                            (click)="removeSelectedField(field.key)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                    <!-- Drag placeholder -->
+                    <div *cdkDragPlaceholder class="QueryBuilder-query-field-item-placeholder"></div>
+                  </div>
                 }
-              </mat-chip-set>
+              </div>
             } @else {
               <p class="QueryBuilder-query-empty">No fields selected yet. Pick an area and tick some fields.</p>
             }
