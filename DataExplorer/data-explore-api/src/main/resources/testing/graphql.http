@@ -1,0 +1,18 @@
+@baseUrl = http://localhost:8080
+
+### GraphQL API Testing - people query
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+
+{
+	"query": "{ people { firstName email } }"
+}
+
+
+### GraphQL API Testing - addresses query
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+
+{
+	"query": "{ addresses { city street } }"
+}

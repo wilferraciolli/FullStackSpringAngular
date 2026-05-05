@@ -1,0 +1,61 @@
+type Query {
+    # The 'filter' and 'sort' arguments provide the OData-like flexibility
+    people(filter: PersonFilter, sort: PersonSort): [Person]
+    addresses(filter: AddressFilter, sort: AddressSort): [Address]
+}
+
+type Person {
+    id: ID
+    email: String
+    firstName: String
+    lastName: String
+    phoneNumber: String
+    bio: String
+    jobName: String
+    startDate: String # Usually ISO-8601 strings
+}
+
+type Address {
+    id: ID
+    city: String
+    street: String
+}
+
+input PersonFilter {
+    firstName: String
+    lastName: String
+    email: String
+    jobName: String
+}
+
+input PersonSort {
+    field: PersonSortField
+    order: SortOrder
+}
+
+enum PersonSortField {
+    lastName
+    firstName
+    email
+    jobName
+}
+
+input AddressFilter {
+    city: String
+    street: String
+}
+
+input AddressSort {
+    field: AddressSortField
+    order: SortOrder
+}
+
+enum AddressSortField {
+    street
+    city
+}
+
+enum SortOrder {
+    ASC
+    DESC
+}
