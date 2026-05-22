@@ -11,7 +11,7 @@ type Person {
     lastName: String
     phoneNumber: String
     bio: String
-    jobName: String
+    jobTitle: String
     startDate: String # Usually ISO-8601 strings
 }
 
@@ -25,7 +25,7 @@ input PersonFilter {
     firstName: String
     lastName: String
     email: String
-    jobName: String
+    jobTitle: String
 }
 
 input PersonSort {
@@ -37,7 +37,7 @@ enum PersonSortField {
     lastName
     firstName
     email
-    jobName
+    jobtitle
 }
 
 input AddressFilter {

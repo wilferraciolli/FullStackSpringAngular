@@ -1,6 +1,12 @@
 package com.witech.dataexplore.graphql.addresses;
 
+import java.util.List;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.witech.dataexplore.graphql.SortOrder;
 
 @Service
 public class AddressViewService {
@@ -11,7 +17,33 @@ public class AddressViewService {
     }
 
     public Iterable<AddressView> findAll(AddressFilter filter, AddressSort sort) {
-        // Your logic to query the DB View goes here
-        return repository.findAll();
+        Sort springSort = getSorting(sort);
+        List<AddressView> results = repository.findAll(springSort);
+
+        if (filter != null) {
+            results = filterResults(filter, results);
+        }
+
+        return results;
+    }
+
+    private List<AddressView> filterResults(AddressFilter filter, List<AddressView> results) {
+        return results.stream()
+                .filter(p -> !StringUtils.hasText(filter.getCity()) || p.getCity().toLowerCase().contains(filter.getCity().toLowerCase()))
+                .filter(p -> !StringUtils.hasText(filter.getStreet()) || p.getStreet().toLowerCase().contains(filter.getStreet().toLowerCase()))
+                .toList();
+    }
+
+    private Sort getSorting(AddressSort sort) {
+        Sort springSort = Sort.unsorted();
+
+        if (sort != null && sort.getField() != null) {
+            Sort.Direction direction = (sort.getOrder() == SortOrder.DESC
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC);
+            springSort = Sort.by(direction, sort.getField().name());
+        }
+
+        return springSort;
     }
 }

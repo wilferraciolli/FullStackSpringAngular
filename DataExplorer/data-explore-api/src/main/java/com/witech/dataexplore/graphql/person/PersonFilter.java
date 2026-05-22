@@ -30,11 +30,11 @@ public class PersonFilter {
         this.lastName = lastName;
     }
 
-    public String getJobName() {
+    public String getJobTitle() {
         return jobTitle;
     }
 
-    public void setJobName(String jobTitle) {
+    public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
     }
 }

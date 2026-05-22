@@ -112,7 +112,7 @@ type Person {
     lastName: String
     phoneNumber: String
     bio: String
-    jobName: String
+    jobTitle: String
     startDate: String
 }
 
@@ -130,7 +130,7 @@ input PersonFilter {
     firstName: String
     lastName: String
     email: String
-    jobName: String
+    jobTitle: String
 }
 
 input PersonSort {
@@ -142,7 +142,7 @@ enum PersonSortField {
     lastName
     firstName
     email
-    jobName
+    jobTitle
 }
 
 enum SortOrder {
@@ -161,7 +161,7 @@ query {
     firstName
     lastName
     email
-    jobName
+    jobTitle
   }
 }
 ```
@@ -169,12 +169,12 @@ query {
 **Get People with Filtering:**
 ```graphql
 query {
-  people(filter: { jobName: "Engineer" }) {
+  people(filter: { jobTitle: "Engineer" }) {
     id
     firstName
     lastName
     email
-    jobName
+    jobTitle
     startDate
   }
 }
