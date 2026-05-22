@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { DataArea } from '../components/query-builder/query-builder';
+import { DataArea, FieldFilter } from '../components/query-builder/query-builder';
 
 
 @Injectable({
@@ -48,8 +48,12 @@ export class GraphqlService {
       .filter((area: DataArea | null): area is DataArea => area !== null);
   }
 
-  public async executeQuery(selectedFieldKeys: string[], dataAreas: DataArea[]): Promise<any> {
-    const query = this.buildGraphQLQuery(selectedFieldKeys, dataAreas);
+  public async executeQuery(
+    selectedFieldKeys: string[],
+    dataAreas: DataArea[],
+    filters: FieldFilter[],
+  ): Promise<any> {
+    const query = this.buildGraphQLQuery(selectedFieldKeys, dataAreas, filters);
     console.log('Query built before sending request ', query);
     const response = await firstValueFrom(this._httpClient.post<any>(this.apiUrl, { query }));
 
@@ -60,7 +64,11 @@ export class GraphqlService {
     return response.data;
   }
 
-  private buildGraphQLQuery(selectedFieldKeys: string[], dataAreas: DataArea[]): string {
+  private buildGraphQLQuery(
+    selectedFieldKeys: string[],
+    dataAreas: DataArea[],
+    filters: FieldFilter[]
+  ): string {
     // Map from area key to GraphQL query name: person → people, address → addresses
     const queryNameMap: Record<string, string> = dataAreas.reduce<Record<string, string>>(
       (acc, area) => {
@@ -70,8 +78,6 @@ export class GraphqlService {
       {},
     );
 
-    // Group field names by area key
-    // e.g. { person: ['email', 'firstName'], address: ['city'] }
     const grouped = selectedFieldKeys.reduce<Record<string, string[]>>((acc, key) => {
       const [areaKey, fieldName] = key.split('.');
       if (!acc[areaKey]) acc[areaKey] = [];
@@ -79,12 +85,28 @@ export class GraphqlService {
       return acc;
     }, {});
 
-    // Build each query block
+    // Group filters by area key, keep only those with a value
+    const filtersByArea = filters.reduce<Record<string, FieldFilter[]>>((acc, f) => {
+      if (!f.value.trim()) return acc; // skip empty values
+      const [areaKey] = f.fieldKey.split('.');
+      if (!acc[areaKey]) acc[areaKey] = [];
+      acc[areaKey].push(f);
+      return acc;
+    }, {});
+
     const blocks = Object.entries(grouped)
       .map(([areaKey, fields]) => {
         const queryName = queryNameMap[areaKey] ?? areaKey;
         const fieldList = fields.map((f) => `    ${f}`).join('\n');
-        return `  ${queryName} {\n${fieldList}\n  }`;
+
+        // Serialize filter args: e.g. (filter: { firstName: "John", lastName: "Doe" })
+        const areaFilters = filtersByArea[areaKey] ?? [];
+        const filterArg =
+          areaFilters.length > 0
+            ? `(filter: { ${areaFilters.map((f) => `${f.fieldKey.split('.')[1]}: "${f.value}"`).join(', ')} })`
+            : '';
+
+        return `  ${queryName}${filterArg} {\n${fieldList}\n  }`;
       })
       .join('\n');
 

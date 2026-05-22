@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { catchError, EMPTY, from, pipe, switchMap, tap } from 'rxjs';
 
-import { DataArea } from '../components/query-builder/query-builder';
+import { DataArea, FieldFilter, QueryPayload } from '../components/query-builder/query-builder';
 import { GraphqlService } from './graph-ql.service';
 
 interface SchemaState {
@@ -45,15 +45,13 @@ export const SchemaStore = signalStore(
       ),
     ),
 
-    runQuery: rxMethod<string[]>(
+    runQuery: rxMethod<QueryPayload>(
       pipe(
-        switchMap((selectedFieldKeys) => {
+        switchMap(({ fieldKeys, filters }) => {
           patchState(store, { isExecuting: true, queryError: null, queryResults: null });
-
-          return from(graphqlService.executeQuery(selectedFieldKeys, store.dataAreas())).pipe(
+          return from(graphqlService.executeQuery(fieldKeys, store.dataAreas(), filters)).pipe(
             tap((queryResults) => patchState(store, { queryResults, isExecuting: false })),
             catchError((err) => {
-              console.error(err);
               patchState(store, { isExecuting: false, queryError: err.message ?? 'Query failed' });
               return EMPTY;
             }),

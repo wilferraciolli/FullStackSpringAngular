@@ -37,6 +37,11 @@ export interface DataArea {
   fields: DataField[];
 }
 
+export interface QueryPayload {
+  fieldKeys: string[];
+  filters: FieldFilter[];
+}
+
 export type FilterOperator =
   | ''
   | 'is_null'
@@ -144,8 +149,11 @@ export class QueryBuilder {
   get fieldSuggestions(): IndexedField[] {
     const term = this.filterSearchTerm().toLowerCase().trim();
     const added = new Set(this.addedFilterKeys());
+    const currentAreaKey = this.selectedArea()?.key;
+
     return this.allIndexedFields.filter(
       (f) =>
+        f.areaKey === currentAreaKey &&
         !added.has(f.key) &&
         (term === '' ||
           f.label.toLowerCase().includes(term) ||
@@ -241,8 +249,13 @@ export class QueryBuilder {
 
   protected onAreaChange(area: DataArea | null): void {
     const current = this.selectedArea();
+
     if (current && area?.key !== current.key) {
-      this.selectedFieldKeys.set([]); // clear fields when area changes
+      // clear selections when area changes
+      this.selectedFieldKeys.set([]);
+      this.addedFilterKeys.set([]);
+      this.fieldFilters.set(new Map());
+      this.filterSearchTerm.set('');
     }
     this.selectedArea.set(area);
   }
@@ -284,7 +297,10 @@ export class QueryBuilder {
       filters: this.activeFilters,
     });
     // const query = this._graphqlService.buildGraphQLQuery(this.selectedFields.map((f) => f.key));
-    this._schemaStore.runQuery(this.selectedFields.map((f) => f.key));
+    this._schemaStore.runQuery({
+      fieldKeys: this.selectedFields.map((f) => f.key),
+      filters: this.activeFilters,
+    });
     // console.log('Result ', query);
   }
 }
