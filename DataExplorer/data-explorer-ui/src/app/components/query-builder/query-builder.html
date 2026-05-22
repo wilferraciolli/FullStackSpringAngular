@@ -29,13 +29,16 @@
 
       <mat-card-content>
         <!-- Area selector -->
+        @if (isLoadingAreas()) {  <p class="QueryBuilder-fields-empty">Loading fields from API…</p> }
+        @else if (loadingError()) {  <p class="QueryBuilder-fields-empty" style="color: red">{{ loadingError() }}</p> }
+        @else {
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-fields-area-select">
           <mat-label>Area</mat-label>
           <mat-select [ngModel]="selectedArea()"
                       (ngModelChange)="selectedArea.set($event)"
                       [compareWith]="compareAreas">
             <mat-option [value]="null">— None —</mat-option>
-            @for (area of dataAreas; track area.key) {
+            @for (area of dataAreas(); track area.key) {
               <mat-option [value]="area">
                 <mat-icon>{{ area.icon }}</mat-icon>
                 {{ area.label }}
@@ -45,6 +48,7 @@
         </mat-form-field>
 
         <mat-divider class="QueryBuilder-fields-divider" />
+        }
 
         <!-- Field checkboxes -->
         @if (selectedArea()) {

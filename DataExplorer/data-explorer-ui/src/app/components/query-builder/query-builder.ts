@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +16,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { SchemaStore } from '../../services/query-builder.store';
 
 export interface DataField {
   key: string;
@@ -36,10 +37,15 @@ export interface DataArea {
 }
 
 export type FilterOperator =
-  | '' | 'is_null' | 'is_not_null'
-  | 'equals' | 'not_equals'
-  | 'greater_than' | 'less_than'
-  | 'contains' | 'starts_with';
+  | ''
+  | 'is_null'
+  | 'is_not_null'
+  | 'equals'
+  | 'not_equals'
+  | 'greater_than'
+  | 'less_than'
+  | 'contains'
+  | 'starts_with';
 
 export interface FieldFilter {
   fieldKey: string;
@@ -76,8 +82,14 @@ export type DateRangeOption = 'today' | 'this_week' | 'this_month' | 'custom';
   styleUrl: './query-builder.scss',
 })
 export class QueryBuilder {
-  aiPrompt = signal('');
-  selectedArea = signal<DataArea | null>(null);
+  private readonly _schemaStore = inject(SchemaStore);
+
+  protected aiPrompt: WritableSignal<string> = signal('');
+  protected dataAreas: Signal<DataArea[]> = this._schemaStore.dataAreas;
+  protected selectedArea: WritableSignal<DataArea | null> = signal<DataArea | null>(null);
+
+  protected readonly isLoadingAreas: Signal<boolean> = this._schemaStore.isLoading;
+  protected readonly loadingError: Signal<string | null> = this._schemaStore.error;
 
   // Ordered list of selected field keys (drives both display order and drag-drop)
   selectedFieldKeys = signal<string[]>([]);
@@ -91,21 +103,21 @@ export class QueryBuilder {
   filterSearchTerm = signal('');
 
   readonly dateRangeOptions: { value: DateRangeOption; label: string }[] = [
-    { value: 'custom',     label: 'Custom' },
-    { value: 'today',      label: 'Today' },
-    { value: 'this_week',  label: 'This Week' },
+    { value: 'custom', label: 'Custom' },
+    { value: 'today', label: 'Today' },
+    { value: 'this_week', label: 'This Week' },
     { value: 'this_month', label: 'This Month' },
   ];
 
   readonly filterOperators: { value: FilterOperator; label: string }[] = [
-    { value: '',            label: '— None —' },
-    { value: 'is_null',     label: 'Is Null' },
+    { value: '', label: '— None —' },
+    { value: 'is_null', label: 'Is Null' },
     { value: 'is_not_null', label: 'Is Not Null' },
-    { value: 'equals',      label: 'Equals' },
-    { value: 'not_equals',  label: 'Not Equals' },
-    { value: 'greater_than',label: 'Greater Than' },
-    { value: 'less_than',   label: 'Less Than' },
-    { value: 'contains',    label: 'Contains' },
+    { value: 'equals', label: 'Equals' },
+    { value: 'not_equals', label: 'Not Equals' },
+    { value: 'greater_than', label: 'Greater Than' },
+    { value: 'less_than', label: 'Less Than' },
+    { value: 'contains', label: 'Contains' },
     { value: 'starts_with', label: 'Starts With' },
   ];
 
@@ -115,51 +127,51 @@ export class QueryBuilder {
   // Map: fieldKey → FieldFilter
   fieldFilters = signal<Map<string, FieldFilter>>(new Map());
 
-  dataAreas: DataArea[] = [
-    {
-      key: 'person',
-      label: 'Person',
-      icon: 'person',
-      fields: [
-        { key: 'person.id',        label: 'ID',            selected: false },
-        { key: 'person.firstName', label: 'First Name',    selected: false },
-        { key: 'person.lastName',  label: 'Last Name',     selected: false },
-        { key: 'person.email',     label: 'Email',         selected: false },
-        { key: 'person.dob',       label: 'Date of Birth', selected: false },
-        { key: 'person.phone',     label: 'Phone',         selected: false },
-      ],
-    },
-    {
-      key: 'absence',
-      label: 'Absence',
-      icon: 'event_busy',
-      fields: [
-        { key: 'absence.personId', label: 'Person',               selected: false },
-        { key: 'absence.dayStart', label: 'Day Start',            selected: false },
-        { key: 'absence.dayEnd',   label: 'Day End',              selected: false },
-        { key: 'absence.type',     label: 'Type (e.g. Sickness)', selected: false },
-        { key: 'absence.notes',    label: 'Notes',                selected: false },
-      ],
-    },
-    {
-      key: 'jobs',
-      label: 'Jobs',
-      icon: 'work',
-      fields: [
-        { key: 'jobs.jobId',      label: 'Job ID',     selected: false },
-        { key: 'jobs.title',      label: 'Job Title',  selected: false },
-        { key: 'jobs.department', label: 'Department', selected: false },
-        { key: 'jobs.location',   label: 'Location',   selected: false },
-        { key: 'jobs.startDate',  label: 'Start Date', selected: false },
-        { key: 'jobs.salary',     label: 'Salary',     selected: false },
-      ],
-    },
-  ];
+  // dataAreas: DataArea[] = [
+  //   {
+  //     key: 'person',
+  //     label: 'Person',
+  //     icon: 'person',
+  //     fields: [
+  //       { key: 'person.id', label: 'ID', selected: false },
+  //       { key: 'person.firstName', label: 'First Name', selected: false },
+  //       { key: 'person.lastName', label: 'Last Name', selected: false },
+  //       { key: 'person.email', label: 'Email', selected: false },
+  //       { key: 'person.dob', label: 'Date of Birth', selected: false },
+  //       { key: 'person.phone', label: 'Phone', selected: false },
+  //     ],
+  //   },
+  //   {
+  //     key: 'absence',
+  //     label: 'Absence',
+  //     icon: 'event_busy',
+  //     fields: [
+  //       { key: 'absence.personId', label: 'Person', selected: false },
+  //       { key: 'absence.dayStart', label: 'Day Start', selected: false },
+  //       { key: 'absence.dayEnd', label: 'Day End', selected: false },
+  //       { key: 'absence.type', label: 'Type (e.g. Sickness)', selected: false },
+  //       { key: 'absence.notes', label: 'Notes', selected: false },
+  //     ],
+  //   },
+  //   {
+  //     key: 'jobs',
+  //     label: 'Jobs',
+  //     icon: 'work',
+  //     fields: [
+  //       { key: 'jobs.jobId', label: 'Job ID', selected: false },
+  //       { key: 'jobs.title', label: 'Job Title', selected: false },
+  //       { key: 'jobs.department', label: 'Department', selected: false },
+  //       { key: 'jobs.location', label: 'Location', selected: false },
+  //       { key: 'jobs.startDate', label: 'Start Date', selected: false },
+  //       { key: 'jobs.salary', label: 'Salary', selected: false },
+  //     ],
+  //   },
+  // ];
 
   /** Flat list of every field across all areas */
   get allIndexedFields(): IndexedField[] {
-    return this.dataAreas.flatMap(area =>
-      area.fields.map(f => ({ ...f, areaKey: area.key, areaLabel: area.label }))
+    return this.dataAreas().flatMap((area) =>
+      area.fields.map((f) => ({ ...f, areaKey: area.key, areaLabel: area.label })),
     );
   }
 
@@ -167,9 +179,12 @@ export class QueryBuilder {
   get fieldSuggestions(): IndexedField[] {
     const term = this.filterSearchTerm().toLowerCase().trim();
     const added = new Set(this.addedFilterKeys());
-    return this.allIndexedFields.filter(f =>
-      !added.has(f.key) &&
-      (term === '' || f.label.toLowerCase().includes(term) || f.areaLabel.toLowerCase().includes(term))
+    return this.allIndexedFields.filter(
+      (f) =>
+        !added.has(f.key) &&
+        (term === '' ||
+          f.label.toLowerCase().includes(term) ||
+          f.areaLabel.toLowerCase().includes(term)),
     );
   }
 
@@ -177,13 +192,13 @@ export class QueryBuilder {
   get addedFilters(): FieldFilter[] {
     const map = this.fieldFilters();
     return this.addedFilterKeys()
-      .map(k => map.get(k))
+      .map((k) => map.get(k))
       .filter((f): f is FieldFilter => f !== undefined);
   }
 
   /** Filters that have a non-empty operator */
   get activeFilters(): FieldFilter[] {
-    return this.addedFilters.filter(f => f.operator !== '');
+    return this.addedFilters.filter((f) => f.operator !== '');
   }
 
   addFieldToFilter(field: IndexedField) {
@@ -202,7 +217,7 @@ export class QueryBuilder {
   }
 
   removeFilter(fieldKey: string) {
-    this.addedFilterKeys.set(this.addedFilterKeys().filter(k => k !== fieldKey));
+    this.addedFilterKeys.set(this.addedFilterKeys().filter((k) => k !== fieldKey));
     const map = new Map(this.fieldFilters());
     map.delete(fieldKey);
     this.fieldFilters.set(map);
@@ -210,7 +225,11 @@ export class QueryBuilder {
 
   onOperatorChange(filter: FieldFilter, op: FilterOperator) {
     const map = new Map(this.fieldFilters());
-    map.set(filter.fieldKey, { ...filter, operator: op, value: this.needsNoValue(op) ? '' : filter.value });
+    map.set(filter.fieldKey, {
+      ...filter,
+      operator: op,
+      value: this.needsNoValue(op) ? '' : filter.value,
+    });
     this.fieldFilters.set(map);
   }
 
@@ -225,14 +244,14 @@ export class QueryBuilder {
   }
 
   get dateRangeLabel(): string {
-    return this.dateRangeOptions.find(o => o.value === this.dateRangeOption())?.label ?? '';
+    return this.dateRangeOptions.find((o) => o.value === this.dateRangeOption())?.label ?? '';
   }
 
   get selectedFields(): IndexedField[] {
     const keyOrder = this.selectedFieldKeys();
     const allFields = this.allIndexedFields;
     return keyOrder
-      .map(k => allFields.find(f => f.key === k))
+      .map((k) => allFields.find((f) => f.key === k))
       .filter((f): f is IndexedField => f !== undefined);
   }
 
@@ -243,15 +262,15 @@ export class QueryBuilder {
         this.selectedFieldKeys.set([...this.selectedFieldKeys(), field.key]);
       }
     } else {
-      this.selectedFieldKeys.set(this.selectedFieldKeys().filter(k => k !== field.key));
+      this.selectedFieldKeys.set(this.selectedFieldKeys().filter((k) => k !== field.key));
     }
   }
 
   removeSelectedField(fieldKey: string) {
     // Uncheck the field object so the checkbox reflects removal
-    const field = this.allIndexedFields.find(f => f.key === fieldKey);
+    const field = this.allIndexedFields.find((f) => f.key === fieldKey);
     if (field) field.selected = false;
-    this.selectedFieldKeys.set(this.selectedFieldKeys().filter(k => k !== fieldKey));
+    this.selectedFieldKeys.set(this.selectedFieldKeys().filter((k) => k !== fieldKey));
   }
 
   onFieldDrop(event: CdkDragDrop<string[]>) {
@@ -274,7 +293,7 @@ export class QueryBuilder {
 
   saveQuery() {
     console.log('[Query Builder] Save query:', {
-      fields: this.selectedFields.map(f => f.key),
+      fields: this.selectedFields.map((f) => f.key),
       dateRange: this.dateRangeOption(),
       customDateStart: this.customDateStart,
       customDateEnd: this.customDateEnd,
@@ -284,7 +303,7 @@ export class QueryBuilder {
 
   runQuery() {
     console.log('[Query Builder] Run query:', {
-      fields: this.selectedFields.map(f => f.key),
+      fields: this.selectedFields.map((f) => f.key),
       dateRange: this.dateRangeOption(),
       customDateStart: this.customDateStart,
       customDateEnd: this.customDateEnd,
