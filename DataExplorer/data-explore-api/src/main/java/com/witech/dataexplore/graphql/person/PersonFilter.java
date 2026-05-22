@@ -1,40 +1,52 @@
 package com.witech.dataexplore.graphql.person;
 
-public class PersonFilter {
-    private String email;
-    private String firstName;
-    private String lastName;
-    private String jobTitle;
+import com.witech.dataexplore.graphql.helpers.DateFilter;
+import com.witech.dataexplore.graphql.helpers.StringFilter;
 
-    public String getEmail() {
+public class PersonFilter {
+    private StringFilter email;
+    private StringFilter firstName;
+    private StringFilter lastName;
+    private StringFilter jobTitle;
+    private DateFilter startDate;
+
+    public StringFilter getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(StringFilter email) {
         this.email = email;
     }
 
-    public String getFirstName() {
+    public StringFilter getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(StringFilter firstName) {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
+    public StringFilter getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(StringFilter lastName) {
         this.lastName = lastName;
     }
 
-    public String getJobTitle() {
+    public StringFilter getJobTitle() {
         return jobTitle;
     }
 
-    public void setJobTitle(String jobTitle) {
+    public void setJobTitle(StringFilter jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public DateFilter getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(DateFilter startDate) {
+        this.startDate = startDate;
     }
 }

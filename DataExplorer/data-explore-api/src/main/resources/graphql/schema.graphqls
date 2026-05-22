@@ -4,6 +4,7 @@ type Query {
     addresses(filter: AddressFilter, sort: AddressSort): [Address]
 }
 
+# ── Entities ──────────────────────────────────
 type Person {
     id: ID
     email: String
@@ -21,11 +22,10 @@ type Address {
     street: String
 }
 
-input PersonFilter {
-    firstName: String
-    lastName: String
-    email: String
-    jobTitle: String
+# ── Entity sorts ──────────────────────────────────
+enum SortOrder {
+    ASC
+    DESC
 }
 
 input PersonSort {
@@ -40,11 +40,6 @@ enum PersonSortField {
     jobtitle
 }
 
-input AddressFilter {
-    city: String
-    street: String
-}
-
 input AddressSort {
     field: AddressSortField
     order: SortOrder
@@ -55,7 +50,32 @@ enum AddressSortField {
     city
 }
 
-enum SortOrder {
-    ASC
-    DESC
+# ── Entity filters ──────────────────────────────────
+input AddressFilter {
+    city: StringFilter
+    street: StringFilter
+}
+
+input PersonFilter {
+    firstName: StringFilter
+    lastName: StringFilter
+    email: StringFilter
+    jobTitle: StringFilter
+    startDate: DateFilter
+}
+
+# ── Reusable filter inputs ──────────────────────────────────
+input StringFilter {
+  equals:     String
+  notEquals:  String
+  contains:   String
+  startsWith: String
+  isNull:     Boolean
+}
+
+input DateFilter {
+  equals:      String   # ISO-8601 e.g. "2024-01-01"
+  before:      String
+  after:       String
+  isNull:      Boolean
 }

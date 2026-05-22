@@ -1,22 +1,24 @@
 package com.witech.dataexplore.graphql.addresses;
 
-public class AddressFilter {
-    private String city;
-    private String street;
+import com.witech.dataexplore.graphql.helpers.StringFilter;
 
-    public String getCity() {
+public class AddressFilter {
+    private StringFilter city;
+    private StringFilter street;
+
+    public StringFilter getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(StringFilter city) {
         this.city = city;
     }
 
-    public String getStreet() {
+    public StringFilter getStreet() {
         return street;
     }
 
-    public void setStreet(String street) {
+    public void setStreet(StringFilter street) {
         this.street = street;
     }
 }

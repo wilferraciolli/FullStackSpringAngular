@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.witech.dataexplore.graphql.SortOrder;
+import com.witech.dataexplore.graphql.helpers.FilterHelper;
 
 @Service
 public class AddressViewService {
@@ -29,8 +30,8 @@ public class AddressViewService {
 
     private List<AddressView> filterResults(AddressFilter filter, List<AddressView> results) {
         return results.stream()
-                .filter(p -> !StringUtils.hasText(filter.getCity()) || p.getCity().toLowerCase().contains(filter.getCity().toLowerCase()))
-                .filter(p -> !StringUtils.hasText(filter.getStreet()) || p.getStreet().toLowerCase().contains(filter.getStreet().toLowerCase()))
+                .filter(a -> FilterHelper.matchesString(filter.getCity(),   a.getCity()))
+                .filter(a -> FilterHelper.matchesString(filter.getStreet(), a.getStreet()))
                 .toList();
     }
 
