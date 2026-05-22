@@ -35,7 +35,7 @@
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-fields-area-select">
           <mat-label>Area</mat-label>
           <mat-select [ngModel]="selectedArea()"
-                      (ngModelChange)="selectedArea.set($event)"
+                      (ngModelChange)="onAreaChange($event)"
                       [compareWith]="compareAreas">
             <mat-option [value]="null">— None —</mat-option>
             @for (area of dataAreas(); track area.key) {
@@ -56,7 +56,7 @@
             <p class="QueryBuilder-fields-list-heading">{{ selectedArea()!.label }} Fields</p>
             @for (field of selectedArea()!.fields; track field.key) {
               <mat-checkbox class="QueryBuilder-fields-list-item"
-                            [ngModel]="field.selected"
+                            [ngModel]="isFieldSelected(field.key)"
                             (ngModelChange)="onFieldToggle(field, $event)">
                 {{ field.label }}
               </mat-checkbox>
@@ -252,4 +252,19 @@
     </mat-card>
 
   </div>
+  <!-- Results -->
+  <app-query-results/>
+<!--  <app-query-results />-->
+
+<!--  @if (isExecuting()) {-->
+<!--    <p class="QueryBuilder-query-empty">Running query…</p>-->
+<!--  }-->
+
+<!--  @if (queryError()) {-->
+<!--    <p style="color: red">{{ queryError() }}</p>-->
+<!--  }-->
+
+<!--  @if (queryResults()) {-->
+<!--    <pre style="font-size: 12px; overflow: auto">{{ queryResults() | json }}</pre>-->
+<!--  }-->
 </div>

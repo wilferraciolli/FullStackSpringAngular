@@ -17,11 +17,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { SchemaStore } from '../../services/query-builder.store';
+import { QueryResults } from '../query-results/query-results';
 
 export interface DataField {
   key: string;
   label: string;
-  selected: boolean;
 }
 
 export interface IndexedField extends DataField {
@@ -33,6 +33,7 @@ export interface DataArea {
   key: string;
   label: string;
   icon: string;
+  queryName: string;
   fields: DataField[];
 }
 
@@ -77,6 +78,7 @@ export type DateRangeOption = 'today' | 'this_week' | 'this_month' | 'custom';
     MatAutocompleteModule,
     MatTooltipModule,
     DragDropModule,
+    QueryResults,
   ],
   templateUrl: './query-builder.html',
   styleUrl: './query-builder.scss',
@@ -90,6 +92,10 @@ export class QueryBuilder {
 
   protected readonly isLoadingAreas: Signal<boolean> = this._schemaStore.isLoading;
   protected readonly loadingError: Signal<string | null> = this._schemaStore.error;
+
+  protected readonly queryResults: Signal<any> = this._schemaStore.queryResults;
+  protected readonly isExecuting: Signal<boolean> = this._schemaStore.isExecuting;
+  protected readonly queryError: Signal<string | null> = this._schemaStore.queryError;
 
   // Ordered list of selected field keys (drives both display order and drag-drop)
   selectedFieldKeys = signal<string[]>([]);
@@ -126,47 +132,6 @@ export class QueryBuilder {
 
   // Map: fieldKey → FieldFilter
   fieldFilters = signal<Map<string, FieldFilter>>(new Map());
-
-  // dataAreas: DataArea[] = [
-  //   {
-  //     key: 'person',
-  //     label: 'Person',
-  //     icon: 'person',
-  //     fields: [
-  //       { key: 'person.id', label: 'ID', selected: false },
-  //       { key: 'person.firstName', label: 'First Name', selected: false },
-  //       { key: 'person.lastName', label: 'Last Name', selected: false },
-  //       { key: 'person.email', label: 'Email', selected: false },
-  //       { key: 'person.dob', label: 'Date of Birth', selected: false },
-  //       { key: 'person.phone', label: 'Phone', selected: false },
-  //     ],
-  //   },
-  //   {
-  //     key: 'absence',
-  //     label: 'Absence',
-  //     icon: 'event_busy',
-  //     fields: [
-  //       { key: 'absence.personId', label: 'Person', selected: false },
-  //       { key: 'absence.dayStart', label: 'Day Start', selected: false },
-  //       { key: 'absence.dayEnd', label: 'Day End', selected: false },
-  //       { key: 'absence.type', label: 'Type (e.g. Sickness)', selected: false },
-  //       { key: 'absence.notes', label: 'Notes', selected: false },
-  //     ],
-  //   },
-  //   {
-  //     key: 'jobs',
-  //     label: 'Jobs',
-  //     icon: 'work',
-  //     fields: [
-  //       { key: 'jobs.jobId', label: 'Job ID', selected: false },
-  //       { key: 'jobs.title', label: 'Job Title', selected: false },
-  //       { key: 'jobs.department', label: 'Department', selected: false },
-  //       { key: 'jobs.location', label: 'Location', selected: false },
-  //       { key: 'jobs.startDate', label: 'Start Date', selected: false },
-  //       { key: 'jobs.salary', label: 'Salary', selected: false },
-  //     ],
-  //   },
-  // ];
 
   /** Flat list of every field across all areas */
   get allIndexedFields(): IndexedField[] {
@@ -255,8 +220,7 @@ export class QueryBuilder {
       .filter((f): f is IndexedField => f !== undefined);
   }
 
-  onFieldToggle(field: DataField, checked: boolean) {
-    field.selected = checked;
+  protected onFieldToggle(field: DataField, checked: boolean): void {
     if (checked) {
       if (!this.selectedFieldKeys().includes(field.key)) {
         this.selectedFieldKeys.set([...this.selectedFieldKeys(), field.key]);
@@ -266,11 +230,21 @@ export class QueryBuilder {
     }
   }
 
-  removeSelectedField(fieldKey: string) {
+  protected removeSelectedField(fieldKey: string): void {
     // Uncheck the field object so the checkbox reflects removal
-    const field = this.allIndexedFields.find((f) => f.key === fieldKey);
-    if (field) field.selected = false;
     this.selectedFieldKeys.set(this.selectedFieldKeys().filter((k) => k !== fieldKey));
+  }
+
+  protected isFieldSelected(fieldKey: string): boolean {
+    return this.selectedFieldKeys().includes(fieldKey);
+  }
+
+  protected onAreaChange(area: DataArea | null): void {
+    const current = this.selectedArea();
+    if (current && area?.key !== current.key) {
+      this.selectedFieldKeys.set([]); // clear fields when area changes
+    }
+    this.selectedArea.set(area);
   }
 
   onFieldDrop(event: CdkDragDrop<string[]>) {
@@ -301,7 +275,7 @@ export class QueryBuilder {
     });
   }
 
-  runQuery() {
+  protected runQuery(): void {
     console.log('[Query Builder] Run query:', {
       fields: this.selectedFields.map((f) => f.key),
       dateRange: this.dateRangeOption(),
@@ -309,5 +283,8 @@ export class QueryBuilder {
       customDateEnd: this.customDateEnd,
       filters: this.activeFilters,
     });
+    // const query = this._graphqlService.buildGraphQLQuery(this.selectedFields.map((f) => f.key));
+    this._schemaStore.runQuery(this.selectedFields.map((f) => f.key));
+    // console.log('Result ', query);
   }
 }

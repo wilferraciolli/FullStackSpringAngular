@@ -200,3 +200,11 @@ Examples:
 - `.Home-feature-item`
 - `.QueryViewer-categories-item--active`
 
+## Dependencies
+
+ag grid
+```bash
+npm install ag-grid-community ag-grid-angular
+```
+
+ngx signal store

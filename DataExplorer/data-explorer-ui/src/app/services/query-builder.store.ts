@@ -11,12 +11,18 @@ interface SchemaState {
   dataAreas: DataArea[];
   isLoading: boolean;
   error: string | null;
+  queryResults: any | null;
+  isExecuting: boolean;
+  queryError: string | null;
 }
 
 const initialState: SchemaState = {
   dataAreas: [],
   isLoading: false,
   error: null,
+  queryResults: null,
+  isExecuting: false,
+  queryError: null,
 };
 
 export const SchemaStore = signalStore(
@@ -32,6 +38,23 @@ export const SchemaStore = signalStore(
             catchError((err) => {
               console.error(err);
               patchState(store, { isLoading: false, error: 'Failed to load fields from API' });
+              return EMPTY;
+            }),
+          );
+        }),
+      ),
+    ),
+
+    runQuery: rxMethod<string[]>(
+      pipe(
+        switchMap((selectedFieldKeys) => {
+          patchState(store, { isExecuting: true, queryError: null, queryResults: null });
+
+          return from(graphqlService.executeQuery(selectedFieldKeys, store.dataAreas())).pipe(
+            tap((queryResults) => patchState(store, { queryResults, isExecuting: false })),
+            catchError((err) => {
+              console.error(err);
+              patchState(store, { isExecuting: false, queryError: err.message ?? 'Query failed' });
               return EMPTY;
             }),
           );
