@@ -38,6 +38,7 @@ enum PersonSortField {
     firstName
     email
     jobtitle
+    startDate
 }
 
 input AddressSort {

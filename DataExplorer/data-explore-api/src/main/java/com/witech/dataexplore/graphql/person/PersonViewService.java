@@ -36,6 +36,7 @@ public class PersonViewService {
                 .filter(p -> FilterHelper.matchesString(filter.getLastName(),  p.getLastName()))
                 .filter(p -> FilterHelper.matchesString(filter.getEmail(),     p.getEmail()))
                 .filter(p -> FilterHelper.matchesString(filter.getJobTitle(),  p.getJobTitle()))
+                .filter(p -> FilterHelper.matchesDate(filter.getStartDate(),   p.getStartDate()))
                 .toList();
     }
 
