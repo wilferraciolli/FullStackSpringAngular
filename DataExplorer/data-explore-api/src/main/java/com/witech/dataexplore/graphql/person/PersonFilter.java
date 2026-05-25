@@ -10,6 +10,8 @@ public class PersonFilter {
     private StringFilter jobTitle;
     private DateFilter startDate;
 
+    private DateFilter effectiveDate;
+
     public StringFilter getEmail() {
         return email;
     }
@@ -48,5 +50,13 @@ public class PersonFilter {
 
     public void setStartDate(DateFilter startDate) {
         this.startDate = startDate;
+    }
+
+    public DateFilter getEffectiveDate() {
+        return effectiveDate;
+    }
+
+    public void setEffectiveDate(DateFilter effectiveDate) {
+        this.effectiveDate = effectiveDate;
     }
 }

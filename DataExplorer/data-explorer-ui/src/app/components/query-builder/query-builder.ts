@@ -41,6 +41,7 @@ export interface DataArea {
 export interface QueryPayload {
   fieldKeys: string[];
   filters: FieldFilter[];
+  dateRange: { after: string; before: string };
 }
 
 export type FilterOperator =
@@ -62,7 +63,7 @@ export interface FieldFilter {
   value: string;
 }
 
-export type DateRangeOption = 'today' | 'this_week' | 'this_month' | 'custom';
+export type DateRangeOption = null | 'today' | 'this_week' | 'this_month' | 'past_year' | 'custom';
 
 @Component({
   selector: 'app-query-builder',
@@ -106,8 +107,8 @@ export class QueryBuilder {
   // Ordered list of selected field keys (drives both display order and drag-drop)
   selectedFieldKeys = signal<string[]>([]);
 
-  // Date range
-  dateRangeOption = signal<DateRangeOption>('this_month');
+  // Date range — null means no filter selected (will send wide-open defaults to API)
+  dateRangeOption = signal<DateRangeOption>(null);
   customDateStart: Date | null = null;
   customDateEnd: Date | null = null;
 
@@ -115,10 +116,12 @@ export class QueryBuilder {
   filterSearchTerm = signal('');
 
   readonly dateRangeOptions: { value: DateRangeOption; label: string }[] = [
-    { value: 'custom', label: 'Custom' },
-    { value: 'today', label: 'Today' },
-    { value: 'this_week', label: 'This Week' },
+    { value: null,         label: '— None —' },
+    { value: 'today',      label: 'Today' },
+    { value: 'this_week',  label: 'This Week' },
     { value: 'this_month', label: 'This Month' },
+    { value: 'past_year',  label: 'Past Year' },
+    { value: 'custom',     label: 'Custom' },
   ];
 
   protected readonly operatorsByType: Record<string, { value: FilterOperator; label: string }[]> = {
@@ -246,7 +249,7 @@ export class QueryBuilder {
   }
 
   get dateRangeLabel(): string {
-    return this.dateRangeOptions.find((o) => o.value === this.dateRangeOption())?.label ?? '';
+    return this.dateRangeOptions.find((o) => o.value === this.dateRangeOption())?.label ?? '— None —';
   }
 
   get selectedFields(): IndexedField[] {
@@ -318,18 +321,48 @@ export class QueryBuilder {
   }
 
   protected runQuery(): void {
-    console.log('[Query Builder] Run query:', {
-      fields: this.selectedFields.map((f) => f.key),
-      dateRange: this.dateRangeOption(),
-      customDateStart: this.customDateStart,
-      customDateEnd: this.customDateEnd,
-      filters: this.activeFilters,
-    });
-    // const query = this._graphqlService.buildGraphQLQuery(this.selectedFields.map((f) => f.key));
     this._schemaStore.runQuery({
       fieldKeys: this.selectedFields.map((f) => f.key),
       filters: this.activeFilters,
+      dateRange: this.computeDateRange(),
     });
-    // console.log('Result ', query);
+  }
+
+  private computeDateRange(): { after: string; before: string } {
+    const opt = this.dateRangeOption();
+
+    // Timezone-safe local date formatter
+    const fmt = (d: Date): string => {
+      const y  = d.getFullYear();
+      const m  = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${dd}`;
+    };
+
+    const today = new Date();
+
+    if (opt === 'today') {
+      return { after: fmt(today), before: fmt(today) };
+    }
+    if (opt === 'this_week') {
+      const startOfWeek = new Date(today); startOfWeek.setDate(today.getDate() - today.getDay());
+      const endOfWeek   = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6);
+      return { after: fmt(startOfWeek), before: fmt(endOfWeek) };
+    }
+    if (opt === 'this_month') {
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const endOfMonth   = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      return { after: fmt(startOfMonth), before: fmt(endOfMonth) };
+    }
+    if (opt === 'past_year') {
+      const oneYearAgo = new Date(today); oneYearAgo.setFullYear(today.getFullYear() - 1);
+      return { after: fmt(oneYearAgo), before: fmt(today) };
+    }
+    if (opt === 'custom' && this.customDateStart && this.customDateEnd) {
+      return { after: fmt(new Date(this.customDateStart)), before: fmt(new Date(this.customDateEnd)) };
+    }
+
+    // null / custom with incomplete dates — wide-open defaults
+    return { after: '1900-01-01', before: '2099-12-31' };
   }
 }

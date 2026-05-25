@@ -1,5 +1,6 @@
 package com.witech.dataexplore.graphql.addresses;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -22,6 +23,8 @@ public class AddressView {
     @Column(nullable = false)
     private String street;
 
+    private LocalDate effectiveDate;
+
     public UUID getId() {
         return id;
     }
@@ -32,5 +35,9 @@ public class AddressView {
 
     public String getStreet() {
         return street;
+    }
+
+    public LocalDate getEffectiveDate() {
+        return effectiveDate;
     }
 }

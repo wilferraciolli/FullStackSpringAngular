@@ -106,12 +106,9 @@ public class FilterHelper {
         if (filter.getEquals() != null)
             return actual.isEqual(LocalDate.parse(filter.getEquals()));
 
-        if (filter.getAfter() != null)
-            return actual.isAfter(LocalDate.parse(filter.getAfter()));
-
-        if (filter.getBefore() != null)
-            return actual.isBefore(LocalDate.parse(filter.getBefore()));
-
-        return true;
+        // Inclusive range: after = start date (>=), before = end date (<=)
+        boolean afterOk  = filter.getAfter()  == null || !actual.isBefore(LocalDate.parse(filter.getAfter()));
+        boolean beforeOk = filter.getBefore() == null || !actual.isAfter(LocalDate.parse(filter.getBefore()));
+        return afterOk && beforeOk;
     }
 }

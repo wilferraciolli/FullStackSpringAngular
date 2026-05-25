@@ -63,47 +63,47 @@ INSERT INTO employees (id, email, first_name, last_name, phone_number, bio) VALU
 
 -- Insert sample data for jobs
 INSERT INTO jobs (id, title, department, description, start_date, end_date) VALUES
-(RANDOM_UUID(), 'Senior Software Engineer', 'Engineering', 'Lead development of core platform features', '2024-01-01', NULL),
-(RANDOM_UUID(), 'Product Manager', 'Product', 'Manage product roadmap and strategy', '2024-01-15', NULL),
-(RANDOM_UUID(), 'Data Analyst', 'Analytics', 'Analyze business data and generate insights', '2024-02-01', NULL),
-(RANDOM_UUID(), 'UX Designer', 'Design', 'Design user interfaces and experiences', '2024-02-10', NULL),
-(RANDOM_UUID(), 'DevOps Engineer', 'Infrastructure', 'Manage cloud infrastructure and deployment', '2024-03-01', NULL),
-(RANDOM_UUID(), 'Marketing Manager', 'Marketing', 'Lead marketing campaigns and initiatives', '2024-03-15', NULL),
-(RANDOM_UUID(), 'HR Manager', 'Human Resources', 'Manage recruitment and employee relations', '2024-04-01', NULL),
-(RANDOM_UUID(), 'Finance Director', 'Finance', 'Oversee financial operations', '2024-04-15', NULL),
-(RANDOM_UUID(), 'QA Lead', 'Quality Assurance', 'Lead quality assurance efforts', '2024-05-01', NULL),
-(RANDOM_UUID(), 'Business Analyst', 'Business', 'Analyze business requirements', '2024-05-15', NULL),
-(RANDOM_UUID(), 'Frontend Developer', 'Engineering', 'Develop frontend applications', '2024-06-01', NULL),
-(RANDOM_UUID(), 'Backend Developer', 'Engineering', 'Develop backend services', '2024-06-15', NULL),
-(RANDOM_UUID(), 'Security Engineer', 'Security', 'Ensure system security', '2024-07-01', NULL),
-(RANDOM_UUID(), 'Project Manager', 'Project Management', 'Manage projects and timelines', '2024-07-15', NULL),
-(RANDOM_UUID(), 'Systems Administrator', 'IT Operations', 'Manage IT systems', '2024-08-01', NULL),
-(RANDOM_UUID(), 'Content Writer', 'Marketing', 'Create content for marketing', '2024-08-15', NULL),
-(RANDOM_UUID(), 'Sales Manager', 'Sales', 'Manage sales team performance', '2024-09-01', NULL),
-(RANDOM_UUID(), 'Recruiter', 'Human Resources', 'Recruit and hire talent', '2024-09-15', NULL),
-(RANDOM_UUID(), 'Solution Architect', 'Engineering', 'Design technical solutions', '2024-10-01', NULL),
-(RANDOM_UUID(), 'ML Engineer', 'Data Science', 'Build machine learning models', '2024-10-15', NULL),
-(RANDOM_UUID(), 'Tech Lead', 'Engineering', 'Lead technical team', '2024-11-01', NULL),
-(RANDOM_UUID(), 'CTO', 'Executive', 'Chief Technology Officer', '2024-11-15', NULL),
-(RANDOM_UUID(), 'Operations Manager', 'Operations', 'Manage operational processes', '2024-12-01', NULL),
-(RANDOM_UUID(), 'Training Coordinator', 'Human Resources', 'Coordinate training programs', '2025-01-01', NULL),
-(RANDOM_UUID(), 'Network Administrator', 'IT Operations', 'Manage network infrastructure', '2025-01-15', NULL),
-(RANDOM_UUID(), 'Data Scientist', 'Data Science', 'Perform advanced data analysis', '2025-02-01', NULL),
-(RANDOM_UUID(), 'API Developer', 'Engineering', 'Develop and maintain APIs', '2025-02-15', NULL),
-(RANDOM_UUID(), 'Database Administrator', 'IT Operations', 'Manage databases', '2025-03-01', NULL),
-(RANDOM_UUID(), 'Mobile Developer', 'Engineering', 'Develop mobile applications', '2025-03-15', NULL),
-(RANDOM_UUID(), 'Compliance Officer', 'Legal', 'Ensure regulatory compliance', '2025-04-01', NULL),
-(RANDOM_UUID(), 'Customer Success Manager', 'Customer Support', 'Manage customer success', '2025-04-15', NULL),
-(RANDOM_UUID(), 'Internal Audit', 'Finance', 'Conduct internal audits', '2025-05-01', NULL),
-(RANDOM_UUID(), 'Supply Chain Manager', 'Operations', 'Manage supply chain', '2025-05-15', NULL),
-(RANDOM_UUID(), 'IT Manager', 'IT Operations', 'Manage IT department', '2025-06-01', NULL),
-(RANDOM_UUID(), 'Legal Counsel', 'Legal', 'Provide legal counsel', '2025-06-15', NULL),
-(RANDOM_UUID(), 'Communications Manager', 'Marketing', 'Manage communications', '2025-07-01', NULL),
-(RANDOM_UUID(), 'Facilities Manager', 'Operations', 'Manage facilities', '2025-07-15', NULL),
-(RANDOM_UUID(), 'Research Scientist', 'Research', 'Conduct research', '2025-08-01', NULL),
-(RANDOM_UUID(), 'CFO', 'Executive', 'Chief Financial Officer', '2025-08-15', NULL),
-(RANDOM_UUID(), 'Procurement Manager', 'Operations', 'Manage procurement', '2025-09-01', NULL),
-(RANDOM_UUID(), 'Environmental Health Officer', 'Compliance', 'Ensure environmental health', '2025-09-15', NULL);
+(RANDOM_UUID(), 'Senior Software Engineer', 'Engineering', 'Lead development of core platform features', '2026-01-01', NULL),
+(RANDOM_UUID(), 'Product Manager', 'Product', 'Manage product roadmap and strategy', '2026-01-15', NULL),
+(RANDOM_UUID(), 'Data Analyst', 'Analytics', 'Analyze business data and generate insights', '2026-02-01', NULL),
+(RANDOM_UUID(), 'UX Designer', 'Design', 'Design user interfaces and experiences', '2026-02-10', NULL),
+(RANDOM_UUID(), 'DevOps Engineer', 'Infrastructure', 'Manage cloud infrastructure and deployment', '2026-03-01', NULL),
+(RANDOM_UUID(), 'Marketing Manager', 'Marketing', 'Lead marketing campaigns and initiatives', '2026-03-15', NULL),
+(RANDOM_UUID(), 'HR Manager', 'Human Resources', 'Manage recruitment and employee relations', '2026-04-01', NULL),
+(RANDOM_UUID(), 'Finance Director', 'Finance', 'Oversee financial operations', '2026-04-15', NULL),
+(RANDOM_UUID(), 'QA Lead', 'Quality Assurance', 'Lead quality assurance efforts', '2026-05-01', NULL),
+(RANDOM_UUID(), 'Business Analyst', 'Business', 'Analyze business requirements', '2026-05-15', NULL),
+(RANDOM_UUID(), 'Frontend Developer', 'Engineering', 'Develop frontend applications', '2026-06-01', NULL),
+(RANDOM_UUID(), 'Backend Developer', 'Engineering', 'Develop backend services', '2026-06-15', NULL),
+(RANDOM_UUID(), 'Security Engineer', 'Security', 'Ensure system security', '2026-07-01', NULL),
+(RANDOM_UUID(), 'Project Manager', 'Project Management', 'Manage projects and timelines', '2026-07-15', NULL),
+(RANDOM_UUID(), 'Systems Administrator', 'IT Operations', 'Manage IT systems', '2026-08-01', NULL),
+(RANDOM_UUID(), 'Content Writer', 'Marketing', 'Create content for marketing', '2026-08-15', NULL),
+(RANDOM_UUID(), 'Sales Manager', 'Sales', 'Manage sales team performance', '2026-09-01', NULL),
+(RANDOM_UUID(), 'Recruiter', 'Human Resources', 'Recruit and hire talent', '2026-09-15', NULL),
+(RANDOM_UUID(), 'Solution Architect', 'Engineering', 'Design technical solutions', '2026-10-01', NULL),
+(RANDOM_UUID(), 'ML Engineer', 'Data Science', 'Build machine learning models', '2026-10-15', NULL),
+(RANDOM_UUID(), 'Tech Lead', 'Engineering', 'Lead technical team', '2026-11-01', NULL),
+(RANDOM_UUID(), 'CTO', 'Executive', 'Chief Technology Officer', '2026-11-15', NULL),
+(RANDOM_UUID(), 'Operations Manager', 'Operations', 'Manage operational processes', '2026-12-01', NULL),
+(RANDOM_UUID(), 'Training Coordinator', 'Human Resources', 'Coordinate training programs', '2026-01-01', NULL),
+(RANDOM_UUID(), 'Network Administrator', 'IT Operations', 'Manage network infrastructure', '2026-01-15', NULL),
+(RANDOM_UUID(), 'Data Scientist', 'Data Science', 'Perform advanced data analysis', '2026-02-01', NULL),
+(RANDOM_UUID(), 'API Developer', 'Engineering', 'Develop and maintain APIs', '2026-02-15', NULL),
+(RANDOM_UUID(), 'Database Administrator', 'IT Operations', 'Manage databases', '2026-03-01', NULL),
+(RANDOM_UUID(), 'Mobile Developer', 'Engineering', 'Develop mobile applications', '2026-03-15', NULL),
+(RANDOM_UUID(), 'Compliance Officer', 'Legal', 'Ensure regulatory compliance', '2026-04-01', NULL),
+(RANDOM_UUID(), 'Customer Success Manager', 'Customer Support', 'Manage customer success', '2026-04-15', NULL),
+(RANDOM_UUID(), 'Internal Audit', 'Finance', 'Conduct internal audits', '2026-05-01', NULL),
+(RANDOM_UUID(), 'Supply Chain Manager', 'Operations', 'Manage supply chain', '2026-05-15', NULL),
+(RANDOM_UUID(), 'IT Manager', 'IT Operations', 'Manage IT department', '2026-06-01', NULL),
+(RANDOM_UUID(), 'Legal Counsel', 'Legal', 'Provide legal counsel', '2026-06-15', NULL),
+(RANDOM_UUID(), 'Communications Manager', 'Marketing', 'Manage communications', '2026-07-01', NULL),
+(RANDOM_UUID(), 'Facilities Manager', 'Operations', 'Manage facilities', '2026-07-15', NULL),
+(RANDOM_UUID(), 'Research Scientist', 'Research', 'Conduct research', '2026-08-01', NULL),
+(RANDOM_UUID(), 'CFO', 'Executive', 'Chief Financial Officer', '2026-08-15', NULL),
+(RANDOM_UUID(), 'Procurement Manager', 'Operations', 'Manage procurement', '2026-09-01', NULL),
+(RANDOM_UUID(), 'Environmental Health Officer', 'Compliance', 'Ensure environmental health', '2026-09-15', NULL);
 
 -- Insert sample addresses for employees (multiple addresses per employee)
 INSERT INTO employee_addresses (id, employee_id, street, city, state, zip_code, country, notes, type, is_primary)
@@ -115,18 +115,18 @@ INSERT INTO employee_addresses (id, employee_id, street, city, state, zip_code, 
 SELECT RANDOM_UUID(), e.id, '456 Business Ave', 'New York', 'NY', '10002', 'USA', 'Office location', 'BUSINESS', false
 FROM (SELECT id FROM employees LIMIT 40 OFFSET 0) e;
 
--- Insert sample occupancy records (employees occupying jobs over time periods)
+-- Insert sample occupancy records — current positions (dates span 2025-05 to 2026-05 so "Past Year" always has data)
 INSERT INTO occupancies (id, employee_id, job_id, start_date, end_date, notes)
 SELECT
     RANDOM_UUID(),
     (ARRAY(SELECT id FROM employees ORDER BY RANDOM() LIMIT 1))[1],
     (ARRAY(SELECT id FROM jobs ORDER BY RANDOM() LIMIT 1))[1],
-    '2024-01-01'::DATE + (RANDOM() * 365)::INT,
+    '2025-05-01'::DATE + (RANDOM() * 365)::INT,
     NULL,
     'Currently occupying this position'
 FROM generate_series(1, 100);
 
--- Insert additional occupancy records for completed positions
+-- Insert additional occupancy records for completed positions (historical — 2023-2024)
 INSERT INTO occupancies (id, employee_id, job_id, start_date, end_date, notes)
 SELECT
     RANDOM_UUID(),
@@ -137,13 +137,13 @@ SELECT
     'Previously occupied this position'
 FROM generate_series(1, 50);
 
--- Insert additional occupancy records for on-leave positions
+-- Insert additional occupancy records for on-leave positions (recent — 2025-2026)
 INSERT INTO occupancies (id, employee_id, job_id, start_date, end_date, notes)
 SELECT
     RANDOM_UUID(),
     (ARRAY(SELECT id FROM employees ORDER BY RANDOM() LIMIT 1))[1],
     (ARRAY(SELECT id FROM jobs ORDER BY RANDOM() LIMIT 1))[1],
-    '2024-06-01'::DATE + (RANDOM() * 180)::INT,
+    '2025-06-01'::DATE + (RANDOM() * 300)::INT,
     NULL,
     'Employee on sabbatical'
 FROM generate_series(1, 20);

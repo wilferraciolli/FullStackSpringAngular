@@ -47,9 +47,9 @@ export const SchemaStore = signalStore(
 
     runQuery: rxMethod<QueryPayload>(
       pipe(
-        switchMap(({ fieldKeys, filters }) => {
+        switchMap(({ fieldKeys, filters, dateRange }) => {
           patchState(store, { isExecuting: true, queryError: null, queryResults: null });
-          return from(graphqlService.executeQuery(fieldKeys, store.dataAreas(), filters)).pipe(
+          return from(graphqlService.executeQuery(fieldKeys, store.dataAreas(), filters, dateRange)).pipe(
             tap((queryResults) => patchState(store, { queryResults, isExecuting: false })),
             catchError((err) => {
               patchState(store, { isExecuting: false, queryError: err.message ?? 'Query failed' });

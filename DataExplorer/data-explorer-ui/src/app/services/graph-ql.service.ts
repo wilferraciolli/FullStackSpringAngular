@@ -57,8 +57,9 @@ export class GraphqlService {
     selectedFieldKeys: string[],
     dataAreas: DataArea[],
     filters: FieldFilter[],
+    dateRange: { before: string; after: string;  },
   ): Promise<any> {
-    const query = this.buildGraphQLQuery(selectedFieldKeys, dataAreas, filters);
+    const query = this.buildGraphQLQuery(selectedFieldKeys, dataAreas, filters, dateRange);
     console.log('Query built before sending request ', query);
     const response = await firstValueFrom(this._httpClient.post<any>(this.apiUrl, { query }));
 
@@ -73,6 +74,7 @@ export class GraphqlService {
     selectedFieldKeys: string[],
     dataAreas: DataArea[],
     filters: FieldFilter[],
+    dateRange: { before: string; after: string;  },
   ): string {
     // Map from area key to GraphQL query name: person → people, address → addresses
     const queryNameMap: Record<string, string> = dataAreas.reduce<Record<string, string>>(
@@ -109,17 +111,26 @@ export class GraphqlService {
         const queryName = queryNameMap[areaKey] ?? areaKey;
         const fieldList = fields.map((f) => `    ${f}`).join('\n');
 
-        // Serialize filter args: e.g. (filter: { firstName: "John", lastName: "Doe" })
         const areaFilters = filtersByArea[areaKey] ?? [];
-        const filterArg =
-          areaFilters.length > 0
-            ? `(filter: { ${areaFilters
-                .map((f) => {
-                  const fieldName = f.fieldKey.split('.')[1];
-                  return `${fieldName}: { ${this.serializeOperator(f.operator, f.value)} }`;
-                })
-                .join(', ')} })`
-            : '';
+
+        // Per-field filter parts
+        const fieldFilterParts = areaFilters.map((f) => {
+          const fieldName = f.fieldKey.split('.')[1];
+          return `${fieldName}: { ${this.serializeOperator(f.operator, f.value)} }`;
+        });
+
+        // Date range → effectiveDate filter (only for areas that expose effectiveDate)
+        const area = dataAreas.find((a) => a.key === areaKey);
+        const hasEffectiveDate = area?.fields.some((f) => f.key === `${areaKey}.effectiveDate`);
+        const dateFilterParts: string[] = [];
+        if (hasEffectiveDate) {
+          dateFilterParts.push(`effectiveDate: { after: "${dateRange.after}", before: "${dateRange.before}" }`);
+        }
+
+        const allFilterParts = [...fieldFilterParts, ...dateFilterParts];
+        const filterArg = allFilterParts.length > 0
+          ? `(filter: { ${allFilterParts.join(', ')} })`
+          : '';
 
         return `  ${queryName}${filterArg} {\n${fieldList}\n  }`;
       })

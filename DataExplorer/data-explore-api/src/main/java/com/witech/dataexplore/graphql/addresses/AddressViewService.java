@@ -32,6 +32,7 @@ public class AddressViewService {
         return results.stream()
                 .filter(a -> FilterHelper.matchesString(filter.getCity(),   a.getCity()))
                 .filter(a -> FilterHelper.matchesString(filter.getStreet(), a.getStreet()))
+                .filter(a -> FilterHelper.matchesDate(filter.getEffectiveDate(), a.getEffectiveDate()))
                 .toList();
     }
 

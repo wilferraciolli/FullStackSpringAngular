@@ -3,6 +3,7 @@ package com.witech.dataexplore.graphql.person;
 import java.time.LocalDate;
 import java.util.UUID;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -37,6 +38,8 @@ public class PersonView {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    private LocalDate effectiveDate;
 
     public UUID getId() {
         return id;
@@ -76,6 +79,10 @@ public class PersonView {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public LocalDate getEffectiveDate() {
+        return effectiveDate;
     }
 }
 
