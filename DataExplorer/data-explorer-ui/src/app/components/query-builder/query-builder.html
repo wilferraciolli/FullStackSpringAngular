@@ -208,7 +208,7 @@
                       <mat-label>Condition</mat-label>
                       <mat-select [ngModel]="filter.operator"
                                   (ngModelChange)="onOperatorChange(filter, $event)">
-                        @for (op of filterOperators; track op.value) {
+                        @for (op of getOperatorsForFilter(filter); track op.value) {
                           <mat-option [value]="op.value">{{ op.label }}</mat-option>
                         }
                       </mat-select>

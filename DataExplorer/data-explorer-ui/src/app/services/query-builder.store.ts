@@ -4,7 +4,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 
 import { catchError, EMPTY, from, pipe, switchMap, tap } from 'rxjs';
 
-import { DataArea, FieldFilter, QueryPayload } from '../components/query-builder/query-builder';
+import { DataArea, QueryPayload } from '../components/query-builder/query-builder';
 import { GraphqlService } from './graph-ql.service';
 
 interface SchemaState {

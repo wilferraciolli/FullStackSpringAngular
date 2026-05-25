@@ -1,0 +1,17 @@
+<div class="QueryResults-container">
+  @if (isExecuting()) {
+    <span class="QueryResults-loading">Running query…</span>
+  } @else if (queryError()) {
+    <p class="QueryResults-results-error">{{ queryError() }}</p>
+  } @else if (rowData().length > 0) {
+    <ag-grid-angular
+      style="width: 100%; height: 500px;"
+      [theme]="theme"
+      [rowData]="rowData()"
+      [columnDefs]="colDefs()"
+      [defaultColDef]="defaultColDef"
+    />
+  } @else {
+    <p class="QueryResults-results-empty">Nothing to see here, try refining your query.</p>
+  }
+</div>

@@ -1,0 +1,25 @@
+.QueryResults {
+  &-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
+
+  &-loading {
+    padding: 16px;
+    color: #888;
+  }
+
+  &-results-empty {
+    padding: 16px;
+    color: #888;
+  }
+
+  &-results-error {
+    padding: 16px;
+    color: red;
+  }
+}
+
+

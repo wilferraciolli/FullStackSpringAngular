@@ -22,6 +22,7 @@ import { QueryResults } from '../query-results/query-results';
 export interface DataField {
   key: string;
   label: string;
+  type: 'String' | 'Date' | 'ID' | 'Boolean' | 'unknown';
 }
 
 export interface IndexedField extends DataField {
@@ -120,23 +121,51 @@ export class QueryBuilder {
     { value: 'this_month', label: 'This Month' },
   ];
 
-  readonly filterOperators: { value: FilterOperator; label: string }[] = [
-    { value: '', label: '— None —' },
-    { value: 'is_null', label: 'Is Null' },
-    { value: 'is_not_null', label: 'Is Not Null' },
-    { value: 'equals', label: 'Equals' },
-    { value: 'not_equals', label: 'Not Equals' },
-    { value: 'greater_than', label: 'Greater Than' },
-    { value: 'less_than', label: 'Less Than' },
-    { value: 'contains', label: 'Contains' },
-    { value: 'starts_with', label: 'Starts With' },
-  ];
+  protected readonly operatorsByType: Record<string, { value: FilterOperator; label: string }[]> = {
+    String: [
+      { value: '', label: '— None —' },
+      { value: 'equals', label: 'Equals' },
+      { value: 'not_equals', label: 'Not Equals' },
+      { value: 'contains', label: 'Contains' },
+      { value: 'starts_with', label: 'Starts With' },
+      { value: 'is_null', label: 'Is Null' },
+      { value: 'is_not_null', label: 'Is Not Null' },
+    ],
+    Date: [
+      { value: '',            label: '— None —' },
+      { value: 'equals',      label: 'On' },
+      { value: 'greater_than', label: 'After' },
+      { value: 'less_than',   label: 'Before' },
+      { value: 'is_null',     label: 'Is Null' },
+      { value: 'is_not_null', label: 'Is Not Null' },
+    ],
+    ID: [
+      { value: '', label: '— None —' },
+      { value: 'equals', label: 'Equals' },
+      { value: 'not_equals', label: 'Not Equals' },
+      { value: 'is_null', label: 'Is Null' },
+      { value: 'is_not_null', label: 'Is Not Null' },
+    ],
+    unknown: [
+      { value: '', label: '— None —' },
+      { value: 'equals', label: 'Equals' },
+      { value: 'not_equals', label: 'Not Equals' },
+      { value: 'is_null', label: 'Is Null' },
+      { value: 'is_not_null', label: 'Is Not Null' },
+    ],
+  };
 
   // Ordered list of added filter keys (preserves insertion order)
   addedFilterKeys = signal<string[]>([]);
 
   // Map: fieldKey → FieldFilter
   fieldFilters = signal<Map<string, FieldFilter>>(new Map());
+
+  getOperatorsForFilter(filter: FieldFilter): { value: FilterOperator; label: string }[] {
+    const field = this.allIndexedFields.find((f) => f.key === filter.fieldKey);
+
+    return this.operatorsByType[field?.type ?? 'unknown'] ?? this.operatorsByType['unknown'];
+  }
 
   /** Flat list of every field across all areas */
   get allIndexedFields(): IndexedField[] {

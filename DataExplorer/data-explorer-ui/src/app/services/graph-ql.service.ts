@@ -1,7 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { DataArea, FieldFilter } from '../components/query-builder/query-builder';
+import {
+  DataArea,
+  DataField,
+  FieldFilter,
+  FilterOperator,
+} from '../components/query-builder/query-builder';
 
 
 @Injectable({
@@ -41,7 +46,7 @@ export class GraphqlService {
           fields: returnType.fields.map((f: any) => ({
             key: `${returnTypeName.toLowerCase()}.${f.name}`,
             label: this.formatLabel(f.name),
-            selected: false,
+            type: this.resolveScalarType(f.type, f.name),
           })),
         } as DataArea;
       })
@@ -67,7 +72,7 @@ export class GraphqlService {
   private buildGraphQLQuery(
     selectedFieldKeys: string[],
     dataAreas: DataArea[],
-    filters: FieldFilter[]
+    filters: FieldFilter[],
   ): string {
     // Map from area key to GraphQL query name: person → people, address → addresses
     const queryNameMap: Record<string, string> = dataAreas.reduce<Record<string, string>>(
@@ -85,14 +90,19 @@ export class GraphqlService {
       return acc;
     }, {});
 
-    // Group filters by area key, keep only those with a value
-    const filtersByArea = filters.reduce<Record<string, FieldFilter[]>>((acc, f) => {
-      if (!f.value.trim()) return acc; // skip empty values
-      const [areaKey] = f.fieldKey.split('.');
-      if (!acc[areaKey]) acc[areaKey] = [];
-      acc[areaKey].push(f);
-      return acc;
-    }, {});
+    // Only include filters that have an operator set
+    const filtersByArea = filters
+      .filter((f) => {
+        if (f.operator === '') return false;
+        if (f.operator === 'is_null' || f.operator === 'is_not_null') return true; // no value needed
+        return f.value.trim() !== ''; // all others need a value
+      })
+      .reduce<Record<string, FieldFilter[]>>((acc, f) => {
+        const [areaKey] = f.fieldKey.split('.');
+        if (!acc[areaKey]) acc[areaKey] = [];
+        acc[areaKey].push(f);
+        return acc;
+      }, {});
 
     const blocks = Object.entries(grouped)
       .map(([areaKey, fields]) => {
@@ -103,7 +113,12 @@ export class GraphqlService {
         const areaFilters = filtersByArea[areaKey] ?? [];
         const filterArg =
           areaFilters.length > 0
-            ? `(filter: { ${areaFilters.map((f) => `${f.fieldKey.split('.')[1]}: "${f.value}"`).join(', ')} })`
+            ? `(filter: { ${areaFilters
+                .map((f) => {
+                  const fieldName = f.fieldKey.split('.')[1];
+                  return `${fieldName}: { ${this.serializeOperator(f.operator, f.value)} }`;
+                })
+                .join(', ')} })`
             : '';
 
         return `  ${queryName}${filterArg} {\n${fieldList}\n  }`;
@@ -111,6 +126,45 @@ export class GraphqlService {
       .join('\n');
 
     return `{\n${blocks}\n}`;
+  }
+
+  private serializeOperator(operator: FilterOperator, value: string): string {
+    switch (operator) {
+      case 'equals':
+        return `equals: "${value}"`;
+      case 'not_equals':
+        return `notEquals: "${value}"`;
+      case 'contains':
+        return `contains: "${value}"`;
+      case 'starts_with':
+        return `startsWith: "${value}"`;
+      case 'greater_than':
+        return `after: "${value}"`;
+      case 'less_than':
+        return `before: "${value}"`;
+      case 'is_null':
+        return `isNull: true`;
+      case 'is_not_null':
+        return `isNull: false`;
+      default:
+        return '';
+    }
+  }
+
+  private resolveScalarType(type: any, fieldName?: string): DataField['type'] {
+    // Unwrap NON_NULL wrapper if present
+    const unwrapped = type.kind === 'NON_NULL' ? type.ofType : type;
+    const name = unwrapped?.name ?? unwrapped?.ofType?.name ?? 'unknown';
+
+    if (name === 'ID') return 'ID';
+    if (name === 'Boolean') return 'Boolean';
+    if (['Date', 'LocalDate', 'DateTime'].includes(name)) return 'Date';
+
+    // Hint: treat known date-named String fields as Date
+    if (name === 'String' && fieldName && /date|Date/.test(fieldName)) return 'Date';
+
+    if (name === 'String') return 'String';
+    return 'unknown';
   }
 
   /**   * Fetch GraphQL schema introspection to discover available types and fields   */
