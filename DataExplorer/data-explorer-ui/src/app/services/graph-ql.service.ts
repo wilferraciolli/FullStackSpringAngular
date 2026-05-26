@@ -38,6 +38,19 @@ export class GraphqlService {
 
         if (!returnType?.fields) return null;
 
+        // Look up the corresponding Filter input type (e.g. PersonFilter for Person)
+        // to know which fields are actually filterable on the backend.
+        // effectiveDate is always excluded — it is handled by the separate date range panel.
+        const filterTypeName = `${returnTypeName}Filter`;
+        const filterType = schema.types.find(
+          (t: any) => t.name === filterTypeName && t.kind === 'INPUT_OBJECT',
+        );
+        const filterableNames = new Set<string>(
+          (filterType?.inputFields ?? [])
+            .map((f: any) => f.name as string)
+            .filter((name: string) => name !== 'effectiveDate'),
+        );
+
         return {
           key: returnTypeName.toLowerCase(),
           label: returnTypeName,
@@ -47,6 +60,7 @@ export class GraphqlService {
             key: `${returnTypeName.toLowerCase()}.${f.name}`,
             label: this.formatLabel(f.name),
             type: this.resolveScalarType(f.type, f.name),
+            filterable: filterableNames.has(f.name),
           })),
         } as DataArea;
       })
@@ -180,12 +194,24 @@ export class GraphqlService {
 
   /**   * Fetch GraphQL schema introspection to discover available types and fields   */
   private async getSchemaIntrospection(): Promise<any> {
-    const introspectionQuery = `      query IntrospectionQuery {
+    const introspectionQuery = `
+      query IntrospectionQuery {
         __schema {
           types {
             name
             kind
             fields(includeDeprecated: false) {
+              name
+              type {
+                name
+                kind
+                ofType {
+                  name
+                  kind
+                }
+              }
+            }
+            inputFields {
               name
               type {
                 name

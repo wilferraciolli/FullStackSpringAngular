@@ -23,6 +23,8 @@ export interface DataField {
   key: string;
   label: string;
   type: 'String' | 'Date' | 'ID' | 'Boolean' | 'unknown';
+  /** True only when the backend Filter input type exposes this field. effectiveDate is always false (handled by date range). */
+  filterable?: boolean;
 }
 
 export interface IndexedField extends DataField {
@@ -146,6 +148,8 @@ export class QueryBuilder {
       { value: '', label: '— None —' },
       { value: 'equals', label: 'Equals' },
       { value: 'not_equals', label: 'Not Equals' },
+      { value: 'contains', label: 'Contains' },
+      { value: 'starts_with', label: 'Starts With' },
       { value: 'is_null', label: 'Is Null' },
       { value: 'is_not_null', label: 'Is Not Null' },
     ],
@@ -177,7 +181,7 @@ export class QueryBuilder {
     );
   }
 
-  /** Fields matching the search term, excluding already-added ones */
+  /** Fields matching the search term, excluding already-added ones and non-filterable fields */
   get fieldSuggestions(): IndexedField[] {
     const term = this.filterSearchTerm().toLowerCase().trim();
     const added = new Set(this.addedFilterKeys());
@@ -186,6 +190,7 @@ export class QueryBuilder {
     return this.allIndexedFields.filter(
       (f) =>
         f.areaKey === currentAreaKey &&
+        f.filterable === true &&          // only fields that exist in the backend Filter input
         !added.has(f.key) &&
         (term === '' ||
           f.label.toLowerCase().includes(term) ||

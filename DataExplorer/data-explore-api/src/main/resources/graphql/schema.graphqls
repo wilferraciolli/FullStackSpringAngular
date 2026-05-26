@@ -61,6 +61,7 @@ input AddressFilter {
 }
 
 input PersonFilter {
+    id: StringFilter
     firstName: StringFilter
     lastName: StringFilter
     email: StringFilter

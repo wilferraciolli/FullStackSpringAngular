@@ -4,6 +4,7 @@ import com.witech.dataexplore.graphql.helpers.DateFilter;
 import com.witech.dataexplore.graphql.helpers.StringFilter;
 
 public class PersonFilter {
+    private StringFilter id;
     private StringFilter email;
     private StringFilter firstName;
     private StringFilter lastName;
@@ -11,6 +12,14 @@ public class PersonFilter {
     private DateFilter startDate;
 
     private DateFilter effectiveDate;
+
+    public StringFilter getId() {
+        return id;
+    }
+
+    public void setId(StringFilter id) {
+        this.id = id;
+    }
 
     public StringFilter getEmail() {
         return email;

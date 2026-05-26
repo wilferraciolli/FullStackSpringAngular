@@ -243,7 +243,10 @@
 
       <!-- Run button at the bottom -->
       <mat-card-actions class="QueryBuilder-query-actions">
-        <button mat-fab extended color="primary" (click)="runQuery()">
+        <button mat-fab extended color="primary"
+                [disabled]="selectedFieldKeys().length === 0"
+                (click)="runQuery()"
+        >
           <mat-icon>play_arrow</mat-icon>
           Run Query
         </button>
