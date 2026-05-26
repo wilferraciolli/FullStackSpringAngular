@@ -12,9 +12,17 @@
         &nbsp;·&nbsp;
         showing page {{ currentPage() + 1 }} of {{ totalPages() }}
       </span>
-      <button mat-stroked-button color="primary" (click)="exportCsv()" matTooltip="Download current page as CSV">
-        <mat-icon>download</mat-icon>
-        Export CSV
+      <button mat-stroked-button color="primary"
+              (click)="exportAllCsv()"
+              [disabled]="isExporting()"
+              matTooltip="Export all matching rows to CSV (ignores current page)">
+        @if (isExporting()) {
+          <mat-spinner diameter="18" strokeWidth="2" style="display:inline-block;vertical-align:middle;margin-right:6px" />
+          Exporting…
+        } @else {
+          <mat-icon>download</mat-icon>
+          Export All CSV
+        }
       </button>
     </div>
 
