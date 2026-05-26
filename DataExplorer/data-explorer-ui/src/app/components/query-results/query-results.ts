@@ -1,16 +1,20 @@
 import { Component, computed, inject } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, themeQuartz } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, themeQuartz } from 'ag-grid-community';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { SchemaStore } from '../../services/query-builder.store';
 
 @Component({
   selector: 'app-query-results',
-  imports: [AgGridAngular],
+  imports: [AgGridAngular, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './query-results.html',
   styleUrl: './query-results.scss',
 })
 export class QueryResults {
   private readonly store = inject(SchemaStore);
+  private gridApi: GridApi | null = null;
 
   readonly theme = themeQuartz;
   readonly isExecuting = this.store.isExecuting;
@@ -44,4 +48,14 @@ export class QueryResults {
         .trim(),
     }));
   });
+
+  protected onGridReady(event: GridReadyEvent): void {
+    this.gridApi = event.api;
+  }
+
+  protected exportCsv(): void {
+    this.gridApi?.exportDataAsCsv({
+      fileName: `export-${new Date().toISOString().substring(0, 10)}.csv`,
+    });
+  }
 }
