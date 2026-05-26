@@ -5,12 +5,12 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import com.witech.dataexplore.graphql.addresses.AddressFilter;
-import com.witech.dataexplore.graphql.addresses.AddressPage;
 import com.witech.dataexplore.graphql.addresses.AddressSort;
+import com.witech.dataexplore.graphql.addresses.AddressView;
 import com.witech.dataexplore.graphql.addresses.AddressViewService;
 import com.witech.dataexplore.graphql.person.PersonFilter;
-import com.witech.dataexplore.graphql.person.PersonPage;
 import com.witech.dataexplore.graphql.person.PersonSort;
+import com.witech.dataexplore.graphql.person.PersonView;
 import com.witech.dataexplore.graphql.person.PersonViewService;
 
 /**
@@ -29,7 +29,7 @@ public class GraphQLController {
     }
 
     @QueryMapping(name = "people")  // This tells Spring: "If someone asks for 'people' in their GraphQL query, run this."
-    public PersonPage people(
+    public PageResult<PersonView> people(
             @Argument PersonFilter filter,
             @Argument PersonSort   sort,
             @Argument PageInput    page) {
@@ -37,7 +37,7 @@ public class GraphQLController {
     }
 
     @QueryMapping(name = "addresses") // This tells Spring: "If someone asks for 'addresses' in their GraphQL query, run this."
-    public AddressPage addresses(
+    public PageResult<AddressView> addresses(
             @Argument AddressFilter filter,
             @Argument AddressSort   sort,
             @Argument PageInput     page) {

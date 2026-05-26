@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.witech.dataexplore.graphql.PageInput;
+import com.witech.dataexplore.graphql.PageResult;
 import com.witech.dataexplore.graphql.SortOrder;
 
 @Service
@@ -17,7 +18,7 @@ public class PersonViewService {
         this.repository = repository;
     }
 
-    public PersonPage findAll(PersonFilter filter, PersonSort sort, PageInput pageInput) {
+    public PageResult<PersonView> findAll(PersonFilter filter, PersonSort sort, PageInput pageInput) {
         // PageRequest combines LIMIT + OFFSET + ORDER BY into one query.
         // The database never loads more than 'size' rows per request.
         PageRequest pageable = PageRequest.of(
@@ -28,12 +29,7 @@ public class PersonViewService {
         Specification<PersonView> spec = PersonViewSpec.fromFilter(filter);
         Page<PersonView> result = repository.findAll(spec, pageable);
 
-        return new PersonPage(
-                result.getContent(),
-                result.getTotalElements(),
-                result.getTotalPages(),
-                result.getNumber(),
-                result.getSize());
+        return PageResult.of(result);
     }
 
     private Sort getSorting(PersonSort sort) {

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.witech.dataexplore.graphql.PageInput;
+import com.witech.dataexplore.graphql.PageResult;
 import com.witech.dataexplore.graphql.SortOrder;
 
 @Service
@@ -17,7 +18,7 @@ public class AddressViewService {
         this.repository = repository;
     }
 
-    public AddressPage findAll(AddressFilter filter, AddressSort sort, PageInput pageInput) {
+    public PageResult<AddressView> findAll(AddressFilter filter, AddressSort sort, PageInput pageInput) {
         PageRequest pageable = PageRequest.of(
                 pageInput == null ? 0  : pageInput.getPage(),
                 pageInput == null ? 20 : pageInput.getSize(),
@@ -26,12 +27,7 @@ public class AddressViewService {
         Specification<AddressView> spec = AddressViewSpec.fromFilter(filter);
         Page<AddressView> result = repository.findAll(spec, pageable);
 
-        return new AddressPage(
-                result.getContent(),
-                result.getTotalElements(),
-                result.getTotalPages(),
-                result.getNumber(),
-                result.getSize());
+        return PageResult.of(result);
     }
 
     private Sort getSorting(AddressSort sort) {
