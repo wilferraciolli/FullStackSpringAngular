@@ -6,6 +6,7 @@ import {
   DataField,
   FieldFilter,
   FilterOperator,
+  QueryPayload,
 } from '../components/query-builder/query-builder';
 
 
@@ -26,22 +27,34 @@ export class GraphqlService {
 
     return queryType.fields
       .map((field: any) => {
-        // Unwrap LIST wrapper: type.name is null when kind=LIST, real name is in ofType
-        const returnTypeName: string = field.type.name ?? field.type.ofType?.name;
+        // The query now returns PersonPage / AddressPage (not the entity directly).
+        // Unwrap: field.type → PersonPage → find its 'content' field → ofType → Person
+        const pageTypeName: string = field.type.name ?? field.type.ofType?.name;
+        if (!pageTypeName) return null;
 
-        if (!returnTypeName) return null;
-
-        // Only map to user-defined OBJECT types (skip scalars, enums, __ internals)
-        const returnType = schema.types.find(
-          (t: any) => t.name === returnTypeName && t.kind === 'OBJECT' && !t.name.startsWith('__'),
+        const pageType = schema.types.find(
+          (t: any) => t.name === pageTypeName && t.kind === 'OBJECT' && !t.name.startsWith('__'),
         );
+        if (!pageType?.fields) return null;
 
-        if (!returnType?.fields) return null;
+        // Find the 'content' field on PersonPage → its ofType gives the entity type name
+        const contentField = pageType.fields.find((f: any) => f.name === 'content');
+        if (!contentField) return null;
 
-        // Look up the corresponding Filter input type (e.g. PersonFilter for Person)
-        // to know which fields are actually filterable on the backend.
-        // effectiveDate is always excluded — it is handled by the separate date range panel.
-        const filterTypeName = `${returnTypeName}Filter`;
+        // content is [Person] — unwrap LIST then NON_NULL wrappers to reach 'Person'
+        const entityTypeName: string =
+          contentField.type?.ofType?.name ??           // [Person]
+          contentField.type?.ofType?.ofType?.name ??   // [Person!]
+          null;
+        if (!entityTypeName) return null;
+
+        const entityType = schema.types.find(
+          (t: any) => t.name === entityTypeName && t.kind === 'OBJECT' && !t.name.startsWith('__'),
+        );
+        if (!entityType?.fields) return null;
+
+        // Filter input: PersonFilter for Person, AddressFilter for Address etc.
+        const filterTypeName = `${entityTypeName}Filter`;
         const filterType = schema.types.find(
           (t: any) => t.name === filterTypeName && t.kind === 'INPUT_OBJECT',
         );
@@ -52,12 +65,12 @@ export class GraphqlService {
         );
 
         return {
-          key: returnTypeName.toLowerCase(),
-          label: returnTypeName,
-          icon: this.getIconForType(returnTypeName),
+          key: entityTypeName.toLowerCase(),
+          label: entityTypeName,
+          icon: this.getIconForType(entityTypeName),
           queryName: field.name,
-          fields: returnType.fields.map((f: any) => ({
-            key: `${returnTypeName.toLowerCase()}.${f.name}`,
+          fields: entityType.fields.map((f: any) => ({
+            key: `${entityTypeName.toLowerCase()}.${f.name}`,
             label: this.formatLabel(f.name),
             type: this.resolveScalarType(f.type, f.name),
             filterable: filterableNames.has(f.name),
@@ -67,86 +80,69 @@ export class GraphqlService {
       .filter((area: DataArea | null): area is DataArea => area !== null);
   }
 
-  public async executeQuery(
-    selectedFieldKeys: string[],
-    dataAreas: DataArea[],
-    filters: FieldFilter[],
-    dateRange: { before: string; after: string;  },
-  ): Promise<any> {
-    const query = this.buildGraphQLQuery(selectedFieldKeys, dataAreas, filters, dateRange);
+  public async executeQuery(dataAreas: DataArea[], payload: QueryPayload): Promise<any> {
+    const query = this.buildGraphQLQuery(dataAreas, payload);
     console.log('Query built before sending request ', query);
     const response = await firstValueFrom(this._httpClient.post<any>(this.apiUrl, { query }));
-
     if (response.errors?.length) {
       throw new Error(response.errors.map((e: any) => e.message).join(', '));
     }
-
     return response.data;
   }
 
-  private buildGraphQLQuery(
-    selectedFieldKeys: string[],
-    dataAreas: DataArea[],
-    filters: FieldFilter[],
-    dateRange: { before: string; after: string;  },
-  ): string {
-    // Map from area key to GraphQL query name: person → people, address → addresses
-    const queryNameMap: Record<string, string> = dataAreas.reduce<Record<string, string>>(
-      (acc, area) => {
-        acc[area.key] = area.queryName;
-        return acc;
-      },
-      {},
-    );
+  private buildGraphQLQuery(dataAreas: DataArea[], payload: QueryPayload): string {
+    const { fieldKeys, filters, dateRange, page, pageSize } = payload;
 
-    const grouped = selectedFieldKeys.reduce<Record<string, string[]>>((acc, key) => {
-      const [areaKey, fieldName] = key.split('.');
-      if (!acc[areaKey]) acc[areaKey] = [];
-      acc[areaKey].push(fieldName);
+    // Map area key → GraphQL query name  (e.g. person → people)
+    const queryNameMap = dataAreas.reduce<Record<string, string>>((acc, a) => {
+      acc[a.key] = a.queryName;
       return acc;
     }, {});
 
-    // Only include filters that have an operator set
+    // Group selected field names by area key
+    const grouped = fieldKeys.reduce<Record<string, string[]>>((acc, key) => {
+      const [areaKey, fieldName] = key.split('.');
+      (acc[areaKey] ??= []).push(fieldName);
+      return acc;
+    }, {});
+
+    // Only include filters that have an operator and (where needed) a value
     const filtersByArea = filters
-      .filter((f) => {
-        if (f.operator === '') return false;
-        if (f.operator === 'is_null' || f.operator === 'is_not_null') return true; // no value needed
-        return f.value.trim() !== ''; // all others need a value
-      })
+      .filter((f) => f.operator !== '' && (f.operator === 'is_null' || f.operator === 'is_not_null' || f.value.trim() !== ''))
       .reduce<Record<string, FieldFilter[]>>((acc, f) => {
         const [areaKey] = f.fieldKey.split('.');
-        if (!acc[areaKey]) acc[areaKey] = [];
-        acc[areaKey].push(f);
+        (acc[areaKey] ??= []).push(f);
         return acc;
       }, {});
 
     const blocks = Object.entries(grouped)
       .map(([areaKey, fields]) => {
         const queryName = queryNameMap[areaKey] ?? areaKey;
-        const fieldList = fields.map((f) => `    ${f}`).join('\n');
 
-        const areaFilters = filtersByArea[areaKey] ?? [];
+        // Indent selected fields inside content { }
+        const fieldList = fields.map((f) => `      ${f}`).join('\n');
 
         // Per-field filter parts
-        const fieldFilterParts = areaFilters.map((f) => {
+        const fieldFilterParts = (filtersByArea[areaKey] ?? []).map((f) => {
           const fieldName = f.fieldKey.split('.')[1];
           return `${fieldName}: { ${this.serializeOperator(f.operator, f.value)} }`;
         });
 
-        // Date range → effectiveDate filter (only for areas that expose effectiveDate)
+        // effectiveDate date-range filter (only if the area has the field)
         const area = dataAreas.find((a) => a.key === areaKey);
         const hasEffectiveDate = area?.fields.some((f) => f.key === `${areaKey}.effectiveDate`);
-        const dateFilterParts: string[] = [];
         if (hasEffectiveDate) {
-          dateFilterParts.push(`effectiveDate: { after: "${dateRange.after}", before: "${dateRange.before}" }`);
+          fieldFilterParts.push(`effectiveDate: { after: "${dateRange.after}", before: "${dateRange.before}" }`);
         }
 
-        const allFilterParts = [...fieldFilterParts, ...dateFilterParts];
-        const filterArg = allFilterParts.length > 0
-          ? `(filter: { ${allFilterParts.join(', ')} })`
+        const filterArg = fieldFilterParts.length > 0
+          ? `filter: { ${fieldFilterParts.join(', ')} }, `
           : '';
 
-        return `  ${queryName}${filterArg} {\n${fieldList}\n  }`;
+        // page argument — always sent so the server applies LIMIT/OFFSET
+        const pageArg = `page: { page: ${page}, size: ${pageSize} }`;
+
+        return `  ${queryName}(${filterArg}${pageArg}) {\n    content {\n${fieldList}\n    }\n    totalElements\n    totalPages\n    page\n    size\n  }`;
       })
       .join('\n');
 

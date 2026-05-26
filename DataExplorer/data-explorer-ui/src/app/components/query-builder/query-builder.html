@@ -153,6 +153,15 @@
                   <mat-date-range-picker #picker />
                 </mat-form-field>
               }
+
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" style="width:110px">
+                <mat-label>Rows / page</mat-label>
+                <mat-select [ngModel]="pageSize()" (ngModelChange)="pageSize.set($event)">
+                  @for (s of pageSizeOptions; track s) {
+                    <mat-option [value]="s">{{ s }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
           </mat-expansion-panel>
 

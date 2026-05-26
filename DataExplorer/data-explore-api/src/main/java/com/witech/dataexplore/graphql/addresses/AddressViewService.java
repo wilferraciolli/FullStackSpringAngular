@@ -1,9 +1,12 @@
 package com.witech.dataexplore.graphql.addresses;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.witech.dataexplore.graphql.PageInput;
 import com.witech.dataexplore.graphql.SortOrder;
 
 @Service
@@ -14,17 +17,27 @@ public class AddressViewService {
         this.repository = repository;
     }
 
-    public Iterable<AddressView> findAll(AddressFilter filter, AddressSort sort) {
+    public AddressPage findAll(AddressFilter filter, AddressSort sort, PageInput pageInput) {
+        PageRequest pageable = PageRequest.of(
+                pageInput == null ? 0  : pageInput.getPage(),
+                pageInput == null ? 20 : pageInput.getSize(),
+                getSorting(sort));
+
         Specification<AddressView> spec = AddressViewSpec.fromFilter(filter);
-        return repository.findAll(spec, getSorting(sort));
+        Page<AddressView> result = repository.findAll(spec, pageable);
+
+        return new AddressPage(
+                result.getContent(),
+                result.getTotalElements(),
+                result.getTotalPages(),
+                result.getNumber(),
+                result.getSize());
     }
 
     private Sort getSorting(AddressSort sort) {
         if (sort != null && sort.getField() != null) {
-            Sort.Direction direction = sort.getOrder() == SortOrder.DESC
-                    ? Sort.Direction.DESC
-                    : Sort.Direction.ASC;
-            return Sort.by(direction, sort.getField().name());
+            Sort.Direction dir = sort.getOrder() == SortOrder.DESC ? Sort.Direction.DESC : Sort.Direction.ASC;
+            return Sort.by(dir, sort.getField().name());
         }
         return Sort.unsorted();
     }

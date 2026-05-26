@@ -1,7 +1,28 @@
 type Query {
-    # The 'filter' and 'sort' arguments provide the OData-like flexibility
-    people(filter: PersonFilter, sort: PersonSort): [Person]
-    addresses(filter: AddressFilter, sort: AddressSort): [Address]
+    people(filter: PersonFilter, sort: PersonSort, page: PageInput): PersonPage
+    addresses(filter: AddressFilter, sort: AddressSort, page: PageInput): AddressPage
+}
+
+# ── Pagination ──────────────────────────────────────────────────────────────
+input PageInput {
+    page: Int   # 0-based page index (default 0)
+    size: Int   # rows per page (default 20)
+}
+
+type PersonPage {
+    content:       [Person]
+    totalElements: Int
+    totalPages:    Int
+    page:          Int
+    size:          Int
+}
+
+type AddressPage {
+    content:       [Address]
+    totalElements: Int
+    totalPages:    Int
+    page:          Int
+    size:          Int
 }
 
 # ── Entities ──────────────────────────────────

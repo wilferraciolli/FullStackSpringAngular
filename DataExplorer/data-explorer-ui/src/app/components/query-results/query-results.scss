@@ -32,6 +32,21 @@ erve
     font-size: 0.875rem;
     color: #666;
   }
+
+  &-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+  }
+
+  &-pagination-label {
+    font-size: 0.875rem;
+    color: #444;
+    min-width: 120px;
+    text-align: center;
+  }
 }
 
 

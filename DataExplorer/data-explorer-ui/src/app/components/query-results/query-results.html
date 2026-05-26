@@ -5,15 +5,14 @@
     <p class="QueryResults-results-error">{{ queryError() }}</p>
   } @else if (rowData().length > 0) {
 
-    <!-- Toolbar -->
+    <!-- Toolbar: row count + export -->
     <div class="QueryResults-toolbar">
       <span class="QueryResults-toolbar-count">
-        {{ rowData().length }} row{{ rowData().length === 1 ? '' : 's' }}
+        {{ totalElements() }} total row{{ totalElements() === 1 ? '' : 's' }}
+        &nbsp;·&nbsp;
+        showing page {{ currentPage() + 1 }} of {{ totalPages() }}
       </span>
-      <button mat-stroked-button
-              color="primary"
-              (click)="exportCsv()"
-              matTooltip="Download visible rows as CSV">
+      <button mat-stroked-button color="primary" (click)="exportCsv()" matTooltip="Download current page as CSV">
         <mat-icon>download</mat-icon>
         Export CSV
       </button>
@@ -27,6 +26,25 @@
       [defaultColDef]="defaultColDef"
       (gridReady)="onGridReady($event)"
     />
+
+    <!-- Pagination controls -->
+    @if (totalPages() > 1) {
+      <div class="QueryResults-pagination">
+        <button mat-icon-button matTooltip="Previous page"
+                [disabled]="currentPage() === 0"
+                (click)="prevPage()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="QueryResults-pagination-label">
+          Page {{ currentPage() + 1 }} / {{ totalPages() }}
+        </span>
+        <button mat-icon-button matTooltip="Next page"
+                [disabled]="currentPage() >= totalPages() - 1"
+                (click)="nextPage()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    }
 
   } @else {
     <p class="QueryResults-results-empty">Nothing to see here, try refining your query.</p>

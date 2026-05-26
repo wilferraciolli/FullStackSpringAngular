@@ -44,6 +44,8 @@ export interface QueryPayload {
   fieldKeys: string[];
   filters: FieldFilter[];
   dateRange: { after: string; before: string };
+  page: number;
+  pageSize: number;
 }
 
 export type FilterOperator =
@@ -113,6 +115,10 @@ export class QueryBuilder {
   dateRangeOption = signal<DateRangeOption>(null);
   customDateStart: Date | null = null;
   customDateEnd: Date | null = null;
+
+  // Page size chosen before running the query
+  pageSize = signal<number>(20);
+  readonly pageSizeOptions = [10, 20, 50, 100];
 
   // Filter search
   filterSearchTerm = signal('');
@@ -330,6 +336,8 @@ export class QueryBuilder {
       fieldKeys: this.selectedFields.map((f) => f.key),
       filters: this.activeFilters,
       dateRange: this.computeDateRange(),
+      page: 0,                    // always start at page 0 on a fresh run
+      pageSize: this.pageSize(),
     });
   }
 

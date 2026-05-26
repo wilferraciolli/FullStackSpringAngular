@@ -14,6 +14,13 @@ interface SchemaState {
   queryResults: any | null;
   isExecuting: boolean;
   queryError: string | null;
+  // Pagination metadata returned by the last query
+  totalElements: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  // Stored so page-navigation can re-run without touching the query builder
+  lastPayload: Omit<QueryPayload, 'page'> | null;
 }
 
 const initialState: SchemaState = {
@@ -23,7 +30,22 @@ const initialState: SchemaState = {
   queryResults: null,
   isExecuting: false,
   queryError: null,
+  totalElements: 0,
+  totalPages: 0,
+  currentPage: 0,
+  pageSize: 20,
+  lastPayload: null,
 };
+
+function extractPaginationMeta(data: any): { totalElements: number; totalPages: number; currentPage: number } {
+  // Response: { people: { content: [], totalElements: N, totalPages: N, page: N } }
+  const firstArea = Object.values(data ?? {})[0] as any;
+  return {
+    totalElements: firstArea?.totalElements ?? 0,
+    totalPages:    firstArea?.totalPages    ?? 0,
+    currentPage:   firstArea?.page          ?? 0,
+  };
+}
 
 export const SchemaStore = signalStore(
   { providedIn: 'root' },
@@ -47,10 +69,39 @@ export const SchemaStore = signalStore(
 
     runQuery: rxMethod<QueryPayload>(
       pipe(
-        switchMap(({ fieldKeys, filters, dateRange }) => {
-          patchState(store, { isExecuting: true, queryError: null, queryResults: null });
-          return from(graphqlService.executeQuery(fieldKeys, store.dataAreas(), filters, dateRange)).pipe(
-            tap((queryResults) => patchState(store, { queryResults, isExecuting: false })),
+        switchMap((payload) => {
+          const { page, pageSize, ...rest } = payload;
+          patchState(store, {
+            isExecuting: true, queryError: null, queryResults: null,
+            lastPayload: { ...rest, pageSize },
+            currentPage: page, pageSize,
+          });
+          return from(graphqlService.executeQuery(store.dataAreas(), payload)).pipe(
+            tap((queryResults) => {
+              const meta = extractPaginationMeta(queryResults);
+              patchState(store, { queryResults, isExecuting: false, ...meta });
+            }),
+            catchError((err) => {
+              patchState(store, { isExecuting: false, queryError: err.message ?? 'Query failed' });
+              return EMPTY;
+            }),
+          );
+        }),
+      ),
+    ),
+
+    changePage: rxMethod<number>(
+      pipe(
+        switchMap((page) => {
+          const last = store.lastPayload();
+          if (!last) return EMPTY;
+          patchState(store, { isExecuting: true, queryError: null, currentPage: page });
+          const payload: QueryPayload = { ...last, page };
+          return from(graphqlService.executeQuery(store.dataAreas(), payload)).pipe(
+            tap((queryResults) => {
+              const meta = extractPaginationMeta(queryResults);
+              patchState(store, { queryResults, isExecuting: false, ...meta });
+            }),
             catchError((err) => {
               patchState(store, { isExecuting: false, queryError: err.message ?? 'Query failed' });
               return EMPTY;
@@ -62,7 +113,7 @@ export const SchemaStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      store.loadDataAreas(); // auto-loads when store is first injected
+      store.loadDataAreas();
     },
   }),
 );

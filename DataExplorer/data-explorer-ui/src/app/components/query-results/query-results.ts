@@ -17,35 +17,31 @@ export class QueryResults {
   private gridApi: GridApi | null = null;
 
   readonly theme = themeQuartz;
-  readonly isExecuting = this.store.isExecuting;
-  readonly queryError = this.store.queryError;
+  readonly isExecuting    = this.store.isExecuting;
+  readonly queryError     = this.store.queryError;
+  readonly totalElements  = this.store.totalElements;
+  readonly totalPages     = this.store.totalPages;
+  readonly currentPage    = this.store.currentPage;
 
   readonly defaultColDef: ColDef = {
-    sortable: true,
-    filter: true,
-    resizable: true,
-    flex: 1,
-    minWidth: 100,
+    sortable: true, filter: true, resizable: true, flex: 1, minWidth: 100,
   };
 
-  // Flatten the response: { people: [...], addresses: [...] } → combined flat rows
+  // Extract rows from content[] inside each area result (e.g. { people: { content: [...] } })
   readonly rowData = computed(() => {
     const results = this.store.queryResults();
     if (!results) return [];
-    // Each query result key returns an array — flatten all into one row set
-    return Object.values(results).flat() as any[];
+    return Object.values(results).flatMap((r: any) =>
+      Array.isArray(r?.content) ? r.content : (Array.isArray(r) ? r : [])
+    ) as any[];
   });
 
-  // Derive column defs from the first row's keys
   readonly colDefs = computed((): ColDef[] => {
     const rows = this.rowData();
     if (rows.length === 0) return [];
     return Object.keys(rows[0]).map((key) => ({
       field: key,
-      headerName: key
-        .replace(/([A-Z])/g, ' $1')
-        .replace(/^./, (s) => s.toUpperCase())
-        .trim(),
+      headerName: key.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase()).trim(),
     }));
   });
 
@@ -57,5 +53,13 @@ export class QueryResults {
     this.gridApi?.exportDataAsCsv({
       fileName: `export-${new Date().toISOString().substring(0, 10)}.csv`,
     });
+  }
+
+  protected prevPage(): void {
+    if (this.currentPage() > 0) this.store.changePage(this.currentPage() - 1);
+  }
+
+  protected nextPage(): void {
+    if (this.currentPage() < this.totalPages() - 1) this.store.changePage(this.currentPage() + 1);
   }
 }
