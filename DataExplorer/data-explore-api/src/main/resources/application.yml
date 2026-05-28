@@ -2,9 +2,13 @@ spring:
   application:
     name: data-explore-api
 
-  # Load .env file from the project root (if present) — keeps secrets out of application.yml
+  # Load secrets from .env — tried in both locations because IntelliJ's working directory
+  # can be the project root (DataExplorer/) or the module root (data-explore-api/)
+  # depending on how the run configuration is set up.
   config:
-    import: optional:file:.env[.properties]
+    import:
+      - optional:file:.env[.properties]                      # works when CWD = data-explore-api/
+      - optional:file:data-explore-api/.env[.properties]     # works when CWD = DataExplorer/
 
   datasource:
     url: jdbc:h2:mem:testdb
@@ -45,5 +49,8 @@ ai:
     api-key: ${GROQ_API_KEY:}
     url: https://api.groq.com/openai/v1/chat/completions
     model: llama-3.1-8b-instant
+    # Set to true when behind a corporate firewall that does SSL inspection (MITM).
+    # This disables certificate validation for Groq requests only — do NOT enable in production.
+    trust-all-certs: ${AI_GROQ_TRUST_ALL_CERTS:false}
 
 

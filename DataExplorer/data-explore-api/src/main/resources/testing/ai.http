@@ -1,0 +1,132 @@
+### ──────────────────────────────────────────────────────────────────────────
+### AI Query Parser — HTTP test file
+###
+### Run these requests inside IntelliJ's HTTP Client (green ▶ button on each ###).
+### Make sure the Spring Boot API is running on port 8080 first.
+### ──────────────────────────────────────────────────────────────────────────
+
+@baseUrl = http://localhost:8080
+
+# Reusable schema block — mirrors what the Angular UI sends.
+# The AI uses this to know which areas/fields exist and which are filterable.
+# filterable:true means the field appears in the backend *Filter input type.
+# effectiveDate is always excluded (handled by the date-range panel, not field filters).
+
+@personSchema = {
+  "key": "person",
+  "label": "Person",
+  "fields": [
+    { "key": "person.id",        "label": "Id",         "type": "ID",     "filterable": true  },
+    { "key": "person.firstName", "label": "First Name", "type": "String", "filterable": true  },
+    { "key": "person.lastName",  "label": "Last Name",  "type": "String", "filterable": true  },
+    { "key": "person.email",     "label": "Email",      "type": "String", "filterable": true  },
+    { "key": "person.jobTitle",  "label": "Job Title",  "type": "String", "filterable": true  },
+    { "key": "person.startDate", "label": "Start Date", "type": "Date",   "filterable": true  },
+    { "key": "person.phoneNumber","label":"Phone Number","type": "String", "filterable": false },
+    { "key": "person.bio",       "label": "Bio",        "type": "String", "filterable": false }
+  ]
+}
+
+@addressSchema = {
+  "key": "address",
+  "label": "Address",
+  "fields": [
+    { "key": "address.city",   "label": "City",   "type": "String", "filterable": true  },
+    { "key": "address.street", "label": "Street", "type": "String", "filterable": true  }
+  ]
+}
+
+
+### ── 1. Status check ────────────────────────────────────────────────────────
+# Quick health check — verifies that GROQ_API_KEY was loaded successfully.
+# Expected response: { "groqConfigured": true, "groqModel": "..." }
+# If groqConfigured is false, check the Spring Boot console for the [AI] warning lines.
+
+GET {{baseUrl}}/api/ai/status
+
+
+### ── 2. Simple email filter ─────────────────────────────────────────────────
+# Natural language: "get people whose email contains hotmail.com"
+# Expected parsed result:
+#   area: "person"
+#   fieldKeys: ["person.firstName", "person.lastName", "person.email"]
+#   filters: [{ fieldKey: "person.email", operator: "contains", value: "hotmail.com" }]
+
+POST {{baseUrl}}/api/ai/parse-query
+Content-Type: application/json
+
+{
+  "prompt": "get people whose email contains hotmail.com",
+  "schema": [{{personSchema}}]
+}
+
+
+### ── 3. Job title filter with starts_with ────────────────────────────────────
+# Natural language: "show me all senior engineers"
+# Expected parsed result:
+#   filters: [{ fieldKey: "person.jobTitle", operator: "starts_with", value: "Senior" }]
+
+POST {{baseUrl}}/api/ai/parse-query
+Content-Type: application/json
+
+{
+  "prompt": "show me all senior engineers",
+  "schema": [{{personSchema}}]
+}
+
+
+### ── 4. Multiple filters ──────────────────────────────────────────────────────
+# Natural language: "people with last name Smith who work as Manager"
+# Expected: two filters — lastName equals "Smith", jobTitle contains "Manager"
+
+POST {{baseUrl}}/api/ai/parse-query
+Content-Type: application/json
+
+{
+  "prompt": "people with last name Smith who work as Manager",
+  "schema": [{{personSchema}}]
+}
+
+
+### ── 5. Null check filter ─────────────────────────────────────────────────────
+# Natural language: "employees who don't have an email address"
+# Expected: filters: [{ fieldKey: "person.email", operator: "is_null", value: "" }]
+
+POST {{baseUrl}}/api/ai/parse-query
+Content-Type: application/json
+
+{
+  "prompt": "employees who don't have an email address",
+  "schema": [{{personSchema}}]
+}
+
+
+### ── 6. Address query ─────────────────────────────────────────────────────────
+# Natural language: "addresses in London"
+# Expected: area: "address", filters: [{ fieldKey: "address.city", operator: "equals", value: "London" }]
+
+POST {{baseUrl}}/api/ai/parse-query
+Content-Type: application/json
+
+{
+  "prompt": "addresses in London",
+  "schema": [{{addressSchema}}]
+}
+
+
+### ── 7. Multi-area schema (as the UI sends it) ─────────────────────────────
+# The Angular UI always sends ALL areas in the schema array.
+# The AI picks the most relevant area based on the prompt.
+# Expected: area: "person" (not address) because the prompt mentions email.
+
+POST {{baseUrl}}/api/ai/parse-query
+Content-Type: application/json
+
+{
+  "prompt": "find everyone with a gmail address",
+  "schema": [
+    {{personSchema}},
+    {{addressSchema}}
+  ]
+}
+
