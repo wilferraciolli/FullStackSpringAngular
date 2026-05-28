@@ -224,6 +224,8 @@ Badge states shown next to the button:
 **To enable Gemini Nano:**
 1. Open Chrome and go to `chrome://flags/#optimization-guide-on-device-model`
 2. Set the flag to **Enabled BypassPerfRequirement**
+1.1. Open Chrome and go to `chrome://flags/#prompt-api-for-gemini-nano`
+2.1. Set the flag to **Enabled**
 3. Click **Relaunch**
 4. Chrome downloads Gemini Nano (~1.7 GB) in the background
 5. Track progress at `chrome://on-device-ai`
