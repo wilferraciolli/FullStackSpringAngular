@@ -15,9 +15,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { SchemaStore } from '../../services/query-builder.store';
 import { QueryResults } from '../query-results/query-results';
+import { AiQueryService, ParsedQuery } from '../../services/ai-query.service';
 
 export interface DataField {
   key: string;
@@ -88,6 +90,7 @@ export type DateRangeOption = null | 'today' | 'this_week' | 'this_month' | 'pas
     MatNativeDateModule,
     MatAutocompleteModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     DragDropModule,
     QueryResults,
   ],
@@ -96,8 +99,13 @@ export type DateRangeOption = null | 'today' | 'this_week' | 'this_month' | 'pas
 })
 export class QueryBuilder {
   private readonly _schemaStore = inject(SchemaStore);
+  private readonly _aiQueryService = inject(AiQueryService);
 
   protected aiPrompt: WritableSignal<string> = signal('');
+  protected isAiBuilding = signal(false);
+  protected aiError = signal<string | null>(null);
+  /** Expose Chrome AI availability to the template */
+  protected readonly aiAvailability = this._aiQueryService.availability;
   protected dataAreas: Signal<DataArea[]> = this._schemaStore.dataAreas;
   protected selectedArea: WritableSignal<DataArea | null> = signal<DataArea | null>(null);
 
@@ -313,12 +321,97 @@ export class QueryBuilder {
     this.selectedArea.set(this.selectedArea()?.key === area.key ? null : area);
   }
 
+  /** Used by mat-autocomplete displayWith — always returns empty string so the input clears after selection */
+  readonly displayWithEmpty = () => '';
+
   compareAreas(a: DataArea | null, b: DataArea | null): boolean {
     return a?.key === b?.key;
   }
 
-  buildWithAi() {
-    console.log('[AI Query Builder] Prompt:', this.aiPrompt());
+  /** Tooltip shown on the Build with AI button */
+  get aiTooltip(): string {
+    switch (this.aiAvailability()) {
+      case 'ready':
+        return 'Gemini Nano is ready — running fully on-device, no internet needed.';
+
+      case 'needs-download':
+        return 'Gemini Nano not yet downloaded.\n\n'
+          + 'To enable Chrome AI (Gemini Nano):\n'
+          + '1. Open a new Chrome tab and go to:\n'
+          + '   chrome://flags/#optimization-guide-on-device-model\n'
+          + '2. Set the flag to "Enabled BypassPerfRequirement"\n'
+          + '3. Click "Relaunch" at the bottom\n'
+          + '4. Chrome will download Gemini Nano in the background (~1.7 GB)\n'
+          + '5. Track download progress at: chrome://on-device-ai\n'
+          + '6. Once downloaded, reload this page\n\n'
+          + 'Currently using Groq API as fallback.';
+
+      case 'unavailable':
+        return 'Chrome AI (Gemini Nano) is not available in this browser.\n\n'
+          + 'To enable it:\n'
+          + '1. Make sure you are using Chrome 127 or newer\n'
+          + '2. Go to: chrome://flags/#optimization-guide-on-device-model\n'
+          + '3. Set the flag to "Enabled BypassPerfRequirement"\n'
+          + '4. Click "Relaunch" — Chrome will download Gemini Nano (~1.7 GB)\n'
+          + '5. Track progress at: chrome://on-device-ai\n'
+          + '6. Reload this page when the download completes\n\n'
+          + 'Alternatively, use Groq API: add GROQ_API_KEY to data-explore-api/.env';
+
+      default:
+        return 'Describe your query in plain English and let AI build it for you';
+    }
+  }
+
+  async buildWithAi(): Promise<void> {
+    const prompt = this.aiPrompt().trim();
+    if (!prompt) return;
+
+    this.isAiBuilding.set(true);
+    this.aiError.set(null);
+
+    try {
+      const result = await this._aiQueryService.parsePrompt(prompt, this.dataAreas());
+      this.applyParsedQuery(result);
+    } catch (e: any) {
+      console.error('[AI Query Builder] Failed:', e);
+      // HttpErrorResponse body comes through as e.error.message; fall back to e.message
+      const msg: string = e?.error?.message ?? e?.message ?? 'AI could not parse your request. Try rephrasing.';
+      this.aiError.set(msg);
+    } finally {
+      this.isAiBuilding.set(false);
+    }
+  }
+
+  private applyParsedQuery(result: ParsedQuery): void {
+    // 1. Find and select the area
+    const area = this.dataAreas().find((a) => a.key === result.area);
+    if (!area) {
+      this.aiError.set(`AI returned unknown area "${result.area}". Try a more specific prompt.`);
+      return;
+    }
+    this.onAreaChange(area);
+
+    // 2. Select valid field keys (guard against hallucinated keys)
+    const validFieldKeys = new Set(area.fields.map((f) => f.key));
+    this.selectedFieldKeys.set(result.fieldKeys.filter((k) => validFieldKeys.has(k)));
+
+    // 3. Apply filters
+    for (const parsed of result.filters ?? []) {
+      const field = area.fields.find((f) => f.key === parsed.fieldKey);
+      if (!field || !field.filterable) continue;
+
+      const indexedField = { ...field, areaKey: area.key, areaLabel: area.label };
+      this.addFieldToFilter(indexedField);
+
+      const added = this.fieldFilters().get(parsed.fieldKey);
+      if (added) {
+        this.onOperatorChange(added, parsed.operator as FilterOperator);
+        const withOp = this.fieldFilters().get(parsed.fieldKey);
+        if (withOp && parsed.value && !this.needsNoValue(parsed.operator as FilterOperator)) {
+          this.onFilterValueChange(withOp, parsed.value);
+        }
+      }
+    }
   }
 
   saveQuery() {

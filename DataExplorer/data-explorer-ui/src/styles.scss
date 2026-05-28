@@ -37,3 +37,12 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+// Allow multiline text in matTooltip (use matTooltipClass="QueryBuilder-ai-tooltip")
+.QueryBuilder-ai-tooltip {
+  white-space: pre-line !important;
+  max-width: 360px !important;
+  font-size: 0.78rem !important;
+  line-height: 1.5 !important;
+}
+

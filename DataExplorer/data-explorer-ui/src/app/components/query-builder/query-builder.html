@@ -11,10 +11,36 @@
       <mat-icon matPrefix>auto_awesome</mat-icon>
     </mat-form-field>
 
-    <button mat-raised-button color="accent" class="QueryBuilder-toolbar-ai-btn" (click)="buildWithAi()">
-      <mat-icon>smart_toy</mat-icon>
-      Build with AI
-    </button>
+    <div class="QueryBuilder-toolbar-ai">
+      <button mat-raised-button color="accent"
+              class="QueryBuilder-toolbar-ai-btn"
+              [disabled]="isAiBuilding()"
+              [matTooltip]="aiTooltip"
+              matTooltipClass="QueryBuilder-ai-tooltip"
+              (click)="buildWithAi()">
+        @if (isAiBuilding()) {
+          <mat-spinner diameter="18" />
+          Thinking…
+        } @else {
+          <mat-icon>smart_toy</mat-icon>
+          Build with AI
+        }
+      </button>
+
+      @if (aiAvailability() === 'ready') {
+        <span class="QueryBuilder-toolbar-ai-badge QueryBuilder-toolbar-ai-badge--local">
+          <mat-icon>memory</mat-icon> On-device
+        </span>
+      }
+      @if (aiAvailability() === 'needs-download') {
+        <span class="QueryBuilder-toolbar-ai-badge QueryBuilder-toolbar-ai-badge--download">
+          <mat-icon>cloud_download</mat-icon> Model not yet downloaded — using Groq
+        </span>
+      }
+      @if (aiError()) {
+        <span class="QueryBuilder-toolbar-ai-error">⚠ {{ aiError() }}</span>
+      }
+    </div>
   </div>
 
   <!-- Body: data fields left, query right -->
@@ -187,7 +213,7 @@
                      placeholder="e.g. Salary, Absence…" />
               <mat-icon matSuffix>search</mat-icon>
               <mat-autocomplete #filterAuto
-                                [displayWith]="() => ''"
+                                [displayWith]="displayWithEmpty"
                                 (optionSelected)="addFieldToFilter($event.option.value)">
                 @for (field of fieldSuggestions; track field.key) {
                   <mat-option [value]="field">

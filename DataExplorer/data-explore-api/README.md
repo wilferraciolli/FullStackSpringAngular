@@ -1,383 +1,346 @@
-# Data Explore API
+# data-explore-api
 
-A modern Spring Boot REST and GraphQL API for exploring and managing user and employee data. This application provides comprehensive data exploration capabilities with dual interface support (REST and GraphQL) and an in-memory H2 database with console access.
+Spring Boot 4 GraphQL API powering the Data Explorer application. Exposes employee and address data through a fully-typed GraphQL schema with server-side filtering, sorting, pagination, and an AI natural-language query parser endpoint.
 
-## Project Overview
+---
 
-Data Explore API is a full-featured Spring Boot application (v4.0.6) built with Java 21 that offers:
+## Table of Contents
 
-- **RESTful API** for user management with full CRUD operations
-- **GraphQL API** with advanced filtering and sorting capabilities
-- **Interactive GraphQL Playground** (GraphiQL) for schema exploration and testing
-- **H2 Console** for database inspection and SQL queries
-- **Database Versioning** with Flyway migrations
-- **Sample Data** for immediate exploration
+- [Overview](#overview)
+- [Technology Stack](#technology-stack)
+- [Getting Started](#getting-started)
+- [Configuration & Environment](#configuration--environment)
+- [GraphQL API](#graphql-api)
+- [AI Query Parser](#ai-query-parser)
+- [Database](#database)
+- [Project Structure](#project-structure)
+- [Interactive Tools](#interactive-tools)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## Overview
+
+The API serves two data areas — **Person** and **Address** — backed by database views on top of a normalised schema. Every query goes through JPA Specifications so filtering, sorting and pagination are handled entirely by the database (no in-memory loops).
+
+Key capabilities:
+
+| Feature | Detail |
+|---|---|
+| **GraphQL endpoint** | `POST /graphql` — all data queries go here |
+| **Pagination** | Every query returns a `Page` wrapper with `totalElements`, `totalPages`, `page`, `size` |
+| **Server-side filtering** | `StringFilter` (equals, contains, startsWith, notEquals, isNull) and `DateFilter` (after, before) pushed to SQL WHERE clause via JPA Specifications |
+| **Sorting** | `ASC`/`DESC` on any indexed field |
+| **AI parse endpoint** | `POST /api/ai/parse-query` — converts a plain-English prompt into a structured query using Groq (Llama 3.1) |
+| **GraphiQL playground** | `GET /graphiql` — in-browser schema explorer and query tester |
+| **H2 console** | `GET /h2-console` — in-browser SQL console |
+
+---
 
 ## Technology Stack
 
-- **Framework**: Spring Boot 4.0.6
-- **Java Version**: 21
-- **Database**: H2 (in-memory)
-- **API Protocols**: REST + GraphQL
-- **Code Generation**: Lombok
-- **Database Migration**: Flyway
-- **Build Tool**: Maven
+| Layer | Technology | Version |
+|---|---|---|
+| Framework | Spring Boot | 4.0.6 |
+| Language | Java | 25 |
+| API protocol | Spring GraphQL | (Boot-managed) |
+| ORM | Spring Data JPA / Hibernate | (Boot-managed) |
+| Filtering | JPA Criteria API (`Specification<T>`) | — |
+| Database | H2 in-memory | — |
+| Migrations | Flyway | (Boot-managed) |
+| Code generation | Lombok | — |
+| AI client | Spring `RestClient` → Groq API | — |
+| Build tool | Maven (wrapper included) | — |
 
-## Prerequisites
-
-- Java 21 or higher
-- Maven 3.8.x or higher (or use the included Maven wrapper)
+---
 
 ## Getting Started
 
-### Build the Project
+### Prerequisites
+
+- Java 25+ (or 21+ with minor version change in `pom.xml`)
+- Maven 3.8+ (or use the included `mvnw` / `mvnw.cmd` wrapper)
+
+### Run
 
 ```bash
-# On Windows
-mvnw.cmd clean package
-
-# On Mac/Linux
-./mvnw clean package
-```
-
-### Run the Application
-
-```bash
-# On Windows
+# Windows
 mvnw.cmd spring-boot:run
 
-# On Mac/Linux
+# Mac / Linux
 ./mvnw spring-boot:run
 ```
 
-The application will start on `http://localhost:8080`
+API starts on **http://localhost:8080**.
 
-## API Documentation
+### Build
 
-### REST API Endpoints
-
-#### User Management
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| **POST** | `/users` | Create a new user |
-| **GET** | `/users` | Retrieve all users |
-| **GET** | `/users/{id}` | Get user by ID |
-| **GET** | `/users/username/{username}` | Get user by username |
-| **PUT** | `/users/{id}` | Update user by ID |
-| **DELETE** | `/users/{id}` | Delete user by ID |
-| **GET** | `/users/check/username/{username}` | Check if username exists |
-| **GET** | `/users/check/email/{email}` | Check if email exists |
-
-#### Example Requests
-
-**Create a User:**
 ```bash
-curl -X POST http://localhost:8080/users \
-  -H "Content-Type: application/json" \
-  -d '{
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "john.doe@example.com",
-    "username": "johndoe"
-  }'
+mvnw.cmd clean package          # Windows
+./mvnw clean package            # Mac / Linux
 ```
 
-**Get All Users:**
+---
+
+## Configuration & Environment
+
+### `application.yml`
+
+| Property | Default | Description |
+|---|---|---|
+| `ai.groq.api-key` | `${GROQ_API_KEY:}` | Groq API key — loaded from `.env` |
+| `ai.groq.url` | `https://api.groq.com/openai/v1/chat/completions` | Groq endpoint |
+| `ai.groq.model` | `llama-3.1-8b-instant` | Model used for query parsing |
+| `ai.groq.trust-all-certs` | `${AI_GROQ_TRUST_ALL_CERTS:false}` | Set `true` behind a corporate SSL-inspecting firewall |
+
+### `.env` file
+
+Copy `.env.example` to `.env` (already git-ignored) and fill in your values:
+
 ```bash
-curl http://localhost:8080/users
+# Get a free key at https://console.groq.com → API Keys
+GROQ_API_KEY=gsk_your_key_here
+
+# Set true if you see PKIX / certificate_unknown errors (corporate firewall SSL inspection)
+AI_GROQ_TRUST_ALL_CERTS=false
 ```
 
-### GraphQL API
+> **Note:** Spring Boot loads `.env` via `spring.config.import`. If your IntelliJ working directory is the project root rather than the module root, the service also reads both paths manually as a fallback. The startup log always prints whether the key was found and from where.
 
-The GraphQL API is available at `http://localhost:8080/graphql`
+### IntelliJ Working Directory (recommended fix)
 
-#### Schema
+Edit Configurations → Working directory → set to `$MODULE_WORKING_DIR$`
+This makes Spring Boot find `.env` automatically without the manual fallback.
 
-**Query:**
+---
+
+## GraphQL API
+
+**Endpoint:** `POST http://localhost:8080/graphql`
+**Playground:** `GET http://localhost:8080/graphiql`
+
+### Schema Summary
+
 ```graphql
 type Query {
-    people(filter: PersonFilter, sort: PersonSort): [Person]
-    addresses(filter: AddressFilter, sort: AddressSort): [Address]
+    people(filter: PersonFilter, sort: PersonSort, page: PageInput): PersonPage
+    addresses(filter: AddressFilter, sort: AddressSort, page: PageInput): AddressPage
+}
+
+# Pagination input
+input PageInput {
+    page: Int   # 0-based page number
+    size: Int   # rows per page
+}
+
+# Paginated result wrappers
+type PersonPage {
+    content:       [Person]
+    totalElements: Int
+    totalPages:    Int
+    page:          Int
+    size:          Int
+}
+
+# String field filter — all operators are optional; first non-null wins
+input StringFilter {
+    equals:     String
+    notEquals:  String
+    contains:   String
+    startsWith: String
+    isNull:     Boolean
+}
+
+# Date field filter (ISO format: YYYY-MM-DD)
+input DateFilter {
+    after:  String   # inclusive >=
+    before: String   # inclusive <=
 }
 ```
 
-**Types:**
+### Person Fields
 
+| Field | Type | Filterable |
+|---|---|---|
+| `id` | ID | ✅ |
+| `firstName` | String | ✅ |
+| `lastName` | String | ✅ |
+| `email` | String | ✅ |
+| `jobTitle` | String | ✅ |
+| `startDate` | Date | ✅ |
+| `effectiveDate` | Date | ✅ (date-range only) |
+| `phoneNumber` | String | — |
+| `bio` | String | — |
+
+### Address Fields
+
+| Field | Type | Filterable |
+|---|---|---|
+| `city` | String | ✅ |
+| `street` | String | ✅ |
+| `effectiveDate` | Date | ✅ (date-range only) |
+
+### Example Queries
+
+**People with email containing "hotmail", page 1:**
 ```graphql
-type Person {
-    id: ID
-    email: String
-    firstName: String
-    lastName: String
-    phoneNumber: String
-    bio: String
-    jobTitle: String
-    startDate: String
-}
-
-type Address {
-    id: ID
-    city: String
-    street: String
-}
-```
-
-**Filtering & Sorting:**
-
-```graphql
-input PersonFilter {
-    firstName: String
-    lastName: String
-    email: String
-    jobTitle: String
-}
-
-input PersonSort {
-    field: PersonSortField
-    order: SortOrder
-}
-
-enum PersonSortField {
-    lastName
-    firstName
-    email
-    jobTitle
-}
-
-enum SortOrder {
-    ASC
-    DESC
-}
-```
-
-#### Example GraphQL Queries
-
-**Get All People:**
-```graphql
-query {
-  people {
-    id
-    firstName
-    lastName
-    email
-    jobTitle
+{
+  people(
+    filter: { email: { contains: "hotmail" }, effectiveDate: { after: "1900-01-01", before: "2099-12-31" } }
+    sort:   { field: lastName, order: ASC }
+    page:   { page: 0, size: 20 }
+  ) {
+    content { firstName lastName email jobTitle }
+    totalElements
+    totalPages
+    page
   }
 }
 ```
 
-**Get People with Filtering:**
+**Addresses in a specific city:**
 ```graphql
-query {
-  people(filter: { jobTitle: "Engineer" }) {
-    id
-    firstName
-    lastName
-    email
-    jobTitle
-    startDate
+{
+  addresses(
+    filter: { city: { equals: "London" } }
+    page:   { page: 0, size: 50 }
+  ) {
+    content { city street }
+    totalElements
   }
 }
 ```
 
-**Get People with Sorting:**
-```graphql
-query {
-  people(sort: { field: lastName, order: ASC }) {
-    id
-    firstName
-    lastName
-    email
-  }
+### How Filtering Works
+
+Filtering uses **JPA Specifications** (`Specification<T>`). Each filter field generates a SQL predicate via `CriteriaBuilder` (LIKE, =, IS NULL, >=, <=). Predicates are ANDed together and passed to `repository.findAll(spec, pageable)` — the database executes a single `SELECT … WHERE … LIMIT ? OFFSET ?` query. No data is ever loaded into memory and then filtered in Java.
+
+---
+
+## AI Query Parser
+
+**Endpoint:** `POST http://localhost:8080/api/ai/parse-query`
+**Status check:** `GET http://localhost:8080/api/ai/status`
+
+Converts a plain-English user prompt into a structured query object that the Angular UI can apply directly to the query builder state. Called automatically by the frontend when Chrome's built-in AI (Gemini Nano) is unavailable.
+
+### Request
+
+```json
+{
+  "prompt": "people with email containing hotmail.com",
+  "schema": [
+    {
+      "key": "person",
+      "label": "Person",
+      "fields": [
+        { "key": "person.email", "label": "Email", "type": "String", "filterable": true },
+        { "key": "person.firstName", "label": "First Name", "type": "String", "filterable": true }
+      ]
+    }
+  ]
 }
 ```
 
-**Get Addresses:**
-```graphql
-query {
-  addresses(filter: { city: "New York" }) {
-    id
-    street
-    city
-  }
+### Response
+
+```json
+{
+  "area": "person",
+  "fieldKeys": ["person.firstName", "person.lastName", "person.email"],
+  "filters": [
+    { "fieldKey": "person.email", "operator": "contains", "value": "hotmail.com" }
+  ]
 }
 ```
 
-## Interactive Tools
+### How it Works
 
-### GraphQL Playground (GraphiQL)
+1. The frontend sends the user's prompt alongside the live schema (areas and filterable fields already loaded via introspection).
+2. `AiService` builds a system prompt that injects the exact field keys so the model cannot hallucinate field names.
+3. The Groq API (`llama-3.1-8b-instant`) returns a JSON object.
+4. The response is deserialized into `ParsedQueryResponse` and returned to the frontend.
 
-Access the interactive GraphQL playground to explore the schema and test queries:
+See `src/main/resources/testing/ai.http` for ready-to-run test requests.
 
-**URL:** `http://localhost:8080/graphiql`
+---
 
-Features:
-- Interactive query editor
-- Real-time schema documentation
-- Query history
-- Variable support
-- Response formatting
+## Database
 
-### H2 Database Console
+| Item | Detail |
+|---|---|
+| Engine | H2 in-memory (resets on restart) |
+| Console | http://localhost:8080/h2-console |
+| JDBC URL | `jdbc:h2:mem:testdb` |
+| Username | `sa` |
+| Password | *(blank)* |
 
-Access the H2 database console for direct database interaction:
+### Migrations (Flyway)
 
-**URL:** `http://localhost:8080/h2-console`
+| File | What it does |
+|---|---|
+| `V001__Initial_schema_inflation.sql` | Core schema: employees, jobs, addresses |
+| `V002__Create_entities_tables.sql` | Additional entity tables |
+| `V003__Insert_sample_data.sql` | ~600 employees, ~1700 occupancy rows via `generate_series` |
+| `R__Create_views.sql` | `person_view` and `address_view` used by GraphQL resolvers |
 
-**Connection Details:**
-- **JDBC URL:** `jdbc:h2:mem:testdb`
-- **User Name:** `sa`
-- **Password:** (leave blank)
+The GraphQL resolvers query the **views** (`person_view`, `address_view`) rather than the raw tables. This cleanly separates the reporting layer from the storage schema.
 
-Features:
-- Run SQL queries
-- Inspect database schema
-- View tables and data
-- Execute database operations
-
-## Database Structure
-
-### Entities
-
-1. **User** - User account information
-2. **Employee** - Employee details and employment information
-3. **EmployeeAddress** - Address information for employees
-4. **Job** - Job titles and descriptions
-5. **Occupancy** - Employment history and occupancy records
-
-### Database Migrations
-
-Database schema is managed using Flyway migrations located in `src/main/resources/db/migration/`:
-
-- `V001__Initial_schema_inflation.sql` - Initial database setup
-- `V002__Create_entities_tables.sql` - Entity tables creation
-- `V003__Insert_sample_data.sql` - Sample data population
-- `R__Create_views.sql` - Database views
+---
 
 ## Project Structure
 
 ```
-data-explore-api/
-├── src/
-│   ├── main/
-│   │   ├── java/com/witech/dataexplore/
-│   │   │   ├── controller/        # REST endpoints
-│   │   │   ├── service/           # Business logic
-│   │   │   ├── repository/        # Data access
-│   │   │   ├── entity/            # JPA entities
-│   │   │   ├── dto/               # Data transfer objects
-│   │   │   ├── graphql/           # GraphQL resolvers
-│   │   │   ├── views/             # View-related classes
-│   │   │   └── DataExploreApiApplication.java
-│   │   └── resources/
-│   │       ├── application.yml    # Configuration
-│   │       ├── graphql/
-│   │       │   └── schema.graphqls  # GraphQL schema
-│   │       └── db/migration/      # Flyway migrations
-│   └── test/                      # Test files
-├── pom.xml                        # Maven configuration
-└── README.md                      # This file
+src/main/java/com/witech/dataexplore/
+├── ai/
+│   ├── AiController.java          # POST /api/ai/parse-query, GET /api/ai/status
+│   ├── AiService.java             # Groq API client + .env loader + trust-all SSL
+│   ├── ParseQueryRequest.java     # Request DTO (prompt + schema)
+│   └── ParsedQueryResponse.java   # Response DTO (area + fieldKeys + filters)
+├── graphql/
+│   ├── GraphQLController.java     # @QueryMapping for people + addresses
+│   ├── PageInput.java             # { page, size }
+│   ├── PageResult.java            # Generic page wrapper T
+│   ├── SortOrder.java             # ASC / DESC enum
+│   ├── helpers/
+│   │   └── SpecificationHelper.java  # stringFilter(), dateFilter(), uuidStringFilter()
+│   ├── person/
+│   │   ├── PersonView.java           # @Entity mapped to person_view
+│   │   ├── PersonFilter.java         # GraphQL filter input DTO
+│   │   ├── PersonSort.java           # Sort field enum + order
+│   │   ├── PersonViewRepository.java # extends JpaSpecificationExecutor
+│   │   ├── PersonViewService.java    # findAll(filter, sort, page)
+│   │   └── PersonViewSpec.java       # Chains filter fields into Specification<PersonView>
+│   └── addresses/                    # Mirror of person/ for addresses
+└── DataExploreApiApplication.java
 ```
-
-## Configuration
-
-Key application properties from `application.yml`:
-
-```yaml
-spring:
-  application:
-    name: data-explore-api
-  datasource:
-    url: jdbc:h2:mem:testdb      # In-memory H2 database
-  h2:
-    console:
-      enabled: true              # Enable H2 console
-      path: /h2-console
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-  graphql:
-    graphiql:
-      enabled: true              # Enable GraphiQL playground
-      path: /graphiql
-    cors:
-      allowed-origins: "*"       # CORS for frontend access
-```
-
-## Building and Testing
-
-### Build with Maven
-
-```bash
-# Clean and package
-mvnw.cmd clean package
-
-# Run tests
-mvnw.cmd clean test
-
-# Skip tests during build
-mvnw.cmd clean package -DskipTests
-```
-
-### Run Specific Tests
-
-```bash
-mvnw.cmd test -Dtest=DataExploreApiApplicationTests
-```
-
-## Troubleshooting
-
-### H2 Console Not Accessible
-- Verify that `spring.h2.console.enabled: true` is set in `application.yml`
-- Check that the application is running on the correct port
-
-### GraphQL Queries Returning Empty Results
-- Verify data migrations have executed successfully
-- Check the H2 console to confirm data exists in the database
-
-### Port Already in Use
-If port 8080 is already in use, you can change it:
-
-```bash
-mvnw.cmd spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
-```
-
-## Development
-
-### Adding New REST Endpoints
-1. Create a new controller in `src/main/java/com/witech/dataexplore/controller/`
-2. Implement the endpoint with appropriate HTTP methods
-3. Add corresponding service and repository methods
-
-### Adding GraphQL Resolvers
-1. Update the GraphQL schema in `src/main/resources/graphql/schema.graphqls`
-2. Implement resolvers in `src/main/java/com/witech/dataexplore/graphql/`
-
-### Database Migrations
-1. Create new migration files in `src/main/resources/db/migration/`
-2. Follow naming convention: `V###__description.sql` for versioned migrations
-3. Flyway will automatically execute pending migrations on startup
-
-## Dependencies
-
-- `spring-boot-starter-graphql` - GraphQL support
-- `spring-boot-starter-webmvc` - REST API support
-- `spring-boot-starter-data-jpa` - Database access
-- `spring-boot-starter-flyway` - Database migrations
-- `h2` - In-memory relational database
-- `lombok` - Code generation (getters, setters, builders)
-- `spring-boot-devtools` - Development tools (hot reload)
-
-## License
-
-This project is part of the FullStackSpringAngular series.
-
-## Support
-
-For issues or questions, please check the application logs or access the GraphQL playground to test queries directly.
 
 ---
 
-**Application Name:** data-explore-api  
-**Version:** 0.0.1-SNAPSHOT  
-**Java Version:** 21  
-**Spring Boot Version:** 4.0.6
+## Interactive Tools
+
+| Tool | URL | Purpose |
+|---|---|---|
+| GraphiQL Playground | http://localhost:8080/graphiql | Write and test GraphQL queries interactively |
+| H2 Console | http://localhost:8080/h2-console | Run SQL directly against the in-memory DB |
+| AI Status | http://localhost:8080/api/ai/status | Verify Groq key is loaded |
+
+---
+
+## Troubleshooting
+
+**`[AI] GROQ_API_KEY not found`**
+Check the startup log for `Working directory searched:`. Either:
+- Add the key to `.env` in that directory, or
+- Set `GROQ_API_KEY` directly in IntelliJ → Edit Run Configuration → Environment variables
+
+**`PKIX path building failed` (SSL error)**
+Your corporate firewall is intercepting HTTPS. Set `AI_GROQ_TRUST_ALL_CERTS=true` in `.env`.
+
+**Empty GraphQL results**
+Open the H2 console and run `SELECT COUNT(*) FROM person_view;`. If 0, check Flyway migration logs on startup.
+
+**Port 8080 in use**
+```bash
+mvnw.cmd spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
+```
