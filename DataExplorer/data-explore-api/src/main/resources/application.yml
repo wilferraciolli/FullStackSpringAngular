@@ -1,6 +1,11 @@
 spring:
   application:
     name: data-explore-api
+
+  # Load .env file from the project root (if present) — keeps secrets out of application.yml
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -32,5 +37,13 @@ spring:
       path: /graphiql
     cors:
       allowed-origins: "*"
+
+# AI configuration — used by AiService (Groq fallback when Chrome AI is unavailable)
+# Get a free key at https://console.groq.com → API Keys → Create Key
+ai:
+  groq:
+    api-key: ${GROQ_API_KEY:}
+    url: https://api.groq.com/openai/v1/chat/completions
+    model: llama-3.1-8b-instant
 
 
