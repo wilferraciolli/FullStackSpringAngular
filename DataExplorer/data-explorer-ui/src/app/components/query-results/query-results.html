@@ -17,11 +17,13 @@
               [disabled]="isExporting()"
               matTooltip="Export all matching rows to CSV (ignores current page)">
         @if (isExporting()) {
-          <mat-spinner diameter="18" strokeWidth="2" style="display:inline-block;vertical-align:middle;margin-right:6px" />
+          <mat-spinner diameter="18" strokeWidth="2" style="display:inline-block;vertical-align:middle;margin-right:6px"/>
           Exporting…
         } @else {
-          <mat-icon>download</mat-icon>
-          Export All CSV
+          <ng-container>
+            <mat-icon>download</mat-icon>
+            Export All CSV
+          </ng-container>
         }
       </button>
     </div>

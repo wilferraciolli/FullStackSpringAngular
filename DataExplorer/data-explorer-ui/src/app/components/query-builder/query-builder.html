@@ -7,7 +7,7 @@
       <input matInput
              [ngModel]="aiPrompt()"
              (ngModelChange)="aiPrompt.set($event)"
-             placeholder="e.g. Get all people who were absent last month" />
+             placeholder="e.g. Get all people who were absent last month"/>
       <mat-icon matPrefix>auto_awesome</mat-icon>
     </mat-form-field>
 
@@ -19,11 +19,13 @@
               matTooltipClass="QueryBuilder-ai-tooltip"
               (click)="buildWithAi()">
         @if (isAiBuilding()) {
-          <mat-spinner diameter="18" />
+          <mat-spinner diameter="18"/>
           Thinking…
         } @else {
-          <mat-icon>smart_toy</mat-icon>
-          Build with AI
+          <ng-container>
+            <mat-icon>smart_toy</mat-icon>
+            Build with AI
+          </ng-container>
         }
       </button>
 
@@ -55,25 +57,27 @@
 
       <mat-card-content>
         <!-- Area selector -->
-        @if (isLoadingAreas()) {  <p class="QueryBuilder-fields-empty">Loading fields from API…</p> }
-        @else if (loadingError()) {  <p class="QueryBuilder-fields-empty" style="color: red">{{ loadingError() }}</p> }
-        @else {
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-fields-area-select">
-          <mat-label>Area</mat-label>
-          <mat-select [ngModel]="selectedArea()"
-                      (ngModelChange)="onAreaChange($event)"
-                      [compareWith]="compareAreas">
-            <mat-option [value]="null">— None —</mat-option>
-            @for (area of dataAreas(); track area.key) {
-              <mat-option [value]="area">
-                <mat-icon>{{ area.icon }}</mat-icon>
-                {{ area.label }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        @if (isLoadingAreas()) {
+          <p class="QueryBuilder-fields-empty">Loading fields from API…</p>
+        } @else if (loadingError()) {
+          <p class="QueryBuilder-fields-empty" style="color: red">{{ loadingError() }}</p>
+        } @else {
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-fields-area-select">
+            <mat-label>Area</mat-label>
+            <mat-select [ngModel]="selectedArea()"
+                        (ngModelChange)="onAreaChange($event)"
+                        [compareWith]="compareAreas">
+              <mat-option [value]="null">— None —</mat-option>
+              @for (area of dataAreas(); track area.key) {
+                <mat-option [value]="area">
+                  <mat-icon>{{ area.icon }}</mat-icon>
+                  {{ area.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-        <mat-divider class="QueryBuilder-fields-divider" />
+          <mat-divider class="QueryBuilder-fields-divider"/>
         }
 
         <!-- Field checkboxes -->
@@ -172,11 +176,11 @@
                 <mat-form-field appearance="outline" subscriptSizing="dynamic" class="QueryBuilder-query-daterange-picker">
                   <mat-label>Custom range</mat-label>
                   <mat-date-range-input [rangePicker]="picker">
-                    <input matStartDate [(ngModel)]="customDateStart" placeholder="Start date" />
-                    <input matEndDate   [(ngModel)]="customDateEnd"   placeholder="End date" />
+                    <input matStartDate [(ngModel)]="customDateStart" placeholder="Start date"/>
+                    <input matEndDate [(ngModel)]="customDateEnd" placeholder="End date"/>
                   </mat-date-range-input>
-                  <mat-datepicker-toggle matIconSuffix [for]="picker" />
-                  <mat-date-range-picker #picker />
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"/>
+                  <mat-date-range-picker #picker/>
                 </mat-form-field>
               }
 
@@ -210,7 +214,7 @@
                      [ngModel]="filterSearchTerm()"
                      (ngModelChange)="filterSearchTerm.set($event)"
                      [matAutocomplete]="filterAuto"
-                     placeholder="e.g. Salary, Absence…" />
+                     placeholder="e.g. Salary, Absence…"/>
               <mat-icon matSuffix>search</mat-icon>
               <mat-autocomplete #filterAuto
                                 [displayWith]="displayWithEmpty"
@@ -254,7 +258,7 @@
                         <mat-label>Value</mat-label>
                         <input matInput
                                [ngModel]="filter.value"
-                               (ngModelChange)="onFilterValueChange(filter, $event)" />
+                               (ngModelChange)="onFilterValueChange(filter, $event)"/>
                       </mat-form-field>
                     }
 
@@ -292,17 +296,17 @@
   </div>
   <!-- Results -->
   <app-query-results/>
-<!--  <app-query-results />-->
+  <!--  <app-query-results />-->
 
-<!--  @if (isExecuting()) {-->
-<!--    <p class="QueryBuilder-query-empty">Running query…</p>-->
-<!--  }-->
+  <!--  @if (isExecuting()) {-->
+  <!--    <p class="QueryBuilder-query-empty">Running query…</p>-->
+  <!--  }-->
 
-<!--  @if (queryError()) {-->
-<!--    <p style="color: red">{{ queryError() }}</p>-->
-<!--  }-->
+  <!--  @if (queryError()) {-->
+  <!--    <p style="color: red">{{ queryError() }}</p>-->
+  <!--  }-->
 
-<!--  @if (queryResults()) {-->
-<!--    <pre style="font-size: 12px; overflow: auto">{{ queryResults() | json }}</pre>-->
-<!--  }-->
+  <!--  @if (queryResults()) {-->
+  <!--    <pre style="font-size: 12px; overflow: auto">{{ queryResults() | json }}</pre>-->
+  <!--  }-->
 </div>
