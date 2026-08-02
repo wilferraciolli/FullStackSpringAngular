@@ -1,59 +1,41 @@
-# FileAnalyzerUi
+# File Analyzer UI
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.1.
+The frontend for the File Analyzer application, built with Angular 22 and Angular Material.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- PDF file selection and upload.
+- Upload progress tracking.
+- Visual feedback using Angular Material components.
+- Displays extracted data from the blood test.
 
-```bash
-ng serve
-```
+## Tech Stack
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Angular**: 22
+- **UI Framework**: Angular Material
+- **Styling**: SCSS
+- **Package Manager**: npm
 
-## Code scaffolding
+## Getting Started
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Prerequisites
 
-```bash
-ng generate component component-name
-```
+- Node.js 22+
+- npm
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Development server
 
-```bash
-ng generate --help
-```
+Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Building
+### Build
 
-To build the project run:
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-```bash
-ng build
-```
+## Component Overview
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- `App`: Main application container.
+- `FileUploadComponent`: Handles file selection, upload logic, and displays the results.
 
-## Running unit tests
+## Service Overview
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `FileService`: Communicates with the Spring Boot backend (`http://localhost:8080/api/files`).

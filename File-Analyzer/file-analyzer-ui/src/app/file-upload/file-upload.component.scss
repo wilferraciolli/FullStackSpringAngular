@@ -1,0 +1,57 @@
+$primary: #3f51b5;
+
+.upload-card {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.file-input-container {
+  margin: 2rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.progress-container {
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  mat-progress-bar {
+    flex: 1;
+  }
+}
+
+.message {
+  margin: 1rem 0;
+  padding: 0.5rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.results-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+  }
+}

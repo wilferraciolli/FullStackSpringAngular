@@ -1,0 +1,39 @@
+<mat-card class="upload-card">
+  <mat-card-header>
+    <mat-card-title>Blood Test Analyzer</mat-card-title>
+    <mat-card-subtitle>Upload your PDF report to extract data</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="file-input-container">
+      <input type="file" class="file-input" (change)="selectFile($event)" #fileUpload accept="application/pdf">
+
+      <div class="file-upload">
+        {{fileName || "No file selected."}}
+        <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+          <mat-icon>attach_file</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="currentFile" class="progress-container">
+      <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+      <span>{{progress}}%</span>
+    </div>
+
+    <div *ngIf="message" class="message">
+      {{message}}
+    </div>
+
+    <div *ngIf="extractedData" class="results-container">
+      <h3>Extracted Data:</h3>
+      <pre>{{extractedData | json}}</pre>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-raised-button color="primary" [disabled]="!selectedFiles" (click)="upload()">
+      Upload and Process
+    </button>
+  </mat-card-actions>
+</mat-card>
