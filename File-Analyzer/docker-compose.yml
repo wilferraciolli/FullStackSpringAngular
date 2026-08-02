@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: file-analyzer-db
+    environment:
+      POSTGRES_DB: file_analyzer
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d file_analyzer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./file-analyzer-api
+      dockerfile: Dockerfile
+    container_name: file-analyzer-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/file_analyzer
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_FLYWAY_URL=jdbc:postgresql://db:5432/file_analyzer
+      - SPRING_FLYWAY_USER=user
+      - SPRING_FLYWAY_PASSWORD=password
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: ./file-analyzer-ui
+      dockerfile: Dockerfile
+    container_name: file-analyzer-ui
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
