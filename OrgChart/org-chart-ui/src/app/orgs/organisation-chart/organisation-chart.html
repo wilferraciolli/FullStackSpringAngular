@@ -32,32 +32,45 @@
             <div class="node-divider"></div>
           }
 
-          <span class="node-icon">
-            @switch (node.data.type) {
-              @case (nodeTypeEnum.Organisation) {
-                🏢
-              }
-              @case (nodeTypeEnum.OrganisationEntity) {
-                🌐
-              }
-              @case (nodeTypeEnum.Department) {
-                📁
-              }
-              @case (nodeTypeEnum.Job) {
-                💼
-              }
-            }
-          </span>
-
           <div class="node-header">
-            <span class="type-badge">{{ node.data.type }}</span>
+            <span class="node-icon">
+              @if (node.data.type === nodeTypeEnum.Job) {
+                @if (node.data.status === 'occupied' && node.data.person) {
+                  @if (node.data.person.thumbnail) {
+                    <img [src]="node.data.person.thumbnail" class="thumbnail" alt="User">
+                  } @else {
+                    👤
+                  }
+                } @else {
+                  💼
+                }
+              } @else {
+                @switch (node.data.type) {
+                  @case (nodeTypeEnum.Organisation) {
+                    🏢
+                  }
+                  @case (nodeTypeEnum.OrganisationEntity) {
+                    🌐
+                  }
+                  @case (nodeTypeEnum.Department) {
+                    📁
+                  }
+                }
+              }
+            </span>
+            <span class="type-badge">
+              @if (node.data.type === nodeTypeEnum.Job) {
+                Person Job
+              } @else {
+                {{ node.data.name }}
+              }
+            </span>
           </div>
 
           <div class="node-body">
             @if (node.data.type === nodeTypeEnum.Job) {
               <div class="job-container">
                 @if (node.data.status === 'occupied' && node.data.person) {
-                  <img [src]="node.data.person.thumbnail" class="avatar" alt="User">
                   <div class="info">
                     <div class="name">{{ node.data.person.name }}</div>
                     <div class="title">{{ node.data.person.title }}</div>
@@ -73,9 +86,7 @@
                 }
               </div>
             } @else {
-              <div class="entity-info">
-                <div class="entity-name">{{ node.data.name }}</div>
-              </div>
+              <!-- Empty body for non-job nodes as name is now in header badge -->
             }
           </div>
         </div>

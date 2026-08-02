@@ -59,53 +59,91 @@
     position: relative;
     transition: all 0.2s ease-in-out;
 
-    &.organisation { border-left-color: #1e293b; }
-    &.organisationentity { border-left-color: #64748b; }
+    &.organisation {
+      border-left-color: #1e293b;
+    }
+    &.organisationentity {
+      border-left-color: #64748b;
+    }
     &.department { border-left-color: #3b82f6; }
     &.job { border-left-color: #10b981; }
 
-    // Adjust font sizes for deeper levels
-    .entity-name {
-      font-size: clamp(0.9rem, 2vw, 1.1rem);
-    }
 
     // Icons for Node Types
     .node-icon {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 1rem;
-      opacity: 0.5;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+
+      .thumbnail {
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+        object-fit: cover;
+      }
     }
 
     .node-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       margin-bottom: 12px;
 
       .type-badge {
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        font-weight: 800;
-        padding: 2px 6px;
+        font-size: 0.85rem;
+        text-transform: none;
+        font-weight: 700;
+        padding: 4px 10px;
         background: rgba(0,0,0,0.05);
-        border-radius: 4px;
+        border-radius: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
       }
     }
 
     // Special styling for Department vs Job
     &.department {
       border-left: 4px solid #3b82f6; // Blue accent for departments
-
-      .entity-name {
-        font-size: 1.1rem;
-        letter-spacing: -0.01em;
-      }
     }
 
     &.job {
       border-left: 4px solid #10b981; // Green accent for jobs
+
+      .job-container {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 12px;
+
+        .info {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .name {
+            font-weight: 700;
+            font-size: 1rem;
+          }
+
+          .title {
+            font-size: 0.85rem;
+            color: #64748b;
+          }
+
+          .tag {
+            font-size: 0.7rem;
+            background: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            width: fit-content;
+          }
+        }
+      }
 
       &.job-vacant {
         border-left: 4px dashed #ef4444;

@@ -1,0 +1,53 @@
+<div class="list-container">
+  <div class="header">
+    <h1>Analyzed Documents</h1>
+    <button mat-flat-button color="primary" [routerLink]="['/upload']">
+      <mat-icon>add</mat-icon> UPLOAD NEW
+    </button>
+  </div>
+
+  <div class="debug-info" style="font-size: 10px; color: #ccc;">
+    Loading: {{ loading() }} | Files count: {{ files().length }}
+  </div>
+
+  <mat-progress-bar *ngIf="loading()" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div *ngIf="!loading() && files().length === 0" class="empty-state">
+    <mat-icon>history</mat-icon>
+    <p>No documents found. Upload your first blood test to see results here.</p>
+  </div>
+
+  <mat-accordion multi="true" *ngIf="files().length > 0">
+    <mat-expansion-panel *ngFor="let file of files()" class="file-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>description</mat-icon>
+          {{ file.fileName }}
+        </mat-panel-title>
+        <mat-panel-description>
+          Processed on {{ file.processedAt | date:'medium' }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="panel-content">
+        <div class="data-section">
+          <h3>Extracted Data (JSON)</h3>
+          <pre>{{ file.extractedData | json }}</pre>
+        </div>
+
+        <div class="data-section">
+          <h3>Raw Text</h3>
+          <div class="raw-text-box">
+            {{ file.rawText }}
+          </div>
+        </div>
+
+        <div class="metadata">
+          <span><strong>ID:</strong> {{ file.id }}</span>
+          <span><strong>Size:</strong> {{ (file.size / 1024) | number:'1.0-2' }} KB</span>
+          <span><strong>Type:</strong> {{ file.contentType }}</span>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
