@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
             <mat-card-subtitle>See all uploaded and processed files</mat-card-subtitle>
           </mat-card-header>
           <mat-card-actions>
-            <a mat-button color="primary" routerLink="/files">GO TO DOCUMENTS</a>
+            <a mat-button color="primary" [routerLink]="['/files']">GO TO DOCUMENTS</a>
           </mat-card-actions>
         </mat-card>
 
@@ -31,7 +31,7 @@ import { MatIconModule } from '@angular/material/icon';
             <mat-card-subtitle>Upload a new blood test PDF for analysis</mat-card-subtitle>
           </mat-card-header>
           <mat-card-actions>
-            <a mat-button color="accent" routerLink="/upload">GO TO UPLOAD</a>
+            <a mat-button color="accent" [routerLink]="['/upload']">GO TO UPLOAD</a>
           </mat-card-actions>
         </mat-card>
       </div>

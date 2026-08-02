@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { FileService } from '../file.service';
@@ -7,12 +7,14 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MatButtonModule,
     MatProgressBarModule,
     MatCardModule,
@@ -24,51 +26,51 @@ import { MatListModule } from '@angular/material/list';
 })
 export class FileUploadComponent {
   selectedFiles?: FileList;
-  currentFile?: File;
-  progress = 0;
-  message = '';
-  fileName = '';
-  extractedData: any = null;
+  currentFile = signal<File | undefined>(undefined);
+  progress = signal<number>(0);
+  message = signal<string>('');
+  fileName = signal<string>('');
+  extractedData = signal<any>(null);
 
   constructor(private uploadService: FileService) {}
 
   selectFile(event: any): void {
     this.selectedFiles = event.target.files;
     if (this.selectedFiles && this.selectedFiles.length > 0) {
-      this.fileName = this.selectedFiles[0].name;
+      this.fileName.set(this.selectedFiles[0].name);
     }
   }
 
   upload(): void {
-    this.progress = 0;
-    this.message = '';
-    this.extractedData = null;
+    this.progress.set(0);
+    this.message.set('');
+    this.extractedData.set(null);
 
     if (this.selectedFiles) {
       const file: File | null = this.selectedFiles.item(0);
 
       if (file) {
-        this.currentFile = file;
+        this.currentFile.set(file);
 
-        this.uploadService.upload(this.currentFile).subscribe({
+        this.uploadService.upload(file).subscribe({
           next: (event: any) => {
             if (event.type === HttpEventType.UploadProgress) {
-              this.progress = Math.round(100 * event.loaded / event.total);
+              this.progress.set(Math.round(100 * event.loaded / (event.total || event.loaded)));
             } else if (event instanceof HttpResponse) {
-              this.message = 'File uploaded successfully!';
-              this.extractedData = event.body;
+              this.message.set('File uploaded successfully!');
+              this.extractedData.set(event.body);
+              this.currentFile.set(undefined);
+              this.selectedFiles = undefined;
             }
           },
           error: (err: any) => {
             console.error(err);
-            this.progress = 0;
-            this.message = 'Could not upload the file!';
-            this.currentFile = undefined;
+            this.progress.set(0);
+            this.message.set('Could not upload the file!');
+            this.currentFile.set(undefined);
           }
         });
       }
-
-      this.selectedFiles = undefined;
     }
   }
 }

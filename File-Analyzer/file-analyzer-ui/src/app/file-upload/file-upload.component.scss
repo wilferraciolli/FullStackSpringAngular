@@ -54,4 +54,10 @@ $primary: #3f51b5;
     word-wrap: break-word;
     font-size: 0.9rem;
   }
+
+  .actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+  }
 }

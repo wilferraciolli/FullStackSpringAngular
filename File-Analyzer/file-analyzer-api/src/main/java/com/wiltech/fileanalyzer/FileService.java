@@ -54,8 +54,11 @@ public class FileService {
     }
 
     private String convertTextToJson(String text) {
+        // Remove control characters (except common ones like newline and tab) that are invalid in JSON
+        String sanitizedText = text.replaceAll("[\\p{Cntrl}&&[^\\r\\n\\t]]", "");
+
         // For a blood test, we might look for common patterns like "Glucose: 90 mg/dL"
         // This is a placeholder for actual parsing logic
-        return "{\"raw_extracted_text\": \"" + text.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"}";
+        return "{\"raw_extracted_text\": \"" + sanitizedText.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "") + "\"}";
     }
 }

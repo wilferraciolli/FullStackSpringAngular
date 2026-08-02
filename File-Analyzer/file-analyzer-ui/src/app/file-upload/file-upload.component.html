@@ -9,25 +9,30 @@
       <input type="file" class="file-input" (change)="selectFile($event)" #fileUpload accept="application/pdf">
 
       <div class="file-upload">
-        {{fileName || "No file selected."}}
+        {{fileName() || "No file selected."}}
         <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
           <mat-icon>attach_file</mat-icon>
         </button>
       </div>
     </div>
 
-    <div *ngIf="currentFile" class="progress-container">
-      <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
-      <span>{{progress}}%</span>
+    <div *ngIf="currentFile()" class="progress-container">
+      <mat-progress-bar mode="determinate" [value]="progress()"></mat-progress-bar>
+      <span>{{progress()}}%</span>
     </div>
 
-    <div *ngIf="message" class="message">
-      {{message}}
+    <div *ngIf="message()" class="message">
+      {{message()}}
     </div>
 
-    <div *ngIf="extractedData" class="results-container">
+    <div *ngIf="extractedData()" class="results-container">
       <h3>Extracted Data:</h3>
-      <pre>{{extractedData | json}}</pre>
+      <pre>{{extractedData() | json}}</pre>
+      <div class="actions">
+        <a mat-stroked-button color="primary" [routerLink]="['/files']">
+          <mat-icon>list</mat-icon> View All Documents
+        </a>
+      </div>
     </div>
   </mat-card-content>
 
