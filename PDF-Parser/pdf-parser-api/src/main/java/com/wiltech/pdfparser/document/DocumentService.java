@@ -1,40 +1,33 @@
 package com.wiltech.pdfparser.document;
 
+import com.wiltech.pdfparser.document.content.DocumentContentApplicationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
 public class DocumentService {
 
-	private final DocumentRepository documentRepository;
+	private final DocumentApplicationService documentApplicationService;
+	private final DocumentContentApplicationService documentContentApplicationService;
 
-	public DocumentService(DocumentRepository documentRepository) {
-		this.documentRepository = documentRepository;
+	public DocumentService(DocumentApplicationService documentApplicationService,
+			DocumentContentApplicationService documentContentApplicationService) {
+		this.documentApplicationService = documentApplicationService;
+		this.documentContentApplicationService = documentContentApplicationService;
 	}
 
-	public List<DocumentDto> getAll() {
-		return documentRepository.findAll().stream()
-				.map(DocumentDto::from)
-				.toList();
+	@Transactional
+	public DocumentDto upload(String name, String type, long size, byte[] data) {
+		DocumentDto created = documentApplicationService.create(new CreateDocumentRequest(name, type, size));
+		documentContentApplicationService.save(created.id(), data);
+		return created;
 	}
 
-	public DocumentDto getById(UUID id) {
-		return DocumentDto.from(findDocumentOrThrow(id));
-	}
-
-	public DocumentDto create(CreateDocumentRequest request) {
-		Document document = new Document(request.name(), request.type(), request.size());
-		return DocumentDto.from(documentRepository.save(document));
-	}
-
+	@Transactional
 	public void delete(UUID id) {
-		documentRepository.delete(findDocumentOrThrow(id));
-	}
-
-	private Document findDocumentOrThrow(UUID id) {
-		return documentRepository.findById(id)
-				.orElseThrow(() -> new DocumentNotFoundException(id));
+		documentContentApplicationService.delete(id);
+		documentApplicationService.delete(id);
 	}
 }
