@@ -71,6 +71,6 @@ uvicorn app.main:app --reload --port 8000
 
 ## Status
 
-Standalone and working on its own (`/parse` and `/health`). Not yet wired up to the Spring Boot
-API — that integration (async call on upload, status tracking, storing the result) is the next
-step.
+Working and wired up: `pdf-parser-api` calls `/parse` asynchronously after every upload and
+stores the result. See [its README](../pdf-parser-api/README.md#how-parsing-works) for how the
+two services fit together.

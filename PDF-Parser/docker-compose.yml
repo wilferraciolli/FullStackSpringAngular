@@ -1,0 +1,26 @@
+services:
+  pdf-ocr-service:
+    build: ./pdf-ocr-service
+    ports:
+      - "8000:8000"
+
+  pdf-parser-api:
+    build: ./pdf-parser-api
+    ports:
+      - "8080:8080"
+    environment:
+      - PDF_OCR_SERVICE_URL=http://pdf-ocr-service:8000
+    volumes:
+      - api-data:/app/data
+    depends_on:
+      - pdf-ocr-service
+
+  pdf-parser-ui:
+    build: ./PDF-parser-ui
+    ports:
+      - "4200:80"
+    depends_on:
+      - pdf-parser-api
+
+volumes:
+  api-data:

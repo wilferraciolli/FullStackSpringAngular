@@ -31,9 +31,10 @@ what a "document" is; it just takes PDF bytes and returns extracted text.
 ## Projects
 
 ### [`pdf-parser-api`](pdf-parser-api/README.md)
-Spring Boot service exposing REST endpoints to upload PDFs, list/fetch/delete them, and (once
-wired up) track parsing status and store parsed text. Spring Data JPA + Flyway for persistence,
-Bean Validation for request validation, H2 (file-based) as the database.
+Spring Boot service exposing REST endpoints to upload PDFs, list/fetch/delete them, and track
+parsing status and parsed text. Spring Data JPA + Flyway for persistence, Bean Validation for
+request validation, H2 (file-based) as the database. Calls `pdf-ocr-service` asynchronously after
+upload and stores the result.
 
 ### [`PDF-parser-ui`](PDF-parser-ui/README.md)
 Angular application: a documents list with upload/delete, and a document details page. Built with
@@ -48,11 +49,14 @@ package.
 
 ## Status
 
-- **Working:** document upload/list/details/delete end-to-end between the UI and API; the OCR
-  service works standalone (`POST /parse`) but isn't called from the API yet.
-- **Next:** a `DocumentParsing` entity + status enum (`FILE_UPLOADED`, `PROCESSING`, `OK`,
-  `FAILED`, `INSUFFICIENT_DATA`) on the API side, an async call from the API to the OCR service on
-  upload, and surfacing the status/parsed text in the UI's document details page.
+Working end-to-end: upload a PDF in the UI → the API stores it and kicks off parsing
+asynchronously (status `FILE_UPLOADED` → `PROCESSING`) → the OCR service extracts text (native
+text layer, or Tesseract OCR for scanned pages) → the API stores the result (`OK` /
+`INSUFFICIENT_DATA` / `FAILED`) → the UI polls and shows the live status and, once done, the
+parsed text on the document details page.
+
+Not yet done: retrying a failed/insufficient parse, downloading a document's raw bytes, and any
+structured extraction beyond raw text (e.g. pulling out individual lab values).
 
 ## Running everything with Docker Compose
 
