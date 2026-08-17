@@ -1,72 +1,128 @@
 # PDF Parser
 
-A full-stack application for uploading PDF documents and parsing them into structured data. When a
-document isn't cleanly extractable as text (e.g. scanned pages), the request is handed off to a
-background OCR service for higher-quality extraction.
+A full-stack application for uploading PDF documents (including scanned/image-based ones) and
+extracting their text. Lab results are the primary use case — some come as clean digital PDFs,
+others as scans, so the pipeline needs both native text extraction and OCR.
 
 ## Architecture
 
-| Component        | Tech                              | Responsibility                                                      |
-|-------------------|------------------------------------|-----------------------------------------------------------------------|
-| `pdf-parser-api`  | Spring Boot (Java 25)             | REST API for uploading PDFs, orchestrating parsing, persisting results |
-| `PDF-parser-ui`   | Angular 22                        | UI for uploading documents and viewing parsed results                 |
-| `pdf-ocr-service` | Python (planned)                  | Background OCR worker for documents that need image-based text extraction |
+| Component        | Tech                                | Responsibility                                                        |
+|-------------------|--------------------------------------|-------------------------------------------------------------------------|
+| `PDF-parser-ui`   | Angular 22 + Material                | Upload documents, browse the list, view a document's details/parsed text |
+| `pdf-parser-api`  | Spring Boot (Java 25)                | REST API — document metadata + file storage, orchestrates parsing       |
+| `pdf-ocr-service` | Python (FastAPI) + PyMuPDF + Tesseract | Stateless PDF→text extraction, with OCR fallback for scanned pages    |
 
 ```
-┌────────────┐      upload PDF       ┌──────────────────┐      needs OCR?       ┌──────────────────┐
-│ Angular UI │  ───────────────────▶ │  Spring Boot API  │  ───────────────────▶ │ Python OCR Service│
-└────────────┘  ◀─────────────────── └──────────────────┘  ◀─────────────────── └──────────────────┘
-                  parsed results               │  persists
-                                                 ▼
-                                          ┌────────────┐
-                                          │  Database  │
-                                          └────────────┘
+┌────────────┐   upload PDF   ┌──────────────────┐   PDF bytes   ┌───────────────────┐
+│ Angular UI │ ─────────────▶ │  Spring Boot API  │ ────────────▶ │ Python OCR Service │
+└────────────┘ ◀───────────── └──────────────────┘ ◀──────────── └───────────────────┘
+                 doc + status            │  persists doc,          extracted text
+                                         │  content, and
+                                         ▼  parse status/result
+                                  ┌────────────┐
+                                  │  H2 (file) │
+                                  └────────────┘
 ```
+
+`pdf-parser-api` owns all state (documents, their bytes, and parsing status/results).
+`pdf-ocr-service` is a stateless transformation service — it has no database and doesn't know
+what a "document" is; it just takes PDF bytes and returns extracted text.
 
 ## Projects
 
-### `pdf-parser-api`
-Spring Boot service exposing REST endpoints to upload PDFs, track parsing status, and retrieve
-parsed content. Uses Spring Data JPA + Flyway for persistence and migrations, and Bean Validation
-for request validation.
+### [`pdf-parser-api`](pdf-parser-api/README.md)
+Spring Boot service exposing REST endpoints to upload PDFs, list/fetch/delete them, and (once
+wired up) track parsing status and store parsed text. Spring Data JPA + Flyway for persistence,
+Bean Validation for request validation, H2 (file-based) as the database.
 
-- Java 25
-- Spring Boot 4.1.0
-- Spring Data JPA
-- Flyway
-- Spring Validation
-- Spring WebMVC
+### [`PDF-parser-ui`](PDF-parser-ui/README.md)
+Angular application: a documents list with upload/delete, and a document details page. Built with
+signals throughout (`httpResource`, signal inputs, zoneless change detection) and Angular
+Material.
 
-### `PDF-parser-ui`
-Angular application providing the upload UI and a view for browsing previously uploaded/parsed
-documents.
-
-- Angular 22
-- TypeScript
-
-### `pdf-ocr-service` (planned)
-Python service that performs OCR on documents the API can't parse cleanly as native text (e.g.
-scanned/image-based PDFs). Runs as a separate background service and communicates with the API.
+### [`pdf-ocr-service`](pdf-ocr-service/README.md)
+Python/FastAPI service with a single `POST /parse` endpoint. Extracts each page's native text
+layer where there is one (PyMuPDF), and falls back to Tesseract OCR for pages that are just
+images (e.g. scanned lab reports). Runs in Docker since Tesseract is a native binary, not a Python
+package.
 
 ## Status
 
-Early scaffolding stage — API and UI projects are initialized but not yet implemented. The OCR
-service has not been created yet.
+- **Working:** document upload/list/details/delete end-to-end between the UI and API; the OCR
+  service works standalone (`POST /parse`) but isn't called from the API yet.
+- **Next:** a `DocumentParsing` entity + status enum (`FILE_UPLOADED`, `PROCESSING`, `OK`,
+  `FAILED`, `INSUFFICIENT_DATA`) on the API side, an async call from the API to the OCR service on
+  upload, and surfacing the status/parsed text in the UI's document details page.
 
-## Getting Started
+## Running everything with Docker Compose
 
-### API
+This is the easiest way to run the full stack — it also avoids installing Python/Tesseract
+natively, since `pdf-ocr-service` needs both.
+
+**Prerequisite:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) running.
+
 ```bash
-cd pdf-parser-api
-./mvnw spring-boot:run
+docker compose up --build
 ```
 
-### UI
+This builds and starts all three services:
+
+| Service           | URL                     |
+|--------------------|--------------------------|
+| `pdf-parser-ui`    | http://localhost:4200    |
+| `pdf-parser-api`   | http://localhost:8080    |
+| `pdf-ocr-service`  | http://localhost:8000    |
+
+Open `http://localhost:4200` — the UI's nginx container proxies `/api/*` to `pdf-parser-api`, so
+no extra configuration is needed.
+
+**Every time you change code, rebuild with `--build`** — Compose caches image layers, so
+unaffected services rebuild quickly, but a plain `docker compose up` without `--build` will just
+reuse the old images and won't pick up your changes:
+
 ```bash
+docker compose up --build
+```
+
+To stop everything:
+
+```bash
+docker compose down
+```
+
+The API's H2 database lives in a named Docker volume (`api-data`) so it survives rebuilds/restarts.
+To wipe it and start fresh:
+
+```bash
+docker compose down -v
+```
+
+To build/run a single service (useful when only working on one piece):
+
+```bash
+docker compose up --build pdf-ocr-service
+```
+
+## Running natively (without Docker)
+
+Each project's own README has the details; in short:
+
+```bash
+# Terminal 1 — API (needs Java 25 + Maven, use the wrapper)
+cd pdf-parser-api
+./mvnw spring-boot:run
+
+# Terminal 2 — UI (needs Node)
 cd PDF-parser-ui
 npm install
 npm start
+
+# Terminal 3 — OCR service (needs Python 3.12 + Tesseract installed natively — see its README)
+cd pdf-ocr-service
+python -m venv .venv && .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 ```
 
-### OCR Service
-Not yet implemented.
+The OCR service is the one with real native-dependency friction (Tesseract), so Docker Compose is
+the recommended way to run it even if you run the API/UI natively.
