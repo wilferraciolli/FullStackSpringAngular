@@ -1,0 +1,33 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.details-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+}
+
+.details-list dt {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.details-list dd {
+  margin: 0;
+}
+
+.parsed-content p {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.error {
+  color: var(--mat-sys-on-surface-variant);
+  padding: 2rem 0;
+  text-align: center;
+}

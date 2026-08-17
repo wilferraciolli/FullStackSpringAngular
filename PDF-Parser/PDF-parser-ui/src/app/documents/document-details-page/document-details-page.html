@@ -1,0 +1,44 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/" aria-label="Back to documents">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Document details</span>
+</mat-toolbar>
+
+<div class="page">
+  @if (documentResource.isLoading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (documentResource.error()) {
+    <p class="error">Could not load this document.</p>
+  } @else if (documentResource.value(); as document) {
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ document.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <dl class="details-list">
+          <dt>Type</dt>
+          <dd>{{ document.type }}</dd>
+          <dt>Size</dt>
+          <dd>{{ formatSize(document.size) }}</dd>
+          <dt>Uploaded</dt>
+          <dd>{{ document.createdAt | date: 'medium' }}</dd>
+        </dl>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="parsed-content">
+      <mat-card-header>
+        <mat-card-title>Parsed content</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          Parsing isn't available yet — this section will show the extracted text once OCR
+          parsing is wired up.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

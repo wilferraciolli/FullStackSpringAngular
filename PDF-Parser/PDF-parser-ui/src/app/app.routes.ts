@@ -6,4 +6,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./documents/documents-page/documents-page').then((m) => m.DocumentsPage),
   },
+  {
+    path: 'documents/:id',
+    loadComponent: () =>
+      import('./documents/document-details-page/document-details-page').then(
+        (m) => m.DocumentDetailsPage,
+      ),
+  },
 ];

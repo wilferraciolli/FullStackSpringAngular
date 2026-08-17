@@ -6,8 +6,11 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
 
+import { Document } from '../document.model';
 import { DocumentsService } from '../documents.service';
+import { formatSize } from '../format-size';
 
 @Component({
   selector: 'app-documents-page',
@@ -18,6 +21,7 @@ import { DocumentsService } from '../documents.service';
     MatProgressBarModule,
     MatTableModule,
     MatToolbarModule,
+    RouterLink,
   ],
   templateUrl: './documents-page.html',
   styleUrl: './documents-page.scss',
@@ -28,7 +32,8 @@ export class DocumentsPage {
 
   protected readonly documents = this.documentsService.documents;
   protected readonly uploading = signal(false);
-  protected readonly displayedColumns = ['name', 'type', 'size', 'createdAt'];
+  protected readonly displayedColumns = ['name', 'type', 'size', 'createdAt', 'actions'];
+  protected readonly formatSize = formatSize;
 
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -53,17 +58,18 @@ export class DocumentsPage {
     });
   }
 
-  protected formatSize(bytes: number): string {
-    if (bytes < 1024) {
-      return `${bytes} B`;
+  protected onDelete(document: Document): void {
+    if (!confirm(`Delete "${document.name}"? This cannot be undone.`)) {
+      return;
     }
-    const units = ['KB', 'MB', 'GB'];
-    let value = bytes / 1024;
-    let unitIndex = 0;
-    while (value >= 1024 && unitIndex < units.length - 1) {
-      value /= 1024;
-      unitIndex++;
-    }
-    return `${value.toFixed(1)} ${units[unitIndex]}`;
+
+    this.documentsService.delete(document.id).subscribe({
+      next: () => this.documents.reload(),
+      error: (error) => {
+        this.snackBar.open(`Delete failed: ${error.error?.message ?? error.message}`, 'Dismiss', {
+          duration: 5000,
+        });
+      },
+    });
   }
 }

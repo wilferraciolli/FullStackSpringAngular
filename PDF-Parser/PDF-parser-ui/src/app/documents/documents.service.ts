@@ -9,6 +9,10 @@ export class DocumentsService {
 
   readonly documents = httpResource<Document[]>(() => '/api/documents', { defaultValue: [] });
 
+  getById(id: () => string) {
+    return httpResource<Document>(() => `/api/documents/${id()}`);
+  }
+
   upload(file: File) {
     const formData = new FormData();
     formData.append('file', file);
