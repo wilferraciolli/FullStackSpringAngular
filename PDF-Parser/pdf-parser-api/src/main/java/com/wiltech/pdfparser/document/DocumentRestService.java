@@ -14,22 +14,20 @@ import java.util.UUID;
 @RequestMapping("/api/documents")
 public class DocumentRestService {
 
-	private final DocumentApplicationService documentApplicationService;
 	private final DocumentService documentService;
 
-	public DocumentRestService(DocumentApplicationService documentApplicationService, DocumentService documentService) {
-		this.documentApplicationService = documentApplicationService;
+	public DocumentRestService(DocumentService documentService) {
 		this.documentService = documentService;
 	}
 
 	@GetMapping
 	public List<DocumentDto> getAll() {
-		return documentApplicationService.getAll();
+		return documentService.getAll();
 	}
 
 	@GetMapping("/{id}")
 	public DocumentDto getById(@PathVariable UUID id) {
-		return documentApplicationService.getById(id);
+		return documentService.getById(id);
 	}
 
 	@DeleteMapping("/{id}")

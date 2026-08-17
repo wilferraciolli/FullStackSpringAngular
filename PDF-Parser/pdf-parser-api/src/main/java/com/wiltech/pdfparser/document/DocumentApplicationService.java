@@ -14,27 +14,21 @@ public class DocumentApplicationService {
 		this.documentRepository = documentRepository;
 	}
 
-	public List<DocumentDto> getAll() {
-		return documentRepository.findAll().stream()
-				.map(DocumentDto::from)
-				.toList();
+	public List<Document> getAll() {
+		return documentRepository.findAll();
 	}
 
-	public DocumentDto getById(UUID id) {
-		return DocumentDto.from(findDocumentOrThrow(id));
+	public Document getById(UUID id) {
+		return documentRepository.findById(id)
+				.orElseThrow(() -> new DocumentNotFoundException(id));
 	}
 
-	public DocumentDto create(CreateDocumentRequest request) {
+	public Document create(CreateDocumentRequest request) {
 		Document document = new Document(request.name(), request.type(), request.size());
-		return DocumentDto.from(documentRepository.save(document));
+		return documentRepository.save(document);
 	}
 
 	public void delete(UUID id) {
-		documentRepository.delete(findDocumentOrThrow(id));
-	}
-
-	private Document findDocumentOrThrow(UUID id) {
-		return documentRepository.findById(id)
-				.orElseThrow(() -> new DocumentNotFoundException(id));
+		documentRepository.delete(getById(id));
 	}
 }
