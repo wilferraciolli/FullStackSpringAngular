@@ -25,6 +25,10 @@
           <dd>{{ formatSize(document.size) }}</dd>
           <dt>Uploaded</dt>
           <dd>{{ document.createdAt | date: 'medium' }}</dd>
+          <dt>Status</dt>
+          <dd>
+            <span [class]="statusBadgeClass(document.statusCode)">{{ statusLabel(document.statusCode) }}</span>
+          </dd>
         </dl>
       </mat-card-content>
     </mat-card>
@@ -34,10 +38,18 @@
         <mat-card-title>Parsed content</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>
-          Parsing isn't available yet — this section will show the extracted text once OCR
-          parsing is wired up.
-        </p>
+        @if (isParsingPending(document.statusCode)) {
+          <div class="hint">
+            <mat-progress-bar mode="indeterminate" />
+            <p>Parsing in progress…</p>
+          </div>
+        } @else if (document.statusCode === 'OK') {
+          <pre class="parsed-text">{{ document.parsedText }}</pre>
+        } @else if (document.statusCode === 'INSUFFICIENT_DATA') {
+          <p class="hint">Not enough text could be extracted from this document.</p>
+        } @else if (document.statusCode === 'FAILED') {
+          <p class="hint">Parsing failed. Try re-uploading the document.</p>
+        }
       </mat-card-content>
     </mat-card>
   }

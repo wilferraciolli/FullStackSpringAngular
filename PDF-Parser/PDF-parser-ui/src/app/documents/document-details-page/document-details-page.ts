@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,9 @@ import { RouterLink } from '@angular/router';
 
 import { DocumentsService } from '../documents.service';
 import { formatSize } from '../format-size';
+import { isParsingPending, statusBadgeClass, statusLabel } from '../parsing-status';
+
+const POLL_INTERVAL_MS = 2000;
 
 @Component({
   selector: 'app-document-details-page',
@@ -31,4 +34,17 @@ export class DocumentDetailsPage {
 
   protected readonly documentResource = this.documentsService.getById(() => this.id());
   protected readonly formatSize = formatSize;
+  protected readonly statusLabel = statusLabel;
+  protected readonly statusBadgeClass = statusBadgeClass;
+  protected readonly isParsingPending = isParsingPending;
+
+  constructor() {
+    effect((onCleanup) => {
+      const document = this.documentResource.value();
+      if (document && isParsingPending(document.statusCode)) {
+        const timeoutId = setTimeout(() => this.documentResource.reload(), POLL_INTERVAL_MS);
+        onCleanup(() => clearTimeout(timeoutId));
+      }
+    });
+  }
 }

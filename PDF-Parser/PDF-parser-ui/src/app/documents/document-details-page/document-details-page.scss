@@ -26,6 +26,17 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.parsed-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  margin: 0;
+}
+
+.hint mat-progress-bar {
+  margin-bottom: 0.75rem;
+}
+
 .error {
   color: var(--mat-sys-on-surface-variant);
   padding: 2rem 0;
