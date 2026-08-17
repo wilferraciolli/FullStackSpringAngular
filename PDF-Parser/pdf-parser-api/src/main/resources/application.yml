@@ -2,6 +2,11 @@ spring:
   application:
     name: pdf-parser
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
   datasource:
     url: jdbc:h2:file:./data/pdfparser;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
@@ -22,3 +27,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+server:
+  tomcat:
+    max-swallow-size: 50MB
+    max-http-form-post-size: 50MB
