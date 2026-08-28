@@ -2,3 +2,14 @@ ToDoApp/ToDoAPI/.mvn/
 ToDoApp/ToDoAPI/mvnw.cmd
 ToDoApp/ToDoAPI/mvnw
 OrgChart/.idea/*
+/PDF-Parser/.idea/.gitignore
+/PDF-Parser/.idea/checkstyle-idea.xml
+/PDF-Parser/.idea/compiler.xml
+/PDF-Parser/.idea/encodings.xml
+/PDF-Parser/.idea/jarRepositories.xml
+/PDF-Parser/.idea/misc.xml
+/PDF-Parser/.idea/modules.xml
+/PDF-Parser/.idea/PDF-Parser.iml
+/PDF-Parser/.idea/prettier.xml
+/PDF-Parser/.idea/vcs.xml
+/.idea/checkstyle-idea.xml
